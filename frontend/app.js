@@ -1,0 +1,750 @@
+/**
+ * Flusso in 3 fasi:
+ *   1. /api/convert  — Upload file → testo Markdown
+ *   2. /api/extract  — Estrazione entità → tabella di mappatura
+ *   3. /api/anonymize — Sostituzione semantica → documento .md finale
+ */
+
+'use strict';
+
+// ===========================================================================
+// CONFIGURAZIONE
+// ===========================================================================
+
+const API_BASE_URL = 'http://localhost:8000';
+
+// Categorie di entità da anonimizzare (da 2.1.2 della documentazione)
+const CATEGORIES = [
+  {
+    id: 'persone_fisiche',
+    label: 'Persone fisiche',
+    description: 'Nomi, cognomi, soprannomi',
+    icon: 'bi-person',
+    color: 'danger',
+  },
+  {
+    id: 'persone_giuridiche',
+    label: 'Persone giuridiche',
+    description: 'Aziende, enti, associazioni',
+    icon: 'bi-building',
+    color: 'warning',
+  },
+  {
+    id: 'dati_contatto',
+    label: 'Dati di contatto',
+    description: 'Telefono, email, indirizzi, URL',
+    icon: 'bi-telephone',
+    color: 'info',
+  },
+  {
+    id: 'identificativi',
+    label: 'Identificativi univoci',
+    description: 'AVS/AHV, CF, passaporto, patente',
+    icon: 'bi-card-text',
+    color: 'primary',
+  },
+  {
+    id: 'dati_finanziari',
+    label: 'Dati finanziari',
+    description: 'IBAN, carte di credito, BIC/SWIFT',
+    icon: 'bi-credit-card',
+    color: 'success',
+  },
+  {
+    id: 'dati_temporali',
+    label: 'Dati temporali',
+    description: 'Date di nascita, date sensibili',
+    icon: 'bi-calendar-date',
+    color: 'secondary',
+  },
+  {
+    id: 'luoghi',
+    label: 'Luoghi specifici',
+    description: 'Domicilio, coordinate GPS, edifici',
+    icon: 'bi-geo-alt',
+    color: 'dark',
+  },
+  {
+    id: 'dati_biometrici',
+    label: 'Dati biometrici',
+    description: 'Dati biometrici o genetici',
+    icon: 'bi-fingerprint',
+    color: 'danger',
+  },
+];
+
+// Colori badge per categoria nella tabella
+const CATEGORY_BADGE_CLASS = {
+  persone_fisiche:    'bg-danger',
+  persone_giuridiche: 'bg-warning text-dark',
+  dati_contatto:      'bg-info text-dark',
+  identificativi:     'bg-primary',
+  dati_finanziari:    'bg-success',
+  dati_temporali:     'bg-secondary',
+  luoghi:             'bg-dark',
+  dati_biometrici:    'bg-danger',
+};
+
+// ===========================================================================
+// STATO APPLICAZIONE
+// ===========================================================================
+
+const state = {
+  currentStep: 1,
+  selectedFile: null,
+  convertedText: '',          // testo .md risultato di /convert
+  mappingRows: [],            // Array di {id, original, category, substitution, status}
+  anonymizedText: '',         // testo .md risultato di /anonymize
+  anonymizedFilename: 'documento_anonimizzato.md',
+};
+
+// ===========================================================================
+// UTILITIES
+// ===========================================================================
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function generateId() {
+  return Math.random().toString(36).slice(2, 9);
+}
+
+function showToast(message, type = 'info') {
+  const icons = {
+    success: '<i class="bi bi-check-circle-fill text-success me-2"></i>',
+    danger:  '<i class="bi bi-x-circle-fill text-danger me-2"></i>',
+    warning: '<i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>',
+    info:    '<i class="bi bi-info-circle-fill text-primary me-2"></i>',
+  };
+
+  const toastEl = document.getElementById('toastEl');
+  const toastBody = document.getElementById('toastBody');
+
+  toastEl.className = `toast align-items-center border-0 text-bg-${type === 'info' ? 'light' : type}`;
+  toastBody.innerHTML = (icons[type] || icons.info) + message;
+
+  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 4000 });
+  toast.show();
+}
+
+function showLoading(message, subMessage = '') {
+  document.getElementById('loadingMessage').textContent = message;
+  document.getElementById('loadingSubMessage').textContent = subMessage;
+  document.getElementById('loadingOverlay').classList.remove('d-none');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('d-none');
+}
+
+async function apiCall(endpoint, options = {}) {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: response.statusText }));
+    throw new Error(err.detail || `Errore HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+// ===========================================================================
+// STEP NAVIGATION
+// ===========================================================================
+
+function goToStep(step) {
+  [1, 2, 3].forEach(s => {
+    document.getElementById(`step${s}`).classList.toggle('d-none', s !== step);
+  });
+
+  // Update step circles
+  [1, 2, 3].forEach(s => {
+    const circle = document.getElementById(`stepCircle${s}`);
+    circle.classList.remove('active', 'completed');
+    if (s < step) {
+      circle.classList.add('completed');
+      circle.innerHTML = '<i class="bi bi-check-lg"></i>';
+    } else if (s === step) {
+      circle.classList.add('active');
+      const icons = ['bi-upload', 'bi-search', 'bi-file-earmark-check'];
+      circle.innerHTML = `<i class="bi ${icons[s - 1]}"></i>`;
+    } else {
+      const icons = ['bi-upload', 'bi-search', 'bi-file-earmark-check'];
+      circle.innerHTML = `<i class="bi ${icons[s - 1]}"></i>`;
+    }
+  });
+
+  // Update step lines
+  [1, 2].forEach(s => {
+    const line = document.getElementById(`stepLine${s}`);
+    line.classList.toggle('active', s < step);
+  });
+
+  state.currentStep = step;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===========================================================================
+// STEP 1 — CARICAMENTO E CONVERSIONE
+// ===========================================================================
+
+function initDropZone() {
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) setFile(file);
+  });
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) setFile(fileInput.files[0]);
+  });
+}
+
+function setFile(file) {
+  const allowed = ['.pdf', '.docx', '.doc', '.txt', '.rtf', '.odt', '.html', '.htm'];
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+  if (!allowed.includes(ext)) {
+    showToast(`Formato non supportato: ${ext}`, 'danger');
+    return;
+  }
+
+  state.selectedFile = file;
+
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatBytes(file.size);
+  document.getElementById('fileInfo').classList.remove('d-none');
+  document.getElementById('btnConvert').disabled = false;
+
+  // Reset preview if re-selecting
+  document.getElementById('previewSection').classList.add('d-none');
+  document.getElementById('markdownPreview').innerHTML = '';
+  document.getElementById('rawText').textContent = '';
+  state.convertedText = '';
+}
+
+function removeFile() {
+  state.selectedFile = null;
+  document.getElementById('fileInfo').classList.add('d-none');
+  document.getElementById('btnConvert').disabled = true;
+  document.getElementById('previewSection').classList.add('d-none');
+  document.getElementById('fileInput').value = '';
+  state.convertedText = '';
+}
+
+async function convertDocument() {
+  if (!state.selectedFile) return;
+
+  showLoading('Conversione documento in corso…', 'Il file viene convertito in formato Markdown.');
+
+  try {
+    const formData = new FormData();
+    formData.append('file', state.selectedFile);
+
+    const result = await apiCall('/api/convert', { method: 'POST', body: formData });
+
+    state.convertedText = result.text;
+
+    // Render markdown preview
+    document.getElementById('markdownPreview').innerHTML = marked.parse(state.convertedText);
+    document.getElementById('rawText').textContent = state.convertedText;
+    document.getElementById('previewSection').classList.remove('d-none');
+
+    showToast('Documento convertito con successo!', 'success');
+  } catch (err) {
+    showToast(`Errore durante la conversione: ${err.message}`, 'danger');
+  } finally {
+    hideLoading();
+  }
+}
+
+function togglePreviewView(showRaw) {
+  document.getElementById('markdownPreview').classList.toggle('d-none', showRaw);
+  document.getElementById('rawPreview').classList.toggle('d-none', !showRaw);
+  document.getElementById('btnViewRendered').classList.toggle('active', !showRaw);
+  document.getElementById('btnViewRaw').classList.toggle('active', showRaw);
+}
+
+// ===========================================================================
+// STEP 2 — ESTRAZIONE E VALIDAZIONE
+// ===========================================================================
+
+function initCategoryCheckboxes() {
+  const container = document.getElementById('categoryCheckboxes');
+
+  CATEGORIES.forEach(cat => {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
+
+    col.innerHTML = `
+      <label class="category-card d-flex align-items-start gap-2 w-100 selected" data-cat="${cat.id}">
+        <input type="checkbox" class="category-checkbox form-check-input mt-0 flex-shrink-0"
+               id="cat_${cat.id}" value="${cat.id}" checked />
+        <div>
+          <div class="d-flex align-items-center gap-1 fw-semibold" style="font-size:0.82rem;">
+            <i class="bi ${cat.icon} text-${cat.color}"></i> ${cat.label}
+          </div>
+          <div class="text-muted" style="font-size:0.72rem;">${cat.description}</div>
+        </div>
+      </label>
+    `;
+
+    const card = col.querySelector('.category-card');
+    const checkbox = col.querySelector('input');
+
+    checkbox.addEventListener('change', () => {
+      card.classList.toggle('selected', checkbox.checked);
+    });
+
+    card.addEventListener('click', e => {
+      if (e.target !== checkbox) {
+        checkbox.checked = !checkbox.checked;
+        card.classList.toggle('selected', checkbox.checked);
+      }
+    });
+
+    container.appendChild(col);
+  });
+}
+
+function getSelectedCategories() {
+  return [...document.querySelectorAll('.category-checkbox:checked')].map(cb => cb.value);
+}
+
+function selectAllCategories(select) {
+  document.querySelectorAll('.category-checkbox').forEach(cb => {
+    cb.checked = select;
+    cb.closest('.category-card').classList.toggle('selected', select);
+  });
+}
+
+async function extractEntities() {
+  const categories = getSelectedCategories();
+
+  if (categories.length === 0) {
+    showToast('Seleziona almeno una categoria.', 'warning');
+    return;
+  }
+
+  showLoading(
+    'Estrazione entità in corso…',
+    'Il modello LLM locale sta analizzando il documento. Questa operazione può richiedere qualche minuto.'
+  );
+
+  try {
+    const result = await apiCall('/api/extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: state.convertedText, categories }),
+    });
+
+    // Build mapping rows
+    state.mappingRows = (result.entities || []).map(e => ({
+      id: generateId(),
+      original: e.original,
+      category: e.category,
+      substitution: e.proposed,
+      status: 'proposed',   // proposed | accepted | modified | removed
+    }));
+
+    renderMappingTable();
+    document.getElementById('mappingSection').classList.remove('d-none');
+
+    if (state.mappingRows.length === 0) {
+      document.getElementById('mappingEmpty').classList.remove('d-none');
+      document.getElementById('mappingTable').classList.add('d-none');
+    } else {
+      document.getElementById('mappingEmpty').classList.add('d-none');
+      document.getElementById('mappingTable').classList.remove('d-none');
+    }
+
+    showToast(`${state.mappingRows.length} entità trovate.`, 'success');
+  } catch (err) {
+    showToast(`Errore durante l'estrazione: ${err.message}`, 'danger');
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderMappingTable() {
+  const tbody = document.getElementById('mappingTableBody');
+  tbody.innerHTML = '';
+
+  state.mappingRows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.id = `row_${row.id}`;
+    tr.className = `row-${row.status}`;
+
+    const catLabel = CATEGORIES.find(c => c.id === row.category)?.label || row.category;
+    const badgeClass = CATEGORY_BADGE_CLASS[row.category] || 'bg-secondary';
+    const isEditing = row._editing === true;
+    const isRemoved = row.status === 'removed';
+
+    tr.innerHTML = `
+      <td>
+        <span class="entity-text">${escapeHtml(row.original)}</span>
+      </td>
+      <td>
+        <span class="badge ${badgeClass}" style="font-size:0.7rem;">${catLabel}</span>
+      </td>
+      <td>
+        ${isEditing
+          ? `<input class="substitution-input" id="editInput_${row.id}"
+               value="${escapeHtml(row.substitution)}" />`
+          : `<span class="substitution-display">${escapeHtml(row.substitution)}</span>`
+        }
+      </td>
+      <td>${statusBadge(row.status)}</td>
+      <td>
+        ${isRemoved
+          ? `<button class="btn btn-sm btn-outline-secondary" onclick="restoreRow('${row.id}')" title="Ripristina">
+               <i class="bi bi-arrow-counterclockwise"></i>
+             </button>`
+          : isEditing
+            ? `<button class="btn btn-sm btn-success me-1" onclick="saveEdit('${row.id}')" title="Salva">
+                 <i class="bi bi-check-lg"></i>
+               </button>
+               <button class="btn btn-sm btn-outline-secondary" onclick="cancelEdit('${row.id}')" title="Annulla">
+                 <i class="bi bi-x-lg"></i>
+               </button>`
+            : `<button class="btn btn-sm btn-outline-success me-1" onclick="acceptRow('${row.id}')" title="Accetta">
+                 <i class="bi bi-check-lg"></i>
+               </button>
+               <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow('${row.id}')" title="Modifica">
+                 <i class="bi bi-pencil"></i>
+               </button>
+               <button class="btn btn-sm btn-outline-danger" onclick="removeRow('${row.id}')" title="Rimuovi">
+                 <i class="bi bi-x-lg"></i>
+               </button>`
+        }
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  updateMappingStats();
+}
+
+function statusBadge(status) {
+  const map = {
+    proposed: '<span class="badge bg-warning text-dark">Proposta</span>',
+    accepted: '<span class="badge bg-success">Accettata</span>',
+    modified: '<span class="badge bg-primary">Modificata</span>',
+    removed:  '<span class="badge bg-danger">Rimossa</span>',
+  };
+  return map[status] || '';
+}
+
+function updateMappingStats() {
+  const total    = state.mappingRows.length;
+  const accepted = state.mappingRows.filter(r => r.status === 'accepted').length;
+  const modified = state.mappingRows.filter(r => r.status === 'modified').length;
+  const removed  = state.mappingRows.filter(r => r.status === 'removed').length;
+  const proposed = state.mappingRows.filter(r => r.status === 'proposed').length;
+  const validated = accepted + modified + removed;
+
+  document.getElementById('mappingStats').textContent =
+    `${total} entità trovate · ${accepted} accettate · ${modified} modificate · ${removed} rimosse · ${proposed} in attesa`;
+
+  const pct = total > 0 ? (validated / total) * 100 : 0;
+  document.getElementById('validationProgress').style.width = `${pct}%`;
+
+  // Enable "next" only if all rows have a decision
+  document.getElementById('btnToStep3').disabled = proposed > 0;
+
+  if (proposed > 0) {
+    document.getElementById('btnToStep3').title = `${proposed} entità ancora in attesa di validazione`;
+  } else {
+    document.getElementById('btnToStep3').title = '';
+  }
+}
+
+// --- Row actions ---
+
+function acceptRow(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  row.status = 'accepted';
+  row._editing = false;
+  renderMappingTable();
+}
+
+function editRow(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  row._editing = true;
+  renderMappingTable();
+  document.getElementById(`editInput_${id}`)?.focus();
+}
+
+function saveEdit(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  const input = document.getElementById(`editInput_${id}`);
+  const newValue = input?.value.trim();
+  if (!newValue) {
+    showToast('La sostituzione non può essere vuota.', 'warning');
+    return;
+  }
+  row.substitution = newValue;
+  row.status = 'modified';
+  row._editing = false;
+  renderMappingTable();
+}
+
+function cancelEdit(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  row._editing = false;
+  renderMappingTable();
+}
+
+function removeRow(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  row.status = 'removed';
+  row._editing = false;
+  renderMappingTable();
+}
+
+function restoreRow(id) {
+  const row = state.mappingRows.find(r => r.id === id);
+  if (!row) return;
+  row.status = 'proposed';
+  renderMappingTable();
+}
+
+function acceptAllRows() {
+  state.mappingRows.forEach(row => {
+    if (row.status !== 'removed') row.status = 'accepted';
+  });
+  renderMappingTable();
+}
+
+function removeAllRows() {
+  state.mappingRows.forEach(row => {
+    row.status = 'removed';
+    row._editing = false;
+  });
+  renderMappingTable();
+}
+
+// ===========================================================================
+// STEP 3 — ANONIMIZZAZIONE E DOWNLOAD
+// ===========================================================================
+
+function buildSummary() {
+  const rows    = state.mappingRows;
+  const accepted = rows.filter(r => r.status === 'accepted').length;
+  const modified = rows.filter(r => r.status === 'modified').length;
+  const removed  = rows.filter(r => r.status === 'removed').length;
+  const active   = accepted + modified;
+
+  const summaryEl = document.getElementById('summaryStats');
+  summaryEl.innerHTML = `
+    <div class="col-6 col-md-3">
+      <div class="text-center p-2 rounded bg-white">
+        <div class="fs-4 fw-bold text-success">${accepted}</div>
+        <div class="small text-muted">Accettate</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="text-center p-2 rounded bg-white">
+        <div class="fs-4 fw-bold text-primary">${modified}</div>
+        <div class="small text-muted">Modificate</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="text-center p-2 rounded bg-white">
+        <div class="fs-4 fw-bold text-danger">${removed}</div>
+        <div class="small text-muted">Rimosse</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="text-center p-2 rounded bg-white">
+        <div class="fs-4 fw-bold text-dark">${active}</div>
+        <div class="small text-muted">Sostituzioni attive</div>
+      </div>
+    </div>
+  `;
+}
+
+async function anonymizeDocument() {
+  const activeRows = state.mappingRows
+    .filter(r => r.status === 'accepted' || r.status === 'modified')
+    .map(r => ({ original: r.original, substitution: r.substitution }));
+
+  showLoading(
+    'Anonimizzazione in corso…',
+    'Il LLM locale sta applicando le sostituzioni semantiche. La tabella di mappatura verrà distrutta al termine.'
+  );
+
+  try {
+    const result = await apiCall('/api/anonymize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: state.convertedText, mapping: activeRows }),
+    });
+
+    state.anonymizedText = result.text;
+    if (result.filename) state.anonymizedFilename = result.filename;
+
+    // Render anonymized preview
+    document.getElementById('anonymizedPreview').innerHTML = marked.parse(state.anonymizedText);
+    document.getElementById('anonymizedRawText').textContent = state.anonymizedText;
+    document.getElementById('resultSection').classList.remove('d-none');
+
+    // Scroll to result
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    showToast('Documento anonimizzato con successo!', 'success');
+  } catch (err) {
+    showToast(`Errore durante l'anonimizzazione: ${err.message}`, 'danger');
+  } finally {
+    hideLoading();
+  }
+}
+
+function downloadAnonymized() {
+  if (!state.anonymizedText) return;
+  const blob = new Blob([state.anonymizedText], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = state.anonymizedFilename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function toggleAnonymizedView(showRaw) {
+  document.getElementById('anonymizedPreview').classList.toggle('d-none', showRaw);
+  document.getElementById('anonymizedRawPreview').classList.toggle('d-none', !showRaw);
+  document.getElementById('btnViewAnonymizedRendered').classList.toggle('active', !showRaw);
+  document.getElementById('btnViewAnonymizedRaw').classList.toggle('active', showRaw);
+}
+
+function startOver() {
+  // Reset state
+  state.selectedFile = null;
+  state.convertedText = '';
+  state.mappingRows = [];
+  state.anonymizedText = '';
+
+  // Reset UI
+  removeFile();
+  document.getElementById('mappingSection').classList.add('d-none');
+  document.getElementById('resultSection').classList.add('d-none');
+  document.getElementById('fileInput').value = '';
+
+  goToStep(1);
+}
+
+// ===========================================================================
+// HTML ESCAPING
+// ===========================================================================
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ===========================================================================
+// INIT
+// ===========================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // --- Drop zone ---
+  initDropZone();
+
+  // --- Category checkboxes ---
+  initCategoryCheckboxes();
+
+  // --- Step 1 events ---
+  document.getElementById('btnRemoveFile').addEventListener('click', removeFile);
+  document.getElementById('btnConvert').addEventListener('click', convertDocument);
+  document.getElementById('btnViewRendered').addEventListener('click', () => togglePreviewView(false));
+  document.getElementById('btnViewRaw').addEventListener('click', () => togglePreviewView(true));
+
+  document.getElementById('btnToStep2').addEventListener('click', () => {
+    if (!state.convertedText) {
+      showToast('Prima converti il documento.', 'warning');
+      return;
+    }
+    goToStep(2);
+  });
+
+  // --- Step 2 events ---
+  document.getElementById('btnBackToStep1').addEventListener('click', () => goToStep(1));
+  document.getElementById('btnSelectAll').addEventListener('click', () => selectAllCategories(true));
+  document.getElementById('btnDeselectAll').addEventListener('click', () => selectAllCategories(false));
+  document.getElementById('btnExtract').addEventListener('click', extractEntities);
+  document.getElementById('btnAcceptAll').addEventListener('click', acceptAllRows);
+  document.getElementById('btnRemoveAll').addEventListener('click', removeAllRows);
+
+  document.getElementById('btnToStep3').addEventListener('click', () => {
+    const proposed = state.mappingRows.filter(r => r.status === 'proposed').length;
+    if (proposed > 0) {
+      showToast(`Ci sono ancora ${proposed} entità in attesa di validazione.`, 'warning');
+      return;
+    }
+    buildSummary();
+    goToStep(3);
+  });
+
+  // --- Step 3 events ---
+  document.getElementById('btnBackToStep2').addEventListener('click', () => {
+    document.getElementById('resultSection').classList.add('d-none');
+    goToStep(2);
+  });
+  document.getElementById('btnAnonymize').addEventListener('click', anonymizeDocument);
+  document.getElementById('btnViewAnonymizedRendered').addEventListener('click', () => toggleAnonymizedView(false));
+  document.getElementById('btnViewAnonymizedRaw').addEventListener('click', () => toggleAnonymizedView(true));
+  document.getElementById('btnDownload').addEventListener('click', downloadAnonymized);
+  document.getElementById('btnStartOver').addEventListener('click', startOver);
+
+  // --- Keyboard shortcut for editing (Enter = save, Esc = cancel) ---
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.classList.contains('substitution-input')) {
+      const id = e.target.id.replace('editInput_', '');
+      saveEdit(id);
+    }
+    if (e.key === 'Escape' && e.target.classList.contains('substitution-input')) {
+      const id = e.target.id.replace('editInput_', '');
+      cancelEdit(id);
+    }
+  });
+
+});
+
+// Make row-action functions accessible from inline onclick handlers
+window.acceptRow  = acceptRow;
+window.editRow    = editRow;
+window.saveEdit   = saveEdit;
+window.cancelEdit = cancelEdit;
+window.removeRow  = removeRow;
+window.restoreRow = restoreRow;

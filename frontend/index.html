@@ -1,13 +1,353 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Piattaforma di Anonimizzazione Documenti</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Welcome to the Frontend</h1>
-    <p>This is a simple frontend page.</p>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar navbar-dark bg-dark px-4 py-3">
+    <div class="d-flex align-items-center gap-3">
+      <i class="bi bi-shield-lock-fill fs-4 text-primary"></i>
+      <div>
+        <span class="navbar-brand mb-0 fw-bold">Piattaforma di Anonimizzazione Documenti</span>
+        <small class="d-block text-secondary" style="font-size: 0.72rem;">
+          SUPSI · Progetto di Semestre C11149 · 2025/2026
+        </small>
+      </div>
+    </div>
+    <span class="badge bg-success ms-auto d-flex align-items-center gap-1">
+      <i class="bi bi-house-fill"></i> Esecuzione locale
+    </span>
+  </nav>
+
+  <!-- ===================== MAIN CONTAINER ===================== -->
+  <main class="container py-4" style="max-width: 900px;">
+
+    <!-- -------- STEP INDICATOR -------- -->
+    <div class="step-indicator d-flex align-items-center justify-content-center mb-4 gap-0">
+      <!-- Step 1 -->
+      <div class="step-item d-flex flex-column align-items-center" id="stepIndicator1">
+        <div class="step-circle active" id="stepCircle1">
+          <i class="bi bi-upload"></i>
+        </div>
+        <small class="step-label mt-1">Caricamento</small>
+      </div>
+      <div class="step-line" id="stepLine1"></div>
+      <!-- Step 2 -->
+      <div class="step-item d-flex flex-column align-items-center" id="stepIndicator2">
+        <div class="step-circle" id="stepCircle2">
+          <i class="bi bi-search"></i>
+        </div>
+        <small class="step-label mt-1">Estrazione</small>
+      </div>
+      <div class="step-line" id="stepLine2"></div>
+      <!-- Step 3 -->
+      <div class="step-item d-flex flex-column align-items-center" id="stepIndicator3">
+        <div class="step-circle" id="stepCircle3">
+          <i class="bi bi-file-earmark-check"></i>
+        </div>
+        <small class="step-label mt-1">Anonimizzazione</small>
+      </div>
+    </div>
+
+    <!-- ===================== STEP 1: CARICAMENTO ===================== -->
+    <div id="step1" class="step-panel">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0"><i class="bi bi-upload me-2 text-primary"></i>Fase 1 — Caricamento e Conversione</h5>
+        </div>
+        <div class="card-body">
+
+          <!-- Drop Zone -->
+          <div id="dropZone" class="drop-zone text-center p-5 rounded mb-3">
+            <i class="bi bi-cloud-arrow-up-fill drop-icon mb-3"></i>
+            <p class="fs-5 fw-medium mb-1">Trascina qui il documento</p>
+            <p class="text-muted mb-3">oppure</p>
+            <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('fileInput').click()">
+              <i class="bi bi-folder2-open me-1"></i>Sfoglia file
+            </button>
+            <input type="file" id="fileInput" class="d-none"
+              accept=".pdf,.docx,.doc,.txt,.rtf,.odt,.html,.htm" />
+            <div class="mt-3 d-flex flex-wrap justify-content-center gap-1">
+              <span class="badge bg-secondary">PDF</span>
+              <span class="badge bg-secondary">DOCX</span>
+              <span class="badge bg-secondary">DOC</span>
+              <span class="badge bg-secondary">TXT</span>
+              <span class="badge bg-secondary">RTF</span>
+              <span class="badge bg-secondary">ODT</span>
+              <span class="badge bg-secondary">HTML</span>
+            </div>
+          </div>
+
+          <!-- File Info (shown after selection) -->
+          <div id="fileInfo" class="d-none alert alert-primary d-flex align-items-center justify-content-between py-2">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-file-earmark-text fs-4"></i>
+              <div>
+                <div class="fw-semibold" id="fileName">—</div>
+                <small class="text-muted" id="fileSize">—</small>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" id="btnRemoveFile" title="Rimuovi file">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <!-- Convert Button -->
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-primary" id="btnConvert" disabled>
+              <i class="bi bi-arrow-repeat me-1"></i>Converti in Markdown
+            </button>
+          </div>
+
+          <!-- Preview Section (shown after conversion) -->
+          <div id="previewSection" class="d-none mt-4">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Anteprima documento convertito</h6>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success">Conversione completata</span>
+                <div class="btn-group btn-group-sm" role="group">
+                  <button class="btn btn-outline-secondary active" id="btnViewRendered" title="Vista renderizzata">
+                    <i class="bi bi-file-richtext"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary" id="btnViewRaw" title="Vista testo grezzo">
+                    <i class="bi bi-code-slash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="markdownPreview" class="preview-box p-3 rounded border bg-white overflow-auto"></div>
+            <div id="rawPreview" class="d-none preview-box p-3 rounded border bg-light overflow-auto">
+              <pre id="rawText" class="mb-0 small"></pre>
+            </div>
+
+            <!-- Next Step -->
+            <div class="d-flex justify-content-end mt-3">
+              <button class="btn btn-success" id="btnToStep2">
+                Procedi all'estrazione <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== STEP 2: ESTRAZIONE ===================== -->
+    <div id="step2" class="step-panel d-none">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex align-items-center justify-content-between">
+          <h5 class="mb-0"><i class="bi bi-search me-2 text-primary"></i>Fase 2 — Estrazione e Validazione Entità</h5>
+          <button class="btn btn-sm btn-outline-secondary" id="btnBackToStep1">
+            <i class="bi bi-arrow-left me-1"></i>Indietro
+          </button>
+        </div>
+        <div class="card-body">
+
+          <!-- Category Selection -->
+          <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6 class="mb-0">Seleziona le categorie da estrarre</h6>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-link p-0" id="btnSelectAll">Seleziona tutte</button>
+                <span class="text-muted">|</span>
+                <button class="btn btn-sm btn-link p-0" id="btnDeselectAll">Deseleziona tutte</button>
+              </div>
+            </div>
+            <div class="row g-2" id="categoryCheckboxes">
+              <!-- generated by JS -->
+            </div>
+          </div>
+
+          <!-- Extract Button -->
+          <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-primary" id="btnExtract">
+              <i class="bi bi-search me-1"></i>Estrai entità
+            </button>
+          </div>
+
+          <!-- Mapping Table (shown after extraction) -->
+          <div id="mappingSection" class="d-none">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div>
+                <h6 class="mb-0">Tabella di mappatura</h6>
+                <small class="text-muted" id="mappingStats">—</small>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-success" id="btnAcceptAll">
+                  <i class="bi bi-check-all me-1"></i>Accetta tutte
+                </button>
+                <button class="btn btn-sm btn-outline-danger" id="btnRemoveAll">
+                  <i class="bi bi-x-circle me-1"></i>Rimuovi tutte
+                </button>
+              </div>
+            </div>
+
+            <!-- Validation progress -->
+            <div class="progress mb-3" style="height: 6px;">
+              <div class="progress-bar bg-success" id="validationProgress" style="width: 0%"></div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="table table-sm table-hover align-middle mb-2" id="mappingTable">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width:28%">Entità trovata</th>
+                    <th style="width:16%">Categoria</th>
+                    <th style="width:28%">Sostituzione proposta</th>
+                    <th style="width:12%">Stato</th>
+                    <th style="width:16%">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody id="mappingTableBody">
+                  <!-- dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty state -->
+            <div id="mappingEmpty" class="d-none text-center py-4 text-muted">
+              <i class="bi bi-search fs-2 mb-2 d-block"></i>
+              Nessuna entità trovata con le categorie selezionate.
+            </div>
+
+            <!-- Next Step -->
+            <div class="d-flex justify-content-end mt-3">
+              <button class="btn btn-success" id="btnToStep3">
+                Procedi all'anonimizzazione <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== STEP 3: ANONIMIZZAZIONE ===================== -->
+    <div id="step3" class="step-panel d-none">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex align-items-center justify-content-between">
+          <h5 class="mb-0"><i class="bi bi-file-earmark-check me-2 text-primary"></i>Fase 3 — Anonimizzazione</h5>
+          <button class="btn btn-sm btn-outline-secondary" id="btnBackToStep2">
+            <i class="bi bi-arrow-left me-1"></i>Indietro
+          </button>
+        </div>
+        <div class="card-body">
+
+          <!-- Summary -->
+          <div class="alert alert-info mb-4" id="anonymizationSummary">
+            <h6 class="alert-heading"><i class="bi bi-info-circle me-1"></i>Riepilogo anonimizzazione</h6>
+            <div class="row g-3 mt-1" id="summaryStats">
+              <!-- generated by JS -->
+            </div>
+            <hr />
+            <p class="mb-0 small">
+              <i class="bi bi-lock-fill me-1"></i>
+              La tabella di mappatura verrà <strong>distrutta</strong> al termine del processo.
+              L'operazione è <strong>irreversibile</strong>.
+            </p>
+          </div>
+
+          <!-- Legal warning -->
+          <div class="alert alert-warning d-flex gap-2 mb-4">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+            <div>
+              <strong>Attenzione:</strong> Verificare attentamente la tabella di mappatura prima di procedere.
+              Una volta anonimizzato, non sarà possibile risalire ai dati originali.
+            </div>
+          </div>
+
+          <!-- Anonymize button -->
+          <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-danger btn-lg" id="btnAnonymize">
+              <i class="bi bi-shield-check me-2"></i>Anonimizza documento
+            </button>
+          </div>
+
+          <!-- Result Section (shown after anonymization) -->
+          <div id="resultSection" class="d-none">
+            <div class="alert alert-success d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill fs-4"></i>
+              <div>
+                <strong>Anonimizzazione completata con successo!</strong>
+                <div class="small mt-1">
+                  La tabella di mappatura è stata distrutta. Il documento anonimizzato è pronto per il download.
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview of anonymized document -->
+            <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
+              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Documento anonimizzato</h6>
+              <div class="d-flex align-items-center gap-2">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button class="btn btn-outline-secondary active" id="btnViewAnonymizedRendered" title="Vista renderizzata">
+                    <i class="bi bi-file-richtext"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary" id="btnViewAnonymizedRaw" title="Vista testo grezzo">
+                    <i class="bi bi-code-slash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="anonymizedPreview" class="preview-box p-3 rounded border bg-white overflow-auto mb-3"></div>
+            <div id="anonymizedRawPreview" class="d-none preview-box p-3 rounded border bg-light overflow-auto mb-3">
+              <pre id="anonymizedRawText" class="mb-0 small"></pre>
+            </div>
+
+            <!-- Download -->
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-outline-secondary" id="btnStartOver">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Nuovo documento
+              </button>
+              <button class="btn btn-success btn-lg" id="btnDownload">
+                <i class="bi bi-download me-2"></i>Scarica documento anonimizzato (.md)
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===================== TOAST NOTIFICATIONS ===================== -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="toastEl" class="toast align-items-center border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2" id="toastBody">
+          <!-- content set by JS -->
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== LOADING OVERLAY ===================== -->
+  <div id="loadingOverlay" class="loading-overlay d-none">
+    <div class="text-center text-white">
+      <div class="spinner-border mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+      <div class="fs-5 fw-medium" id="loadingMessage">Elaborazione in corso…</div>
+      <small class="text-white-50 mt-1 d-block" id="loadingSubMessage"></small>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

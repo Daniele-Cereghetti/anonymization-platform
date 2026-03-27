@@ -140,14 +140,23 @@ function hideLoading() {
   document.getElementById('loadingOverlay').classList.add('d-none');
 }
 
-async function apiCall(endpoint, options = {}) {
+async function apiCall(endpoint, options = {}, timeoutMs = 360000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   const url = `${API_BASE_URL}${endpoint}`;
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({ detail: response.statusText }));
-    throw new Error(err.detail || `Errore HTTP ${response.status}`);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ detail: response.statusText }));
+      throw new Error(err.detail || `Errore HTTP ${response.status}`);
+    }
+    return response.json();
+  } catch (err) {
+    if (err.name === 'AbortError') throw new Error('Timeout: il server non ha risposto in tempo. Riprova.');
+    throw err;
+  } finally {
+    clearTimeout(timer);
   }
-  return response.json();
 }
 
 // ===========================================================================
@@ -262,6 +271,10 @@ async function convertDocument() {
 
     state.convertedText = result.text;
 
+    // Il testo è cambiato: azzera l'estrazione precedente
+    state.mappingRows = [];
+    document.getElementById('mappingSection').classList.add('d-none');
+
     // Render markdown preview
     document.getElementById('markdownPreview').innerHTML = marked.parse(state.convertedText);
     document.getElementById('rawText').textContent = state.convertedText;
@@ -342,6 +355,9 @@ async function extractEntities() {
     showToast('Seleziona almeno una categoria.', 'warning');
     return;
   }
+
+  // Nascondi i risultati precedenti prima di mostrare il loading
+  document.getElementById('mappingSection').classList.add('d-none');
 
   showLoading(
     'Estrazione entità in corso…',

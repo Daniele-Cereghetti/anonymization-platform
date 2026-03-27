@@ -1,0 +1,493 @@
+{
+  "run_id": "f8cf5315-9a70-4e41-9a4d-31b9d227ceee",
+  "timestamp": "2026-03-27T09:54:52.165906Z",
+  "document": "01_CV_EN.md",
+  "document_id": "38ecd103-30c5-4fad-bc87-43b56903ec9d",
+  "model": "llama3.1:8b",
+  "char_count": 2051,
+  "status": "success",
+  "extraction": {
+    "entities_count": 33,
+    "processing_time_ms": 105739,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "data_di_nascita"
+      },
+      {
+        "value": "Milan (MI), Italy",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "luogo_di_nascita"
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Milan (MI), Italy",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "FP123XY",
+        "category": "dati_contatto",
+        "entity_type": "targa",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "10/02/2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "hr@acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Curriculum Vitae",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento_personale"
+      },
+      {
+        "value": "8 years",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "2021",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Acme S.p.A.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "20123",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "1234 5678",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "monthly",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Christmas",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "1.4 days",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "PMO Analyst",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "ruolo_professionale"
+      },
+      {
+        "value": "Delta S.r.l",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "Viale Monza",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "indirizzo"
+      },
+      {
+        "value": "20125",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "ISO",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "standard_di_qualità"
+      },
+      {
+        "value": "Management Engineering",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "corso_di_studio"
+      },
+      {
+        "value": "Politecnico di Milano",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "istituto_d'istruzione_superiore"
+      },
+      {
+        "value": "Agile/Scrum",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "metodologia_di_lavoro"
+      },
+      {
+        "value": "Lean, Excel/Power BI",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "competenza_professionale"
+      },
+      {
+        "value": "Logistica Oggi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "pubblicazione"
+      },
+      {
+        "value": "Milan Police Headquarters",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "ente_pubblico"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 33,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Milan (MI), Italy",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "https://www.linkedin.com/in/marta-bianchi",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Milan Police Headquarters",
+        "replacement": "ente_pubblico1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Management Engineering",
+        "replacement": "corso_di_studio1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Politecnico di Milano",
+        "replacement": "istituto_d'istruzione_superiore1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Lean, Excel/Power BI",
+        "replacement": "competenza_professionale1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Milan (MI), Italy",
+        "replacement": "luogo_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "hr@acme-italia.it",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[CODICE_FISCALE_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "Curriculum Vitae",
+        "replacement": "documento_personale1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Logistica Oggi",
+        "replacement": "pubblicazione1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "candidato1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[CARTA_IDENTITA_1]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "Acme S.p.A.",
+        "replacement": "azienda_cliente1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "PMO Analyst",
+        "replacement": "ruolo_professionale1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Delta S.r.l",
+        "replacement": "azienda_fornitrice1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Viale Monza",
+        "replacement": "indirizzo1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Agile/Scrum",
+        "replacement": "metodologia_di_lavoro1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "data_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "10/02/2024",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "1234 5678",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "Christmas",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "1.4 days",
+        "replacement": "[DATA_4]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[TARGA_1]",
+        "category": "dati_contatto",
+        "entity_type": "targa"
+      },
+      {
+        "original": "8 years",
+        "replacement": "[DATA_5]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "monthly",
+        "replacement": "[DATA_6]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "20123",
+        "replacement": "[DATA_7]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "20125",
+        "replacement": "[DATA_8]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "2021",
+        "replacement": "[DATA_9]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "ISO",
+        "replacement": "standard_di_qualità1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      }
+    ],
+    "anonymized_preview": "# documento_personale1 — candidato1\n\n## Personal Data\n- **Name and Surname**: candidato1\n- **Date of birth**: data_di_nascita1\n- **Place of birth**: luogo_di_nascita1\n- **Address**: [INDIRIZZO_1]\n- **Phone**: [TELEFONO_1]\n- **Email**: [EMAIL_1]\n- **Tax Code**: [CODICE_FISCALE_1]\n- **LinkedIn**: [CONTATTO_1]\n- **Car License Plate**: [TARGA_1]\n\n## Profile\nProject Manager with over **[DATA_5]** of experience in e‑commerce and logistics. I have led cross‑functional teams of up to 12 people, with budgets exceeding **€ 1.2M**. I believe in clear communication, shared KPIs, and continuous feedback.\nI"
+  },
+  "error": null
+}

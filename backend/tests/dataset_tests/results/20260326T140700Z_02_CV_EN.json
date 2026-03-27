@@ -1,0 +1,211 @@
+{
+  "run_id": "9c1aabf7-df5a-4e13-af19-c90762791573",
+  "timestamp": "2026-03-26T14:07:53.710277Z",
+  "document": "02_CV_EN.md",
+  "document_id": "93a557a9-2c91-448f-af24-925a9ce10fdb",
+  "model": "llama3.1:8b",
+  "char_count": 1619,
+  "status": "success",
+  "extraction": {
+    "entities_count": 15,
+    "processing_time_ms": 48537,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Daniel Carter",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "03/29/1990",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+1 (217) 555-0199",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "dan.carter90@example.org",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "123-45-6789",
+        "category": "identificativi",
+        "entity_type": "SSN",
+        "confidence": null
+      },
+      {
+        "value": "C123-4567-8901 (IL)",
+        "category": "identificativi",
+        "entity_type": "patente",
+        "confidence": null
+      },
+      {
+        "value": "350 W Adams St, Chicago, IL 60606",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "payroll@northstar.ai",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "+1 312-555-0147",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "55 Main St, St. Louis, MO 63101",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "UIUC",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "confidence": null
+      },
+      {
+        "value": "AWS-ML-00A1B2",
+        "category": "identificativi",
+        "entity_type": "Credential ID",
+        "confidence": null
+      },
+      {
+        "value": "GB33BUKB20201555555555",
+        "category": "dati_finanziari",
+        "entity_type": "IBAN",
+        "confidence": null
+      },
+      {
+        "value": "+1 217-555-0172",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 15,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "350 W Adams St, Chicago, IL 60606",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "55 Main St, St. Louis, MO 63101",
+        "replacement": "[AZIENDA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "dan.carter90@example.org",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "GB33BUKB20201555555555",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "IBAN"
+      },
+      {
+        "original": "payroll@northstar.ai",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "C123-4567-8901 (IL)",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "patente"
+      },
+      {
+        "original": "+1 (217) 555-0199",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+1 312-555-0147",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+1 217-555-0172",
+        "replacement": "[CONTATTO_6]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Daniel Carter",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "AWS-ML-00A1B2",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "Credential ID"
+      },
+      {
+        "original": "123-45-6789",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "SSN"
+      },
+      {
+        "original": "03/29/1990",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "UIUC",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [PERSONA_1]\n\n## Personal Details\n- **Full Name**: [PERSONA_1]\n- **Date of Birth**: [PERSONA_2]\n- **Address**: [CONTATTO_1]\n- **Phone**: [CONTATTO_4]\n- **Email**: [CONTATTO_2]\n- **SSN**: [ID_3]\n- **Driver’s License**: [ID_1]\n\n## Summary\nData Scientist specialized in **NLP** and **fraud detection**. Over six years delivering ML models from prototype to production (AWS + Kubernetes). I value reproducibility, human-in-the-loop validation, and clear documentation.\nRecently, I led a cross‑functional effort to define labeling guidelines that reduced inter‑annotator disagreement b"
+  },
+  "error": null
+}

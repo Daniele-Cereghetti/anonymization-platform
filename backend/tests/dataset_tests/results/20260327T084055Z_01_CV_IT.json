@@ -1,0 +1,661 @@
+{
+  "run_id": "742340c9-b2c5-4e4a-b854-7971416903c7",
+  "timestamp": "2026-03-27T08:40:55.596784Z",
+  "document": "01_CV_IT.md",
+  "document_id": "29272b96-9781-401d-8eab-f2ef5e27c8d4",
+  "model": "llama3.1:8b",
+  "char_count": 2123,
+  "status": "success",
+  "extraction": {
+    "entities_count": 45,
+    "processing_time_ms": 137608,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "paziente"
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "data_di_nascita"
+      },
+      {
+        "value": "Milano (MI), Italia",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "luogo_di_nascita"
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "FP123XY",
+        "category": "identificativi",
+        "entity_type": "targa",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "documento_identità",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "hr@acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Curriculum Vitae",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "Dati",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "oltre",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "anni",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Ho",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "cross‑funzionali",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "team"
+      },
+      {
+        "value": "Credo",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "KPI",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "strumento_di_gestione"
+      },
+      {
+        "value": "dall’analisi delle esigenze",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "al backlog",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "al go‑live e alla",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "ma misurare",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "ciò che non",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "organizzazione"
+      },
+      {
+        "value": "Esperienza",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "2021",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Acme S.p.A.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "20123",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Contatti",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "organizzazione"
+      },
+      {
+        "value": "1234 5678",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "per il board",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "organizzazione"
+      },
+      {
+        "value": "Durante",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "PMO Analyst",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "ruolo_professionale"
+      },
+      {
+        "value": "Delta S.r.l",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "Viale Monza",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "luogo_di_lavoro"
+      },
+      {
+        "value": "20125",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Ingegneria Gestionale",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Competenze\n- *",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Agile/Scrum",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "metodologia_di_gestione"
+      },
+      {
+        "value": "Lean, Excel/Power BI",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "strumenti_di_lavoro"
+      },
+      {
+        "value": "Logistica Oggi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Riferimenti",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "Questura di Milano",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "ente_pubblico"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 45,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "https://www.linkedin.com/in/marta-bianchi",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "dall’analisi delle esigenze",
+        "replacement": "persona1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Ingegneria Gestionale",
+        "replacement": "[INDIRIZZO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "Lean, Excel/Power BI",
+        "replacement": "strumenti_di_lavoro1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Milano (MI), Italia",
+        "replacement": "luogo_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "Questura di Milano",
+        "replacement": "ente_pubblico1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "hr@acme-italia.it",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "al go‑live e alla",
+        "replacement": "persona2",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[CODICE_FISCALE_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "Curriculum Vitae",
+        "replacement": "documento1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "cross‑funzionali",
+        "replacement": "team1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Competenze\n- *",
+        "replacement": "persona3",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Logistica Oggi",
+        "replacement": "documento2",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "paziente1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "documento_identità"
+      },
+      {
+        "original": "per il board",
+        "replacement": "organizzazione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "ma misurare",
+        "replacement": "persona4",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "ciò che non",
+        "replacement": "organizzazione2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Acme S.p.A.",
+        "replacement": "azienda_fornitrice1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "PMO Analyst",
+        "replacement": "ruolo_professionale1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Delta S.r.l",
+        "replacement": "azienda_fornitrice2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Viale Monza",
+        "replacement": "luogo_di_lavoro1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Agile/Scrum",
+        "replacement": "metodologia_di_gestione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Riferimenti",
+        "replacement": "documento3",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "data_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "al backlog",
+        "replacement": "persona5",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Esperienza",
+        "replacement": "documento4",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "1234 5678",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "Contatti",
+        "replacement": "organizzazione3",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[TARGA_1]",
+        "category": "identificativi",
+        "entity_type": "targa"
+      },
+      {
+        "original": "Durante",
+        "replacement": "persona6",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "oltre",
+        "replacement": "[INDIRIZZO_3]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "Credo",
+        "replacement": "[INDIRIZZO_4]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "20123",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "20125",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "Dati",
+        "replacement": "persona7",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "anni",
+        "replacement": "[CODICE_FISCALE_2]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "2021",
+        "replacement": "[DATA_4]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "2024",
+        "replacement": "[DATA_5]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "KPI",
+        "replacement": "strumento_di_gestione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Ho",
+        "replacement": "persona8",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      }
+    ],
+    "anonymized_preview": "# documento1 — paziente1\n\n## persona7 personali\n- **Nome e Cognome**: paziente1\n- **Data di nascita**: data_di_nascita1\n- **Luogo di nascita**: luogo_di_nascita1\n- **Indirizzo**: [INDIRIZZO_1]\n- **Telefono**: [TELEFONO_1]\n- **Email**: [EMAIL_1]\n- **Codice Fiscale**: [CODICE_FISCALE_1]\n- **LinkedIn**: [CONTATTO_1]\n- **Targa Auto**: [TARGA_1]\n\n## Profilo\nProject Manager con [INDIRIZZO_3] **8 [CODICE_FISCALE_2]** di esperienza in e‑commerce e logistica. persona8 guidato team team1 fino a 12 persone, con budget superiori a **€ 1,2M**. [INDIRIZZO_4] nella comunicazione chiara, nei strumento_di_gest"
+  },
+  "error": null
+}

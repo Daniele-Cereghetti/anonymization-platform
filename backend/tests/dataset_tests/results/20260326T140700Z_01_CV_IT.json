@@ -1,0 +1,151 @@
+{
+  "run_id": "f37aaabc-2eb9-4758-8591-f11edc3700e6",
+  "timestamp": "2026-03-26T14:07:00.279421Z",
+  "document": "01_CV_IT.md",
+  "document_id": "0c246685-1815-4be3-be94-1867a92000ad",
+  "model": "llama3.1:8b",
+  "char_count": 2123,
+  "status": "success",
+  "extraction": {
+    "entities_count": 10,
+    "processing_time_ms": 53427,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Milano (MI), Italia",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "FP123XY",
+        "category": "identificativi",
+        "entity_type": "targa",
+        "confidence": null
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 10,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Milano (MI), Italia",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "[PERSONA_3]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "targa"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [PERSONA_2]\n\n## Dati personali\n- **Nome e Cognome**: [PERSONA_2]\n- **Data di nascita**: [PERSONA_3]\n- **Luogo di nascita**: [PERSONA_1]\n- **Indirizzo**: [CONTATTO_1]\n- **Telefono**: [CONTATTO_3]\n- **Email**: [CONTATTO_2]\n- **Codice Fiscale**: [ID_1]\n- **LinkedIn**: https://www.linkedin.com/in/marta-bianchi\n- **Targa Auto**: [ID_3]\n\n## Profilo\nProject Manager con oltre **8 anni** di esperienza in e‑commerce e logistica. Ho guidato team cross‑funzionali fino a 12 persone, con budget superiori a **€ 1,2M**. Credo nella comunicazione chiara, nei KPI condivisi e nei feedback co"
+  },
+  "error": null
+}

@@ -1,0 +1,395 @@
+{
+  "run_id": "096b9e2f-395d-4f61-acbc-764133363c76",
+  "timestamp": "2026-03-27T08:43:13.207489Z",
+  "document": "02_CV_EN.md",
+  "document_id": "8f54c63a-79b1-471e-ae1d-a5d5623a4102",
+  "model": "llama3.1:8b",
+  "char_count": 1619,
+  "status": "success",
+  "extraction": {
+    "entities_count": 26,
+    "processing_time_ms": 94775,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Daniel Carter",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "03/29/1990",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "data_di_nascita"
+      },
+      {
+        "value": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+1 (217) 555-0199",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "dan.carter90@example.org",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "123-45-6789",
+        "category": "identificativi",
+        "entity_type": "SSN",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "C123-4567-8901 (IL)",
+        "category": "identificativi",
+        "entity_type": "patente",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+1 312-555-0147",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "350 W Adams St, Chicago, IL 60606",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "payroll@northstar.ai",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "AWS-ML-00A1B2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "certificazione"
+      },
+      {
+        "value": "GB33BUKB20201555555555",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+1 217-555-0172",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "Curriculum Vitae",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "Driver’s License",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "patente_di_guida"
+      },
+      {
+        "value": "Data Scientist",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "ruolo_professionale"
+      },
+      {
+        "value": "six years",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "AWS + Kubernetes",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "tecnologia"
+      },
+      {
+        "value": "cross‑functional",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "approccio_lavorativo"
+      },
+      {
+        "value": "2022",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "NorthStar Analytics Inc.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "BlueBrick Co.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "St. Louis",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "ETL",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "monthly",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Computer Science",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 26,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "350 W Adams St, Chicago, IL 60606",
+        "replacement": "[INDIRIZZO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "dan.carter90@example.org",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "NorthStar Analytics Inc.",
+        "replacement": "azienda_fornitrice1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "GB33BUKB20201555555555",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "payroll@northstar.ai",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "C123-4567-8901 (IL)",
+        "replacement": "[PATENTE_1]",
+        "category": "identificativi",
+        "entity_type": "patente"
+      },
+      {
+        "original": "+1 (217) 555-0199",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Curriculum Vitae",
+        "replacement": "documento1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Driver’s License",
+        "replacement": "patente_di_guida1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "AWS + Kubernetes",
+        "replacement": "tecnologia1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "cross‑functional",
+        "replacement": "approccio_lavorativo1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Computer Science",
+        "replacement": "organizzazione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "+1 312-555-0147",
+        "replacement": "[TELEFONO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+1 217-555-0172",
+        "replacement": "[TELEFONO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Data Scientist",
+        "replacement": "ruolo_professionale1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Daniel Carter",
+        "replacement": "candidato1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "AWS-ML-00A1B2",
+        "replacement": "certificazione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "BlueBrick Co.",
+        "replacement": "azienda_cliente1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "123-45-6789",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "SSN"
+      },
+      {
+        "original": "03/29/1990",
+        "replacement": "data_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "six years",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "St. Louis",
+        "replacement": "[INDIRIZZO_3]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "monthly",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "2022",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "ETL",
+        "replacement": "organizzazione2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      }
+    ],
+    "anonymized_preview": "# documento1 — candidato1\n\n## Personal Details\n- **Full Name**: candidato1\n- **Date of Birth**: data_di_nascita1\n- **Address**: [INDIRIZZO_1]\n- **Phone**: [TELEFONO_1]\n- **Email**: [EMAIL_1]\n- **SSN**: [ID_1]\n- **patente_di_guida1**: [PATENTE_1]\n\n## Summary\nruolo_professionale1 specialized in **NLP** and **fraud detection**. Over [DATA_1] delivering ML models from prototype to production (tecnologia1). I value reproducibility, human-in-the-loop validation, and clear documentation.\nRecently, I led a approccio_lavorativo1 effort to define labeling guidelines that reduced inter‑annotator disagree"
+  },
+  "error": null
+}

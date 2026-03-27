@@ -1,0 +1,175 @@
+{
+  "run_id": "9f479acc-b5c6-4081-95d1-ef9ff1b67af6",
+  "timestamp": "2026-03-26T14:16:42.443941Z",
+  "document": "07_Service_FR.md",
+  "document_id": "cb17c07e-3e37-48c2-9c95-990e97e152f4",
+  "model": "llama3.1:8b",
+  "char_count": 1129,
+  "status": "success",
+  "extraction": {
+    "entities_count": 12,
+    "processing_time_ms": 40679,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "NovaTech SAS",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "Alpina Solutions SA",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null
+      },
+      {
+        "value": "juridique@novatech.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "+33 1 45 67 89 00",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "FR12 812345678",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "FR76 3000 4000 1234 5678 9012 345",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null
+      },
+      {
+        "value": "NOVA-ALP-2026-PP01",
+        "category": "dati_finanziari",
+        "entity_type": "numero_fattura",
+        "confidence": null
+      },
+      {
+        "value": "Élodie Martin",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "12AB34567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null
+      },
+      {
+        "value": "Marc Steiner",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "X1234567",
+        "category": "identificativi",
+        "entity_type": "passaporto",
+        "confidence": null
+      },
+      {
+        "value": "01/05/2026 – 30/04/2028",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 12,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "FR76 3000 4000 1234 5678 9012 345",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "01/05/2026 – 30/04/2028",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto"
+      },
+      {
+        "original": "juridique@novatech.fr",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Alpina Solutions SA",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione"
+      },
+      {
+        "original": "NOVA-ALP-2026-PP01",
+        "replacement": "[DATO_FIN_2]",
+        "category": "dati_finanziari",
+        "entity_type": "numero_fattura"
+      },
+      {
+        "original": "+33 1 45 67 89 00",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "FR12 812345678",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "Élodie Martin",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "NovaTech SAS",
+        "replacement": "[AZIENDA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Marc Steiner",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "12AB34567",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "X1234567",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "passaporto"
+      }
+    ],
+    "anonymized_preview": "# Contrat de Partenariat — [AZIENDA_2] & [AZIENDA_1]\n\n## Parties\n**Partie A** : [AZIENDA_2], RCS Paris **812 345 678**\nSiège : 14 boulevard Haussmann, 75009 Paris\nContact : [CONTATTO_1] | [CONTATTO_2] | TVA : **[ID_1]**\n\n**Partie B** : [AZIENDA_1]\nSiège : Rue du Rhône 15, 1204 Genève, Suisse\nContact : contact@alpina-solutions.ch | +41 22 555 00 44 | IDE : **CHE-987.654.321**\n\n## Objet\nCo‑développement d’une plateforme d’IA pour le secteur bancaire, partage de la propriété intellectuelle selon un modèle *joint IP*. Les parties mettent en place un comité de pilotage trimestriel.\n\n## Durée\n[DATA_"
+  },
+  "error": null
+}

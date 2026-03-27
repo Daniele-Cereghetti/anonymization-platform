@@ -1,0 +1,175 @@
+{
+  "run_id": "4adf544b-54fe-4276-bfed-5c858f7e54c2",
+  "timestamp": "2026-03-26T14:08:42.250791Z",
+  "document": "03_CV_FR.md",
+  "document_id": "a269a374-5cd8-4af4-8bf3-3013bedd052a",
+  "model": "llama3.1:8b",
+  "char_count": 1437,
+  "status": "success",
+  "extraction": {
+    "entities_count": 12,
+    "processing_time_ms": 43007,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Claire Dupont",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "22/11/1987",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "10 rue de la République, 69002 Lyon, France",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+33 6 12 34 56 78",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "claire.dupont@example.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "1 87 11 69 123 456 78",
+        "category": "identificativi",
+        "entity_type": "N° Sécurité sociale",
+        "confidence": null
+      },
+      {
+        "value": "B",
+        "category": "identificativi",
+        "entity_type": "permis",
+        "confidence": null
+      },
+      {
+        "value": "boutiquenova.fr",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "RH@boutiquenova.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "+01 44 55 66 77",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "FR76 3000 6000 0112 3456 7890 189",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN (exemple)",
+        "confidence": null
+      },
+      {
+        "value": "+33 7 77 66 55 44",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 12,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "10 rue de la République, 69002 Lyon, France",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "FR76 3000 6000 0112 3456 7890 189",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN (exemple)"
+      },
+      {
+        "original": "claire.dupont@example.fr",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "1 87 11 69 123 456 78",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "N° Sécurité sociale"
+      },
+      {
+        "original": "RH@boutiquenova.fr",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "+33 6 12 34 56 78",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+33 7 77 66 55 44",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "boutiquenova.fr",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "+01 44 55 66 77",
+        "replacement": "[CONTATTO_6]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Claire Dupont",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "22/11/1987",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "B",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "permis"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [PERSONA_1]\n\n## Informations personnelles\n- **Nom et prénom** : [PERSONA_1]\n- **Date de naissance** : [PERSONA_2]\n- **Adresse** : [CONTATTO_1]\n- **Téléphone** : [CONTATTO_4]\n- **Email** : [CONTATTO_2]\n- **N° Sécurité sociale** : [ID_1]\n- **Permis** : [ID_2]\n\n## Profil\nResponsable Marketing Digital avec **9 ans** d’expérience en retail. Habituée au pilotage d’équipes agiles, à l’A/[ID_2] testing et à la mesure du ROI multicanal. J’accorde une importance particulière à la qualité des données et à la cohérence de la marque.\n\n## Expériences\n**2020–présent — Head of Digital, [I"
+  },
+  "error": null
+}

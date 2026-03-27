@@ -1,0 +1,253 @@
+{
+  "run_id": "0d53792b-e0c6-40b4-babc-37ef98e226d4",
+  "timestamp": "2026-03-26T14:09:25.261204Z",
+  "document": "04_ContrattoLocazione_IT.md",
+  "document_id": "39ee9adb-acdd-40db-af31-35a3738e543a",
+  "model": "llama3.1:8b",
+  "char_count": 1446,
+  "status": "success",
+  "extraction": {
+    "entities_count": 19,
+    "processing_time_ms": 77285,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Luca Ferraro",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "05/05/1978",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Torino (TO)",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "FRRLCU78E05L219R",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "Via Po 14, 10124 Torino",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+39 011 554 7789",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "luca.ferraro@dominio.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "Sara Conti",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "03/09/1991",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Parma (PR)",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "CNTSAR91P43G337F",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "+39 348 990 22 33",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "sara.conti@esempio.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "IT44 C030 0203 2001 0000 0123 999",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null
+      },
+      {
+        "value": "Luca Ferraro",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "IT-DF-7A9C-0021",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria",
+        "confidence": null
+      },
+      {
+        "value": "n. 2",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null
+      },
+      {
+        "value": "10/02/2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 18,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "IT44 C030 0203 2001 0000 0123 999",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "Via Po 14, 10124 Torino",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "luca.ferraro@dominio.it",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "sara.conti@esempio.com",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "+39 348 990 22 33",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "FRRLCU78E05L219R",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "+39 011 554 7789",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "CNTSAR91P43G337F",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "IT-DF-7A9C-0021",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria"
+      },
+      {
+        "original": "Luca Ferraro",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[ID_4]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "Torino (TO)",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "05/05/1978",
+        "replacement": "[PERSONA_3]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "Sara Conti",
+        "replacement": "[PERSONA_4]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "03/09/1991",
+        "replacement": "[PERSONA_5]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "Parma (PR)",
+        "replacement": "[PERSONA_6]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "10/02/2024",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "n. 2",
+        "replacement": "[CONTATTO_6]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      }
+    ],
+    "anonymized_preview": "# CONTRATTO DI LOCAZIONE AD USO ABITATIVO\n\n**Locatore**: [PERSONA_1], nato a [PERSONA_2] il [PERSONA_3],\nCF: **[ID_1]**, residente in [CONTATTO_1].\nEmail: [CONTATTO_2] | Tel: [CONTATTO_5]\n\n**Conduttore**: [PERSONA_4], nata a [PERSONA_6] il [PERSONA_5],\nCF: **[ID_2]**, residente in Via Garibaldi 8, 43121 Parma.\nEmail: [CONTATTO_3] | Tel: [CONTATTO_4]\n\n**Immobile**: Via Roma 22, Interno 3B, 00186 Roma (RM), Catasto: Foglio 12, Part. 345, Sub 7.\n**Durata**: 4 + 4 anni (01/04/2026 – 31/03/2030).\n**Canone**: € 1.150,00/mese; **Deposito**: € 2.300,00.\n\n## Pagamenti\nEffettuare bonifico su **IBAN**: `"
+  },
+  "error": null
+}

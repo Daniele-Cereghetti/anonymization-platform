@@ -1,0 +1,151 @@
+{
+  "run_id": "5c1f3f2e-6e04-47bc-9b37-a4cef26749d3",
+  "timestamp": "2026-03-26T14:17:23.126094Z",
+  "document": "08_CartellaClinica_IT.md",
+  "document_id": "8b565307-a29b-498b-9b12-3a52cd2d6927",
+  "model": "llama3.1:8b",
+  "char_count": 1219,
+  "status": "success",
+  "extraction": {
+    "entities_count": 10,
+    "processing_time_ms": 35783,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Giovanni Esposito",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "09/01/1975",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Napoli (NA)",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "SPSGNN75A09F839T",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "Via Chiaia 77, 80121 Napoli",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+39 320 555 66 77",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "g.esposito75@example.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "8038000001234567",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria",
+        "confidence": null
+      },
+      {
+        "value": "+39 081 555 1122",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "IT-HC-2026-000912",
+        "category": "identificativi",
+        "entity_type": "patente",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 10,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via Chiaia 77, 80121 Napoli",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "g.esposito75@example.it",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Giovanni Esposito",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "+39 320 555 66 77",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "IT-HC-2026-000912",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "patente"
+      },
+      {
+        "original": "SPSGNN75A09F839T",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "8038000001234567",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria"
+      },
+      {
+        "original": "+39 081 555 1122",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Napoli (NA)",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "09/01/1975",
+        "replacement": "[PERSONA_3]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      }
+    ],
+    "anonymized_preview": "# Cartella Clinica — Ospedale S. Carlo\n\n- **Paziente**: [PERSONA_1]\n- **Data di nascita**: [PERSONA_3] — **Luogo**: [PERSONA_2]\n- **Codice Fiscale**: **[ID_2]**\n- **Indirizzo**: [CONTATTO_1]\n- **Telefono**: [CONTATTO_3] — **Email**: [CONTATTO_2]\n- **Tessera Sanitaria**: `[ID_3]`\n\n## Ricovero\n18/03/2026 – 21/03/2026 (Reparto: **Medicina Interna**, Letto: **12B**).\nDiagnosi di ingresso: Ipertensione arteriosa non controllata.\nDiagnosi di dimissione: Ipertensione + ipercolesterolemia.\n\n## Anamnesi e decorso\nIl paziente riferisce cefalea pulsante mattutina e affaticamento progressivo.\n- Familiarit"
+  },
+  "error": null
+}

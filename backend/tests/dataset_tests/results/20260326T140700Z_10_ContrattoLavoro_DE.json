@@ -1,0 +1,199 @@
+{
+  "run_id": "f14a0465-1307-4461-9c49-378a36830d37",
+  "timestamp": "2026-03-26T14:18:53.843829Z",
+  "document": "10_ContrattoLavoro_DE.md",
+  "document_id": "4cec0d14-a1b1-4e4c-8509-04e66eac61a7",
+  "model": "llama3.1:8b",
+  "char_count": 1036,
+  "status": "success",
+  "extraction": {
+    "entities_count": 14,
+    "processing_time_ms": 64144,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Proton Werke AG",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "Jonas Richter",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "02.02.1991",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Kassel",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "hr@proton-werke.de",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "+49 711 555 8800",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "DE123456789",
+        "category": "identificativi",
+        "entity_type": "USt-IdNr.",
+        "confidence": null
+      },
+      {
+        "value": "12 345 678 901",
+        "category": "identificativi",
+        "entity_type": "Steuer-Identifikationsnummer",
+        "confidence": null
+      },
+      {
+        "value": "DE44 5001 0517 5407 3249 31",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null
+      },
+      {
+        "value": "01.06.2026",
+        "category": "dati_temporali",
+        "entity_type": "Eintrittsdatum",
+        "confidence": null
+      },
+      {
+        "value": "68.000 €",
+        "category": "dati_finanziari",
+        "entity_type": "Jahresgehalt",
+        "confidence": null
+      },
+      {
+        "value": "PW-SN-2026-88901",
+        "category": "identificativi",
+        "entity_type": "Dienstlaptop (Seriennummer)",
+        "confidence": null
+      },
+      {
+        "value": "S PW 1234",
+        "category": "dati_contatto",
+        "entity_type": "Kfz-Nutzung",
+        "confidence": null
+      },
+      {
+        "value": "T2209981",
+        "category": "identificativi",
+        "entity_type": "Personalausweis‑Nr.",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 14,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "DE44 5001 0517 5407 3249 31",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "hr@proton-werke.de",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "+49 711 555 8800",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "PW-SN-2026-88901",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "Dienstlaptop (Seriennummer)"
+      },
+      {
+        "original": "Proton Werke AG",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "12 345 678 901",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "Steuer-Identifikationsnummer"
+      },
+      {
+        "original": "Jonas Richter",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "DE123456789",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "USt-IdNr."
+      },
+      {
+        "original": "02.02.1991",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "01.06.2026",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "Eintrittsdatum"
+      },
+      {
+        "original": "S PW 1234",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "Kfz-Nutzung"
+      },
+      {
+        "original": "68.000 €",
+        "replacement": "[DATO_FIN_2]",
+        "category": "dati_finanziari",
+        "entity_type": "Jahresgehalt"
+      },
+      {
+        "original": "T2209981",
+        "replacement": "[ID_4]",
+        "category": "identificativi",
+        "entity_type": "Personalausweis‑Nr."
+      },
+      {
+        "original": "Kassel",
+        "replacement": "[PERSONA_3]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      }
+    ],
+    "anonymized_preview": "# ARBEITSVERTRAG (Unbefristet)\n\n**Arbeitgeber**: [AZIENDA_1]\nAdresse: Industriestraße 5, 70469 Stuttgart, Deutschland\nHR-Kontakt: [CONTATTO_1] | [CONTATTO_2]\nUSt-IdNr.: **[ID_3]**\n\n**Arbeitnehmer**: [PERSONA_1], geb. [PERSONA_2], geb. Ort: [PERSONA_3]\nAdresse: Lindenallee 9, 34117 [PERSONA_3]\nSteuer-Identifikationsnummer: **[ID_2]**\nBankverbindung (Gehalt): IBAN `[DATO_FIN_1]`\n\n## Position und Konditionen\nPosition: Softwareentwickler (Vollzeit, 40 Std./Woche)\nEintrittsdatum: **[DATA_1]**\nProbezeit: **6 Monate**\nJahresgehalt: **[DATO_FIN_2]** brutto, Auszahlung monatlich.\nDer Arbeitnehmer verpf"
+  },
+  "error": null
+}

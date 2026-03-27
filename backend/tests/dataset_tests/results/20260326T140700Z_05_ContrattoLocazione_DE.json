@@ -1,0 +1,283 @@
+{
+  "run_id": "6ea4aa1b-3a55-4fd9-a7d0-819c526561bc",
+  "timestamp": "2026-03-26T14:10:42.549701Z",
+  "document": "05_ContrattoLocazione_DE.md",
+  "document_id": "e82a086a-ccf2-44aa-9d76-7fc9d7de08f3",
+  "model": "llama3.1:8b",
+  "char_count": 1157,
+  "status": "success",
+  "extraction": {
+    "entities_count": 21,
+    "processing_time_ms": 83575,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Beta Immobilien GmbH",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "Thomas Weber",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "+49 30 1234 5678",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "t.weber@beta-immo.de",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "12/345/67890",
+        "category": "identificativi",
+        "entity_type": "Steuer-ID",
+        "confidence": null
+      },
+      {
+        "value": "Anna Müller",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "18.08.1992",
+        "category": "dati_temporali",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Dresden",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Münchner Straße 45, 80336 München",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "L01X2345",
+        "category": "identificativi",
+        "entity_type": "Personalausweis-Nr.",
+        "confidence": null
+      },
+      {
+        "value": "Goethestraße 12, 2. OG links, 60313 Frankfurt am Main",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "68 m²",
+        "category": "dati_contatto",
+        "entity_type": "Wohnfläche",
+        "confidence": null
+      },
+      {
+        "value": "01.05.2026",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "confidence": null
+      },
+      {
+        "value": "unbefristet",
+        "category": "dati_temporali",
+        "entity_type": "Laufzeit",
+        "confidence": null
+      },
+      {
+        "value": "980,00 €",
+        "category": "dati_finanziari",
+        "entity_type": "Kaltmiete",
+        "confidence": null
+      },
+      {
+        "value": "220,00 €",
+        "category": "dati_finanziari",
+        "entity_type": "Nebenkosten",
+        "confidence": null
+      },
+      {
+        "value": "2.940,00 €",
+        "category": "dati_finanziari",
+        "entity_type": "Kaution",
+        "confidence": null
+      },
+      {
+        "value": "DE89 3704 0044 0532 0130 00",
+        "category": "dati_finanziari",
+        "entity_type": "IBAN",
+        "confidence": null
+      },
+      {
+        "value": "Miete 05/2026 – MV-FFM-2026-031",
+        "category": "dati_finanziari",
+        "entity_type": "Verwendungszweck",
+        "confidence": null
+      },
+      {
+        "value": "FFM-KEY-2026-088",
+        "category": "dati_contatto",
+        "entity_type": "Protokoll-Nr.",
+        "confidence": null
+      },
+      {
+        "value": "Frankfurt am Main",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 21,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Goethestraße 12, 2. OG links, 60313 Frankfurt am Main",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "Münchner Straße 45, 80336 München",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "Miete 05/2026 – MV-FFM-2026-031",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "Verwendungszweck"
+      },
+      {
+        "original": "DE89 3704 0044 0532 0130 00",
+        "replacement": "[DATO_FIN_2]",
+        "category": "dati_finanziari",
+        "entity_type": "IBAN"
+      },
+      {
+        "original": "Beta Immobilien GmbH",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "t.weber@beta-immo.de",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Frankfurt am Main",
+        "replacement": "[AZIENDA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione"
+      },
+      {
+        "original": "+49 30 1234 5678",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "FFM-KEY-2026-088",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "Protokoll-Nr."
+      },
+      {
+        "original": "Thomas Weber",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "12/345/67890",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "Steuer-ID"
+      },
+      {
+        "original": "Anna Müller",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "unbefristet",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "Laufzeit"
+      },
+      {
+        "original": "18.08.1992",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "01.05.2026",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto"
+      },
+      {
+        "original": "2.940,00 €",
+        "replacement": "[DATO_FIN_3]",
+        "category": "dati_finanziari",
+        "entity_type": "Kaution"
+      },
+      {
+        "original": "L01X2345",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "Personalausweis-Nr."
+      },
+      {
+        "original": "980,00 €",
+        "replacement": "[DATO_FIN_4]",
+        "category": "dati_finanziari",
+        "entity_type": "Kaltmiete"
+      },
+      {
+        "original": "220,00 €",
+        "replacement": "[DATO_FIN_5]",
+        "category": "dati_finanziari",
+        "entity_type": "Nebenkosten"
+      },
+      {
+        "original": "Dresden",
+        "replacement": "[PERSONA_3]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "68 m²",
+        "replacement": "[CONTATTO_6]",
+        "category": "dati_contatto",
+        "entity_type": "Wohnfläche"
+      }
+    ],
+    "anonymized_preview": "# MIETVERTRAG (Wohnraum)\n\n**Vermieter**: [AZIENDA_1], HRB 556677, Ansprechpartner: [PERSONA_1]\nKurfürstenstraße 21, 10785 Berlin | Telefon: [CONTATTO_4] | Email: [CONTATTO_3]\nSteuer-ID: [ID_1]\n\n**Mieterin**: [PERSONA_2], geb. am [DATA_2] in [PERSONA_3]\nAdresse: [CONTATTO_2] | Personalausweis-Nr.: **[ID_2]**\n\n**Objekt**: [CONTATTO_1] — Wohnfläche: **[CONTATTO_6]**\n**Mietbeginn**: [DATA_3] | **Laufzeit**: [DATA_1]\n**Kaltmiete**: [DATO_FIN_4] | **Nebenkosten**: [DATO_FIN_5] | **Kaution**: [DATO_FIN_3]\n\n## Zahlung\nIBAN des Vermieters: `[DATO_FIN_2]`\nVerwendungszweck: „[DATO_FIN_1]“.\n\n## Hausordnun"
+  },
+  "error": null
+}

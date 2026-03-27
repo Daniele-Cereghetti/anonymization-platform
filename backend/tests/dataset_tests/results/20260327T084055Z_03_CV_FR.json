@@ -1,0 +1,389 @@
+{
+  "run_id": "197483a7-1557-46a1-ae24-54f6dae7ad06",
+  "timestamp": "2026-03-27T08:44:47.985456Z",
+  "document": "03_CV_FR.md",
+  "document_id": "31d5ac8a-210d-4aa6-a1eb-8c9033725f01",
+  "model": "llama3.1:8b",
+  "char_count": 1437,
+  "status": "success",
+  "extraction": {
+    "entities_count": 26,
+    "processing_time_ms": 97454,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Claire Dupont",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "22/11/1987",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "paziente"
+      },
+      {
+        "value": "10 rue de la République, 69002 Lyon, France",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+33 6 12 34 56 78",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "claire.dupont@example.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "1 87 11 69 123 456 78",
+        "category": "identificativi",
+        "entity_type": "N° Sécurité sociale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "B",
+        "category": "identificativi",
+        "entity_type": "permis",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "boutiquenova.fr",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+33 6 12 34 56 78",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "rh@boutiquenova.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+01 44 55 66 77",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "FR76 3000 6000 0112 3456 7890 189",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN (exemple)",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+33 7 77 66 55 44",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "Curriculum Vitae",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "2020",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Digital",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "Foch",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "indirizzo"
+      },
+      {
+        "value": "75016",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Paris",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "CDP",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "sistema"
+      },
+      {
+        "value": "un",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "organizzazione"
+      },
+      {
+        "value": "OMS",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "HexaMedia",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "RFM",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "sistema"
+      },
+      {
+        "value": "Google Analytics",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "strumento_di_analisi"
+      },
+      {
+        "value": "Paul Dupont",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 25,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "10 rue de la République, 69002 Lyon, France",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "FR76 3000 6000 0112 3456 7890 189",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN (exemple)"
+      },
+      {
+        "original": "claire.dupont@example.fr",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "1 87 11 69 123 456 78",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "N° Sécurité sociale"
+      },
+      {
+        "original": "rh@boutiquenova.fr",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "+33 6 12 34 56 78",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+33 7 77 66 55 44",
+        "replacement": "[TELEFONO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Curriculum Vitae",
+        "replacement": "persona1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Google Analytics",
+        "replacement": "strumento_di_analisi1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "boutiquenova.fr",
+        "replacement": "[URL_1]",
+        "category": "dati_contatto",
+        "entity_type": "url"
+      },
+      {
+        "original": "+01 44 55 66 77",
+        "replacement": "[TELEFONO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Claire Dupont",
+        "replacement": "persona2",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Paul Dupont",
+        "replacement": "persona3",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "22/11/1987",
+        "replacement": "paziente1",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "HexaMedia",
+        "replacement": "azienda_cliente1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "Digital",
+        "replacement": "azienda_fornitrice1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "75016",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "Paris",
+        "replacement": "[INDIRIZZO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "2020",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "Foch",
+        "replacement": "indirizzo1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "CDP",
+        "replacement": "sistema1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "OMS",
+        "replacement": "azienda_fornitrice2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "RFM",
+        "replacement": "sistema2",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "un",
+        "replacement": "organizzazione1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "B",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "permis"
+      }
+    ],
+    "anonymized_preview": "# persona1 — persona2\n\n## Informations personnelles\n- **Nom et prénom** : persona2\n- **Date de naissance** : paziente1\n- **Adresse** : [INDIRIZZO_1]\n- **Téléphone** : [TELEFONO_1]\n- **Email** : [EMAIL_1]\n- **N° Sécurité sociale** : [ID_1]\n- **Permis** : [ID_2]\n\n## Profil\nResponsable Marketing azienda_fornitrice1 avec **9 ans** d’expérience en retail. Habituée au pilotage d’équipes agiles, à l’A/[ID_2] testing et à la mesure du ROI multicanal. J’accorde organizzazione1e importance particulière à la qualité des données et à la cohérence de la marque.\n\n## Expériences\n**[DATA_2]–présent — Head of "
+  },
+  "error": null
+}

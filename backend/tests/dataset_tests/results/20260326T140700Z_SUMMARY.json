@@ -1,0 +1,88 @@
+{
+  "run_timestamp": "20260326T140700Z",
+  "model": "llama3.1:8b",
+  "total_documents": 10,
+  "success": 10,
+  "errors": 0,
+  "total_entities_found": 148,
+  "entities_by_category": {
+    "persone_fisiche": 28,
+    "persone_giuridiche": 14,
+    "dati_contatto": 49,
+    "identificativi": 30,
+    "dati_finanziari": 16,
+    "dati_temporali": 11
+  },
+  "documents": [
+    {
+      "document": "01_CV_IT.md",
+      "status": "success",
+      "entities_count": 10,
+      "extraction_time_ms": 53427,
+      "error": null
+    },
+    {
+      "document": "02_CV_EN.md",
+      "status": "success",
+      "entities_count": 15,
+      "extraction_time_ms": 48537,
+      "error": null
+    },
+    {
+      "document": "03_CV_FR.md",
+      "status": "success",
+      "entities_count": 12,
+      "extraction_time_ms": 43007,
+      "error": null
+    },
+    {
+      "document": "04_ContrattoLocazione_IT.md",
+      "status": "success",
+      "entities_count": 19,
+      "extraction_time_ms": 77285,
+      "error": null
+    },
+    {
+      "document": "05_ContrattoLocazione_DE.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 83575,
+      "error": null
+    },
+    {
+      "document": "06_Service_EN.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 65837,
+      "error": null
+    },
+    {
+      "document": "07_Service_FR.md",
+      "status": "success",
+      "entities_count": 12,
+      "extraction_time_ms": 40679,
+      "error": null
+    },
+    {
+      "document": "08_CartellaClinica_IT.md",
+      "status": "success",
+      "entities_count": 10,
+      "extraction_time_ms": 35783,
+      "error": null
+    },
+    {
+      "document": "09_CartellaClinica_DECH.md",
+      "status": "success",
+      "entities_count": 14,
+      "extraction_time_ms": 54929,
+      "error": null
+    },
+    {
+      "document": "10_ContrattoLavoro_DE.md",
+      "status": "success",
+      "entities_count": 14,
+      "extraction_time_ms": 64144,
+      "error": null
+    }
+  ]
+}

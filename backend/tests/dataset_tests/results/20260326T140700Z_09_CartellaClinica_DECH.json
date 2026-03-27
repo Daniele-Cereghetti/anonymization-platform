@@ -1,0 +1,199 @@
+{
+  "run_id": "4d2cb9b8-595c-4bb1-bd4b-7d2b2920a2da",
+  "timestamp": "2026-03-26T14:17:58.913115Z",
+  "document": "09_CartellaClinica_DECH.md",
+  "document_id": "20b562d6-e390-48c3-ad5b-64c388d46505",
+  "model": "llama3.1:8b",
+  "char_count": 799,
+  "status": "success",
+  "extraction": {
+    "entities_count": 14,
+    "processing_time_ms": 54929,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Reto Schmid",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "17.04.1982",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null
+      },
+      {
+        "value": "Badenerstrass 200, 8004 Züri",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+41 76 555 22 88",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "reto.schmid@example.ch",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "756.2345.6789.12",
+        "category": "identificativi",
+        "entity_type": "AHV-Nr.",
+        "confidence": null
+      },
+      {
+        "value": "Helsana (Versicherigs-Nr.: 12-345-678)",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null
+      },
+      {
+        "value": "Dr. Meier",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "+41 44 555 10 20",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "Dr. Andrea Keller",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "G123456",
+        "category": "dati_contatto",
+        "entity_type": "cap_citta",
+        "confidence": null
+      },
+      {
+        "value": "CH-ZH-AB-2026-0042",
+        "category": "dati_finanziari",
+        "entity_type": "conto_bancario",
+        "confidence": null
+      },
+      {
+        "value": "12.03.2026",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": null
+      },
+      {
+        "value": "14.03.2026",
+        "category": "dati_temporali",
+        "entity_type": "scadenza",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 14,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Helsana (Versicherigs-Nr.: 12-345-678)",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione"
+      },
+      {
+        "original": "Badenerstrass 200, 8004 Züri",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "reto.schmid@example.ch",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "CH-ZH-AB-2026-0042",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "conto_bancario"
+      },
+      {
+        "original": "Dr. Andrea Keller",
+        "replacement": "[AZIENDA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "+41 76 555 22 88",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "756.2345.6789.12",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "AHV-Nr."
+      },
+      {
+        "original": "+41 44 555 10 20",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Reto Schmid",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "17.04.1982",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "12.03.2026",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "14.03.2026",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "scadenza"
+      },
+      {
+        "original": "Dr. Meier",
+        "replacement": "[AZIENDA_3]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "G123456",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "cap_citta"
+      }
+    ],
+    "anonymized_preview": "# ARZTBERICHT – KLINIK ZÜRICH\n\n- **Patient**: [PERSONA_1]\n- **Geburtdatum**: [PERSONA_2]\n- **Adresse**: [CONTATTO_1]\n- **Telefon**: [CONTATTO_3]\n- **E‑Mail**: [CONTATTO_2]\n- **AHV‑Nr.**: [ID_1]\n- **Krankenkassä**: Helsana (Versicherigs‑Nr.: 12-345-678)\n\n## Verlauf\nAahtritt: [DATA_1] — Uuszgi: [DATA_2].\nDiagnos: akuti Bronchitis, ohni Komplikatione.\n- Hüstä, Fieber bis **38.4°C**, gäng müed.\n- Kei Allergie bekannt.\n- Medis: Paracetamol 1g, 3x täglig; Inhalation NaCl.\nDer Patient het guet uf d’Therapie aagä. S’Atme isch taggs über entspannter worde.\n\n## Empfehligä\n- Ruh, gnueg Flüssigkeit.\n- Kon"
+  },
+  "error": null
+}

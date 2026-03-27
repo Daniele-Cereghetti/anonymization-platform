@@ -1,0 +1,283 @@
+{
+  "run_id": "2480f925-d9b1-4cf2-a3b6-a1b2759c0d1a",
+  "timestamp": "2026-03-26T14:15:36.602307Z",
+  "document": "06_Service_EN.md",
+  "document_id": "363bdd94-e847-4f8f-8c99-9e653bbcefb3",
+  "model": "llama3.1:8b",
+  "char_count": 1406,
+  "status": "success",
+  "extraction": {
+    "entities_count": 21,
+    "processing_time_ms": 65837,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Orion Cloud Ltd.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null
+      },
+      {
+        "value": "Helix Retail AG",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null
+      },
+      {
+        "value": "09876543",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "22 Bishopsgate, London EC2N 4AJ, UK",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+44 20 7946 0999",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "legal@orioncloud.co.uk",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "GB123456789",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "GB29NWBK60161331926819",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null
+      },
+      {
+        "value": "CHE-123.456.789",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null
+      },
+      {
+        "value": "Bahnhofstrasse 88, 8001 Zürich, Switzerland",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null
+      },
+      {
+        "value": "+41 44 555 22 11",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "finance@helixretail.ch",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "15 April 2026",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "confidence": null
+      },
+      {
+        "value": "24 months",
+        "category": "dati_temporali",
+        "entity_type": "scadenza",
+        "confidence": null
+      },
+      {
+        "value": "CHF 12,500",
+        "category": "dati_finanziari",
+        "entity_type": "conto_bancario",
+        "confidence": null
+      },
+      {
+        "value": "Laura Meier",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "laura.meier@helixretail.ch",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null
+      },
+      {
+        "value": "+41 79 555 44 33",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null
+      },
+      {
+        "value": "John Roberts",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null
+      },
+      {
+        "value": "528399451",
+        "category": "identificativi",
+        "entity_type": "passaporto",
+        "confidence": null
+      },
+      {
+        "value": "756.1234.5678.97",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria",
+        "confidence": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 21,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Bahnhofstrasse 88, 8001 Zürich, Switzerland",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "22 Bishopsgate, London EC2N 4AJ, UK",
+        "replacement": "[CONTATTO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "laura.meier@helixretail.ch",
+        "replacement": "[CONTATTO_3]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "legal@orioncloud.co.uk",
+        "replacement": "[CONTATTO_4]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "GB29NWBK60161331926819",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "finance@helixretail.ch",
+        "replacement": "[CONTATTO_5]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Orion Cloud Ltd.",
+        "replacement": "[AZIENDA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "+44 20 7946 0999",
+        "replacement": "[CONTATTO_6]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+41 44 555 22 11",
+        "replacement": "[CONTATTO_7]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "+41 79 555 44 33",
+        "replacement": "[CONTATTO_8]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "756.1234.5678.97",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria"
+      },
+      {
+        "original": "Helix Retail AG",
+        "replacement": "[AZIENDA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione"
+      },
+      {
+        "original": "CHE-123.456.789",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "15 April 2026",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto"
+      },
+      {
+        "original": "John Roberts",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "GB123456789",
+        "replacement": "[ID_3]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "Laura Meier",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CHF 12,500",
+        "replacement": "[DATO_FIN_2]",
+        "category": "dati_finanziari",
+        "entity_type": "conto_bancario"
+      },
+      {
+        "original": "24 months",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "scadenza"
+      },
+      {
+        "original": "528399451",
+        "replacement": "[ID_4]",
+        "category": "identificativi",
+        "entity_type": "passaporto"
+      },
+      {
+        "original": "09876543",
+        "replacement": "[ID_5]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      }
+    ],
+    "anonymized_preview": "# Service Agreement — [AZIENDA_1] & [AZIENDA_2]\n\n## Parties\n**Provider**: [AZIENDA_1], Company No. **[ID_5]**\nRegistered Address: [CONTATTO_2]\nContact: [CONTATTO_4] | [CONTATTO_6]\nVAT: **[ID_3]** | IBAN: `[DATO_FIN_1]`\n\n**Client**: [AZIENDA_2]\nRegistered Address: [CONTATTO_1]\nContact: [CONTATTO_5] | [CONTATTO_7]\nIDE/CHE: **[ID_2]**\n\n## Scope\nManaged data warehousing and analytics support (SLA: **99.9%**). The Provider will deliver a secure, monitored platform with monthly performance reviews and quarterly roadmap updates.\nBoth parties agree to maintain an escalation matrix and to conduct joint"
+  },
+  "error": null
+}

@@ -99,8 +99,14 @@ La documentazione interattiva (Swagger UI) è accessibile su `http://localhost:8
 
 ## 5. Eseguire i test sul dataset
 
-Il runner processa tutti i documenti in `dataset/`, esegue estrazione e anonimizzazione
-su ognuno e salva i risultati tracciati con timestamp.
+Sono disponibili due runner:
+
+| Runner            | Descrizione                                                                    |
+|-------------------|--------------------------------------------------------------------------------|
+| `runner`          | Pipeline completa: Presidio/spaCy + LLM + ruoli semantici + anonimizzazione    |
+| `runner_ner_only` | Solo Presidio/spaCy - utile per valutare la copertura del layer NER senza LLM  |
+
+### Pipeline completa
 
 ```bash
 cd backend/
@@ -108,7 +114,34 @@ source .venv/bin/activate
 python -m tests.dataset_tests.runner
 ```
 
-I risultati vengono salvati in `backend/tests/dataset_tests/results/`:
+### Solo NER (Presidio/spaCy, senza LLM)
+
+```bash
+python -m tests.dataset_tests.runner_ner_only
+```
+
+### Filtrare per gruppo di documenti
+
+Entrambi i runner accettano l'opzione `--group` (o `-g`) per eseguire solo i documenti
+il cui nome inizia con il prefisso specificato:
+
+```bash
+# Solo i documenti del gruppo 01
+python -m tests.dataset_tests.runner --group 01
+python -m tests.dataset_tests.runner_ner_only -g 01
+
+# Funziona con qualsiasi prefisso
+python -m tests.dataset_tests.runner -g CV
+```
+
+### Output e opzioni
+
+```bash
+# Sopprime le tabelle intermedie per documento (mostra solo il riepilogo finale)
+ANON_VERBOSE=0 python -m tests.dataset_tests.runner
+```
+
+I risultati del runner completo vengono salvati in `backend/tests/dataset_tests/results/`:
 
 ```
 results/

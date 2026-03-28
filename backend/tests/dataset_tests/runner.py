@@ -11,6 +11,7 @@ After each document the runner prints two intermediate tables:
 Usage:
     cd backend/
     python -m tests.dataset_tests.runner
+    python -m tests.dataset_tests.runner --group 01   # only docs starting with "01"
 
 Options (env vars):
     ANON_VERBOSE=0   suppress intermediate tables (only show summary)
@@ -20,6 +21,7 @@ Results are written to:
     tests/dataset_tests/results/<timestamp>_SUMMARY.json
 """
 
+import argparse
 import json
 import os
 import sys
@@ -202,6 +204,14 @@ def _run_single(
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Dataset test runner")
+    parser.add_argument(
+        "--group", "-g",
+        metavar="PREFIX",
+        help="Run only documents whose filename starts with PREFIX (e.g. '01')",
+    )
+    args = parser.parse_args()
+
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     client = OllamaClient()
@@ -218,11 +228,23 @@ def main() -> None:
     extraction_svc = ExtractionService(client)
     anonymization_svc = AnonymizationService()
 
-    documents = sorted(DATASET_DIR.glob("*.md"))
+    all_docs = sorted(DATASET_DIR.glob("*.md"))
+    documents = (
+        [d for d in all_docs if d.name.startswith(args.group)]
+        if args.group
+        else all_docs
+    )
     if not documents:
-        console.print(f"[red]No .md files found in {DATASET_DIR}[/red]")
+        msg = (
+            f"[red]No .md files starting with '{args.group}' found in {DATASET_DIR}[/red]"
+            if args.group
+            else f"[red]No .md files found in {DATASET_DIR}[/red]"
+        )
+        console.print(msg)
         sys.exit(1)
 
+    if args.group:
+        console.print(f"Group filter: [bold cyan]{args.group}[/bold cyan]")
     console.print(f"Documents to test: [bold]{len(documents)}[/bold]")
     console.rule()
 

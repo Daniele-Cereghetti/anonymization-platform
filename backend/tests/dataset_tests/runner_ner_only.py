@@ -10,11 +10,13 @@ before the LLM merging step.
 Usage:
     cd backend/
     python -m tests.dataset_tests.runner_ner_only
+    python -m tests.dataset_tests.runner_ner_only --group 01   # only docs starting with "01"
 
 Options (env vars):
     ANON_VERBOSE=0   suppress per-document entity tables (only show summary)
 """
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -74,6 +76,14 @@ def main() -> None:
     import os
     import time
 
+    parser = argparse.ArgumentParser(description="NER-only dataset test runner")
+    parser.add_argument(
+        "--group", "-g",
+        metavar="PREFIX",
+        help="Run only documents whose filename starts with PREFIX (e.g. '01')",
+    )
+    args = parser.parse_args()
+
     verbose = os.getenv("ANON_VERBOSE", "1") != "0"
 
     # Check Presidio/spaCy availability
@@ -90,11 +100,23 @@ def main() -> None:
     console.print("[bold green]Presidio/spaCy OK[/bold green] — modalità NER-only (nessun LLM)")
     console.print(f"Dataset: {DATASET_DIR}\n")
 
-    documents = sorted(DATASET_DIR.glob("*.md"))
+    all_docs = sorted(DATASET_DIR.glob("*.md"))
+    documents = (
+        [d for d in all_docs if d.name.startswith(args.group)]
+        if args.group
+        else all_docs
+    )
     if not documents:
-        console.print(f"[red]Nessun file .md trovato in {DATASET_DIR}[/red]")
+        msg = (
+            f"[red]Nessun file .md con prefisso '{args.group}' trovato in {DATASET_DIR}[/red]"
+            if args.group
+            else f"[red]Nessun file .md trovato in {DATASET_DIR}[/red]"
+        )
+        console.print(msg)
         sys.exit(1)
 
+    if args.group:
+        console.print(f"Filtro gruppo: [bold cyan]{args.group}[/bold cyan]")
     console.print(f"Documenti da testare: [bold]{len(documents)}[/bold]")
     console.rule()
 

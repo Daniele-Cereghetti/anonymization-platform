@@ -28,7 +28,7 @@ from rich import box
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from app.domain.entities import EntityCategory
-from app.services.identification_service import _run_presidio, _get_analyzer
+from app.services.identification_service import _run_presidio, _get_analyzer, _detect_language
 
 DATASET_DIR = Path(__file__).parent.parent.parent.parent / "dataset"
 
@@ -87,7 +87,7 @@ def main() -> None:
     verbose = os.getenv("ANON_VERBOSE", "1") != "0"
 
     # Check Presidio/spaCy availability
-    analyzer = _get_analyzer()
+    analyzer, _ = _get_analyzer()
     if analyzer is None:
         console.print(
             "[bold red]ERROR:[/bold red] Presidio/spaCy non disponibile.\n"
@@ -134,8 +134,11 @@ def main() -> None:
         content = doc_path.read_text(encoding="utf-8")
 
         t0 = time.monotonic()
-        entities = _run_presidio(content, all_categories)
+        lang = _detect_language(content)
+        entities = _run_presidio(content, all_categories, lang)
         elapsed_ms = int((time.monotonic() - t0) * 1000)
+
+        console.print(f"  [dim]Lingua rilevata: [bold]{lang}[/bold][/dim]", highlight=False)
 
         total_entities += len(entities)
         for e in entities:
@@ -158,7 +161,7 @@ def main() -> None:
     )
     summary_table.add_column("Key",   style="bold", min_width=30)
     summary_table.add_column("Value", style="cyan")
-    summary_table.add_row("Pipeline",             "Presidio + spaCy en_core_web_sm")
+    summary_table.add_row("Pipeline",             "Presidio + spaCy (lingua auto-detection)")
     summary_table.add_row("Documenti analizzati",  str(len(documents)))
     summary_table.add_row("Totale entità rilevate", str(total_entities))
     for cat, count in category_counts.items():

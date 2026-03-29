@@ -19,6 +19,7 @@ as the default language for Presidio.
 """
 
 import logging
+import re
 from typing import List, Optional
 
 from ..domain.entities import Entity, EntityCategory
@@ -209,6 +210,11 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
         logger.warning("Presidio analysis failed: %s", exc)
         return []
 
+    try:
+        _nlp_obj = analyzer.nlp_engine.get_nlp(effective_lang)
+    except Exception:
+        _nlp_obj = None
+
     entities: List[Entity] = []
     for result in results:
         mapping = _PRESIDIO_ENTITY_MAP.get(result.entity_type)
@@ -219,6 +225,12 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
             continue
         value = content[result.start:result.end].strip()
         if not value:
+            continue
+        if _is_semantic_false_positive(value, result.entity_type, _nlp_obj):
+            logger.debug(
+                "Filtered semantic NER false positive '%s' (%s).",
+                value, result.entity_type,
+            )
             continue
         entities.append(
             Entity(
@@ -261,6 +273,90 @@ _SEMANTIC_NER_TYPES: frozenset[str] = frozenset({
     "nome_organizzazione", # ORGANIZATION (alternate mapping)
     "indirizzo",           # LOCATION
 })
+
+# ---------------------------------------------------------------------------
+# False-positive filter for semantic NER types
+# ---------------------------------------------------------------------------
+
+# Presidio entity types that go through semantic filtering (spaCy statistical NER).
+# Structural types (EMAIL, IBAN, PHONE, ...) are regex-based and do not need filtering.
+_SEMANTIC_PRESIDIO_TYPES: frozenset[str] = frozenset({"PERSON", "LOCATION", "ORGANIZATION"})
+
+# Case-insensitive deny-list of Italian document/form-field labels, methodology terms,
+# and common capitalised words that spaCy consistently misclassifies as named entities.
+_NER_DENY_LIST: frozenset[str] = frozenset({
+    # CV / form field labels
+    "nome", "cognome", "indirizzo", "telefono", "email", "sede", "iban",
+    "documento", "linkedin", "formazione", "standardizzazione", "supporto",
+    "riferimenti", "codice fiscale", "profilo", "curriculum vitae",
+    "competenze", "esperienza", "disponibili", "certificazioni", "contatti",
+    "dati personali",
+    # Contract / legal section headers
+    "locatore", "conduttore", "conduttrice", "firme", "firma",
+    "durata", "canone", "deposito", "causale", "verbale", "clausole",
+    "preavviso", "parti", "fornitore", "cliente", "sede legale",
+    # Medical record section headers
+    "paziente", "ricovero", "anamnesi", "diagnosi", "farmaci", "terapia",
+    "tessera sanitaria", "cartella clinica", "allergie",
+    # Methodology / tech buzzwords frequently misclassified as LOC/ORG
+    "agile", "scrum", "lean",
+    # Italian verbs / common words capitalised at line start
+    "amo", "pianificare", "ridurre",
+    "implementazione", "creazione", "migrazione",
+})
+
+# Partial IBAN substrings (e.g. "IT60 X054") that spaCy tags as LOCATION but are
+# already fully captured by the IBAN_CODE recognizer.  A real IBAN is ≥15 chars
+# without spaces; anything shorter matching the country-code+check-digit prefix is
+# a fragment and should be dropped.
+_PARTIAL_IBAN_RE = re.compile(r"^[A-Z]{2}\d{2}[\sA-Z0-9]*$")
+_IBAN_MIN_LEN_NO_SPACES = 15
+
+
+def _is_semantic_false_positive(value: str, presidio_entity_type: str, nlp_obj) -> bool:
+    """
+    Returns True if *value* is likely a false positive for a semantic Presidio entity type.
+
+    Applied only to PERSON / LOCATION / ORGANIZATION (statistical spaCy NER); structural
+    types (EMAIL, IBAN, PHONE, …) are regex-based and are never filtered here.
+
+    Three layers (cheapest first):
+      1. Deny-list  — exact/prefix match on common Italian document section labels and
+                      capitalised words that spaCy consistently misclassifies.
+      2. Partial IBAN regex — drops substrings like "IT60 X054" already fully captured
+                      by the IBAN_CODE recognizer.
+      3. POS filter — discard if spaCy finds no PROPN token in the span; real names,
+                      cities, and company names always contain at least one PROPN.
+    """
+    if presidio_entity_type not in _SEMANTIC_PRESIDIO_TYPES:
+        return False
+
+    stripped = value.strip()
+    lowered = stripped.lower()
+
+    # Layer 1: deny-list — exact match
+    if lowered in _NER_DENY_LIST:
+        return True
+    # Multi-line spans: "Formazione\n- Laurea Magistrale …" → first line is "formazione"
+    first_line = lowered.split("\n")[0].strip().rstrip(":–—-").strip()
+    if first_line in _NER_DENY_LIST:
+        return True
+    # Prefix match: "Profilo Project Manager" starts with "profilo "
+    if any(lowered.startswith(term + " ") for term in _NER_DENY_LIST):
+        return True
+
+    # Layer 2: partial IBAN regex
+    no_spaces = stripped.replace(" ", "")
+    if _PARTIAL_IBAN_RE.match(stripped) and len(no_spaces) < _IBAN_MIN_LEN_NO_SPACES:
+        return True
+
+    # Layer 3: POS filter — no PROPN token → not a named entity
+    if nlp_obj is not None:
+        doc = nlp_obj(stripped)
+        if not any(token.pos_ == "PROPN" for token in doc):
+            return True
+
+    return False
 
 
 def _overlaps(val_a: str, val_b: str) -> bool:

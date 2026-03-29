@@ -248,6 +248,21 @@ def _run_llm_ner(
 # Merge strategy
 # ---------------------------------------------------------------------------
 
+# Entity types detected by spaCy's statistical model — context-dependent and
+# prone to false positives (e.g. sentence-initial capitalised words in Italian).
+# These are only added to the final result when the LLM independently found an
+# overlapping entity, confirming the detection is semantically meaningful.
+#
+# Structural types (email, IBAN, phone, …) are regex/rule-based and remain
+# always trusted without LLM confirmation.
+_SEMANTIC_NER_TYPES: frozenset[str] = frozenset({
+    "nome_cognome",        # PERSON
+    "nome_azienda",        # ORGANIZATION
+    "nome_organizzazione", # ORGANIZATION (alternate mapping)
+    "indirizzo",           # LOCATION
+})
+
+
 def _overlaps(val_a: str, val_b: str) -> bool:
     """True if either value is a substring of the other."""
     a, b = val_a.lower(), val_b.lower()
@@ -257,16 +272,35 @@ def _overlaps(val_a: str, val_b: str) -> bool:
 def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entity]:
     """
     LLM entities take precedence.
-    Add NER entities only if they don't overlap with any LLM entity.
-    Mark merged entities with source='merged'.
+
+    Structural NER entities (email, IBAN, phone, …) are added when they don't
+    overlap with any LLM entity — regex-based detectors are highly reliable.
+
+    Semantic NER entities (person, org, location) are added ONLY when the LLM
+    found an overlapping entity — spaCy's model can produce false positives on
+    sentence-initial capitalised words, so LLM confirmation is required.
     """
     merged = list(llm_entities)
 
     for ner_ent in ner_entities:
-        dominated = any(_overlaps(ner_ent.value, e.value) for e in merged)
-        if not dominated:
-            ner_ent.source = "merged"
-            merged.append(ner_ent)
+        overlapping_llm = [e for e in llm_entities if _overlaps(ner_ent.value, e.value)]
+
+        if ner_ent.entity_type in _SEMANTIC_NER_TYPES:
+            # Semantic: only add if the LLM independently confirmed it.
+            if overlapping_llm:
+                ner_ent.source = "merged"
+                merged.append(ner_ent)
+            else:
+                logger.debug(
+                    "Discarding unconfirmed semantic NER entity '%s' (%s) — "
+                    "not found by LLM.",
+                    ner_ent.value, ner_ent.entity_type,
+                )
+        else:
+            # Structural: add if not already covered by the LLM.
+            if not overlapping_llm:
+                ner_ent.source = "merged"
+                merged.append(ner_ent)
 
     return merged
 

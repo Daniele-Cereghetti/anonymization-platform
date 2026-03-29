@@ -1,0 +1,369 @@
+{
+  "run_id": "69f274db-9fd2-4200-bc20-9151be599658",
+  "timestamp": "2026-03-29T09:32:08.246327Z",
+  "document": "01_CV_DE.md",
+  "document_id": "b8e896ba-82e0-41a5-a485-56708ecf757f",
+  "model": "llama3.1:8b",
+  "char_count": 2249,
+  "status": "success",
+  "extraction": {
+    "entities_count": 25,
+    "processing_time_ms": 91769,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "paziente"
+      },
+      {
+        "value": "Mailand (MI), Italien",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "luogo_di_nascita"
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Mailand (MI), Italien",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "FP123XY",
+        "category": "dati_contatto",
+        "entity_type": "targa",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "hr@acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "Messen",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "2021",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "101, 20123",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "1234 5678",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Weihnachtsspitze 2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "20125",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Risikoregistern",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "10/02/2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "confidence": 0.5,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "+39 02 1234 5678",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": 0.4,
+        "source": "merged",
+        "semantic_role": null
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 23,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Mailand (MI), Italien",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "https://www.linkedin.com/in/marta-bianchi",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Mailand (MI), Italien",
+        "replacement": "luogo_di_nascita1",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "Weihnachtsspitze 2024",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "hr@acme-italia.it",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[CODICE_FISCALE_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "+39 02 1234 5678",
+        "replacement": "[TELEFONO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Risikoregistern",
+        "replacement": "[CODICE_FISCALE_2]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "acme-italia.it",
+        "replacement": "[URL_1]",
+        "category": "dati_contatto",
+        "entity_type": "url"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "azienda_cliente1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[CARTA_IDENTITA_1]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "paziente1",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "101, 20123",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "10/02/2024",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "1234 5678",
+        "replacement": "[DATA_4]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[TARGA_1]",
+        "category": "dati_contatto",
+        "entity_type": "targa"
+      },
+      {
+        "original": "Messen",
+        "replacement": "[CODICE_FISCALE_3]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "20125",
+        "replacement": "[DATA_5]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "2021",
+        "replacement": "[DATA_6]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "2024",
+        "replacement": "[DATA_7]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — azienda_cliente1\n\n## Persönliche Daten\n- **Vor- und Nachname**: azienda_cliente1\n- **Geburtsdatum**: paziente1\n- **Geburtsort**: luogo_di_nascita1\n- **Adresse**: [INDIRIZZO_1]\n- **Telefon**: [TELEFONO_1]\n- **E-Mail**: [EMAIL_1]\n- **Steuernummer**: [CODICE_FISCALE_1]\n- **LinkedIn**: [CONTATTO_1]\n- **Kfz-Kennzeichen**: [TARGA_1]\n\n## Profil\nProject Manager mit über **8 Jahren** Erfahrung in E-Commerce und Logistik. Ich habe funktionsübergreifende Teams von bis zu 12 Personen geleitet, mit Budgets von über **1,2 Mio. €**. Ich glaube an klare Kommunikation, gemeinsame KPIs und "
+  },
+  "error": null
+}

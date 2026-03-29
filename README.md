@@ -57,19 +57,22 @@ source .venv/bin/activate        # macOS/Linux
 pip install -r requirements.txt
 ```
 
-Dopo l'installazione, scarica il modello NLP per il Modulo Identificazione (Presidio/spaCy):
+Dopo l'installazione, scarica almeno un modello spaCy per il Modulo Identificazione (Presidio/spaCy).
+Il modello italiano è quello consigliato per documenti in italiano:
 
 ```bash
-python -m spacy download en_core_web_sm
+python -m spacy download it_core_news_sm   # italiano (consigliato)
+python -m spacy download en_core_web_sm    # inglese
+python -m spacy download fr_core_news_sm   # francese
+python -m spacy download de_core_news_sm   # tedesco
 ```
 
-Opzionale — aggiunge supporto NER nativo per l'italiano:
+La lingua del documento viene rilevata automaticamente tramite `lingua-language-detector`
+(già incluso in `requirements.txt`) e il modello spaCy corrispondente viene selezionato
+di conseguenza. Se il modello per la lingua rilevata non è installato, viene usato il
+primo modello disponibile come fallback.
 
-```bash
-python -m spacy download it_core_news_sm
-```
-
-> Se i modelli spaCy non sono installati, il sistema funziona comunque in modalità
+> Se nessun modello spaCy è installato, il sistema funziona comunque in modalità
 > **LLM-only**: Presidio verrà disabilitato automaticamente e tutta la rilevazione
 > delle entità verrà gestita dall'LLM.
 
@@ -290,10 +293,11 @@ OLLAMA_MODEL=llama3.2:3b uvicorn main:app --reload
 
 ### Presidio/spaCy non disponibile
 
-Il sistema funziona comunque in modalità LLM-only. Per abilitare Presidio:
+Il sistema funziona comunque in modalità LLM-only. Per abilitare Presidio, installa
+almeno un modello spaCy (quello italiano è consigliato):
 
 ```bash
 cd backend/
 source .venv/bin/activate
-python -m spacy download en_core_web_sm
+python -m spacy download it_core_news_sm
 ```

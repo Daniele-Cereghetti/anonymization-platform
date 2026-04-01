@@ -59,8 +59,10 @@ _PRESIDIO_ENTITY_MAP: dict[str, tuple[EntityCategory, str]] = {
     "NRP":            (EntityCategory.IDENTIFICATIVI,    "codice_fiscale"),
     "IP_ADDRESS":     (EntityCategory.DATI_CONTATTO,     "ip_address"),
     "URL":            (EntityCategory.DATI_CONTATTO,     "url"),
-    "MEDICAL_LICENSE":(EntityCategory.IDENTIFICATIVI,    "licenza_medica"),
-    "CRYPTO":         (EntityCategory.DATI_FINANZIARI,   "crypto_wallet"),
+    "MEDICAL_LICENSE":   (EntityCategory.IDENTIFICATIVI,    "licenza_medica"),
+    "CRYPTO":            (EntityCategory.DATI_FINANZIARI,   "crypto_wallet"),
+    "IT_LICENSE_PLATE":  (EntityCategory.IDENTIFICATIVI,    "targa"),
+    "IT_IDENTITY_CARD":  (EntityCategory.IDENTIFICATIVI,    "carta_identita"),
 }
 
 
@@ -152,11 +154,47 @@ def _load_presidio_analyzer():
             )
             return None, set()
 
+        from presidio_analyzer import Pattern, PatternRecognizer, RecognizerRegistry
+
         config = {"nlp_engine_name": "spacy", "models": available}
         provider = NlpEngineProvider(nlp_configuration=config)
         nlp_engine = provider.create_engine()
         supported = {m["lang_code"] for m in available}
+
+        # Build a custom registry: start from predefined recognizers, then add
+        # Italian-specific recognizers for license plates and identity cards.
+        registry = RecognizerRegistry(supported_languages=list(supported))
+        registry.load_predefined_recognizers(languages=list(supported))
+        for lang in supported:
+            registry.add_recognizer(PatternRecognizer(
+                supported_entity="IT_LICENSE_PLATE",
+                name="ItLicensePlateRecognizer",
+                supported_language=lang,
+                patterns=[Pattern(
+                    name="italian_license_plate",
+                    regex=_IT_LICENSE_PLATE_REGEX,
+                    score=_IT_LICENSE_PLATE_SCORE,
+                )],
+                context=["targa", "veicolo", "auto", "autovettura"],
+            ))
+            registry.add_recognizer(PatternRecognizer(
+                supported_entity="IT_IDENTITY_CARD",
+                name="ItIdentityCardRecognizer",
+                supported_language=lang,
+                patterns=[Pattern(
+                    name="italian_identity_card",
+                    regex=_IT_IDENTITY_CARD_REGEX,
+                    score=_IT_IDENTITY_CARD_SCORE,
+                )],
+                context=[
+                    "CI", "carta identità", "carta d'identità",
+                    "documento identità", "carta di identità",
+                    "ril.", "rilasciata", "rilasciato",
+                ],
+            ))
+
         analyzer = AnalyzerEngine(
+            registry=registry,
             nlp_engine=nlp_engine,
             supported_languages=list(supported),
         )
@@ -220,13 +258,25 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
         mapping = _PRESIDIO_ENTITY_MAP.get(result.entity_type)
         if mapping is None:
             continue
-        cat, etype = mapping
-        if allowed_categories and cat.value not in allowed_categories:
-            continue
         value = content[result.start:result.end].strip()
         if not value:
             continue
-        if _is_semantic_false_positive(value, result.entity_type, _nlp_obj):
+
+        # Reclassify: spaCy PERSON beats NRP in overlap resolution, so a codice fiscale
+        # may arrive here tagged as PERSON.  Override the mapping when the value matches
+        # the Italian fiscal-code pattern exactly.
+        effective_presidio_type = result.entity_type
+        if result.entity_type == "PERSON" and _IT_FISCAL_CODE_RE.match(value):
+            nrp_mapping = _PRESIDIO_ENTITY_MAP.get("NRP")
+            if nrp_mapping is not None:
+                mapping = nrp_mapping
+                effective_presidio_type = "NRP"
+
+        cat, etype = mapping
+        if allowed_categories and cat.value not in allowed_categories:
+            continue
+
+        if _is_semantic_false_positive(value, effective_presidio_type, _nlp_obj, lang):
             logger.debug(
                 "Filtered semantic NER false positive '%s' (%s).",
                 value, result.entity_type,
@@ -282,28 +332,55 @@ _SEMANTIC_NER_TYPES: frozenset[str] = frozenset({
 # Structural types (EMAIL, IBAN, PHONE, ...) are regex-based and do not need filtering.
 _SEMANTIC_PRESIDIO_TYPES: frozenset[str] = frozenset({"PERSON", "LOCATION", "ORGANIZATION"})
 
-# Case-insensitive deny-list of Italian document/form-field labels, methodology terms,
+# Language-aware deny-list of document/form-field labels, methodology terms,
 # and common capitalised words that spaCy consistently misclassifies as named entities.
-_NER_DENY_LIST: frozenset[str] = frozenset({
-    # CV / form field labels
-    "nome", "cognome", "indirizzo", "telefono", "email", "sede", "iban",
-    "documento", "linkedin", "formazione", "standardizzazione", "supporto",
-    "riferimenti", "codice fiscale", "profilo", "curriculum vitae",
-    "competenze", "esperienza", "disponibili", "certificazioni", "contatti",
-    "dati personali",
-    # Contract / legal section headers
-    "locatore", "conduttore", "conduttrice", "firme", "firma",
-    "durata", "canone", "deposito", "causale", "verbale", "clausole",
-    "preavviso", "parti", "fornitore", "cliente", "sede legale",
-    # Medical record section headers
-    "paziente", "ricovero", "anamnesi", "diagnosi", "farmaci", "terapia",
-    "tessera sanitaria", "cartella clinica", "allergie",
-    # Methodology / tech buzzwords frequently misclassified as LOC/ORG
-    "agile", "scrum", "lean",
-    # Italian verbs / common words capitalised at line start
-    "amo", "pianificare", "ridurre",
-    "implementazione", "creazione", "migrazione",
-})
+# "common" entries are checked regardless of the detected language.
+_NER_DENY_LIST: dict[str, frozenset[str]] = {
+    "common": frozenset({
+        # Methodology terms (tagged PROPN across all languages)
+        "agile", "scrum", "lean", "kanban", "pmp",
+        # Acronyms / cross-language field labels
+        "wms", "pmo", "iban",
+    }),
+    "it": frozenset({
+        # CV / form field labels
+        "nome", "cognome", "indirizzo", "telefono", "email", "sede", "iban",
+        "documento", "linkedin", "formazione", "standardizzazione", "supporto",
+        "riferimenti", "codice fiscale", "profilo", "curriculum vitae",
+        "competenze", "esperienza", "disponibili", "certificazioni", "contatti",
+        "dati personali",
+        # Contract / legal section headers
+        "locatore", "conduttore", "conduttrice", "firme", "firma",
+        "durata", "canone", "deposito", "causale", "verbale", "clausole",
+        "preavviso", "parti", "fornitore", "cliente", "sede legale",
+        # Medical record section headers
+        "paziente", "ricovero", "anamnesi", "diagnosi", "farmaci", "terapia",
+        "tessera sanitaria", "cartella clinica", "allergie",
+        # Italian verbs / common words capitalised at line start
+        "amo", "pianificare", "ridurre",
+        "implementazione", "creazione", "migrazione",
+    }),
+    "de": frozenset({
+        # CV / form field labels
+        "persönliche daten", "geburtsdatum", "geburtsort", "telefon", "adresse",
+        "steuernummer", "kompetenzen", "publikationen", "standort", "ausweisdokument",
+        "profil", "erfahrung", "ausbildung", "fähigkeiten", "referenzen",
+        # Contract / org labels
+        "arbeitgeber", "abteilung", "firmenname",
+    }),
+    "fr": frozenset({
+        # CV / form field labels
+        "nom et prénom", "adresse", "téléphone", "code fiscal", "lieu",
+        "pour", "analyste", "compétences", "formation", "expérience",
+        "références", "employeur", "société", "département",
+    }),
+    "en": frozenset({
+        # CV / form field labels
+        "name", "address", "phone", "skills", "education",
+        "references", "employer", "company", "department",
+        "date of birth", "place of birth", "nationality",
+    }),
+}
 
 # Partial IBAN substrings (e.g. "IT60 X054") that spaCy tags as LOCATION but are
 # already fully captured by the IBAN_CODE recognizer.  A real IBAN is ≥15 chars
@@ -312,8 +389,27 @@ _NER_DENY_LIST: frozenset[str] = frozenset({
 _PARTIAL_IBAN_RE = re.compile(r"^[A-Z]{2}\d{2}[\sA-Z0-9]*$")
 _IBAN_MIN_LEN_NO_SPACES = 15
 
+# Regex to detect Italian fiscal codes (16 chars: 6 letters + 2 digits + letter + 2 digits
+# + letter + 3 digits + letter) misclassified by spaCy as PERSON.
+_IT_FISCAL_CODE_RE = re.compile(
+    r"^[A-Z]{6}\d{2}[A-EHLMPR-T]\d{2}[A-Z]\d{3}[A-Z]$",
+    re.IGNORECASE,
+)
 
-def _is_semantic_false_positive(value: str, presidio_entity_type: str, nlp_obj) -> bool:
+# Pattern objects for custom Presidio recognizers (instantiated lazily per language in
+# _load_presidio_analyzer to avoid importing presidio_analyzer at module level).
+_IT_LICENSE_PLATE_REGEX = r"\b[A-Z]{2}\d{3}[A-Z]{2}\b"          # post-1994: FP123XY
+_IT_LICENSE_PLATE_SCORE = 0.5                                     # boosted to ~0.85 by context
+_IT_IDENTITY_CARD_REGEX = r"\b[A-Z]{2}\d{7}\b"                    # AA1234567 (2 letters + 7 digits)
+_IT_IDENTITY_CARD_SCORE = 0.65                                    # specific enough to not require context boost
+
+
+def _is_semantic_false_positive(
+    value: str,
+    presidio_entity_type: str,
+    nlp_obj,
+    lang: str = "it",
+) -> bool:
     """
     Returns True if *value* is likely a false positive for a semantic Presidio entity type.
 
@@ -321,8 +417,9 @@ def _is_semantic_false_positive(value: str, presidio_entity_type: str, nlp_obj) 
     types (EMAIL, IBAN, PHONE, …) are regex-based and are never filtered here.
 
     Three layers (cheapest first):
-      1. Deny-list  — exact/prefix match on common Italian document section labels and
+      1. Deny-list  — exact/prefix match on language-specific document section labels and
                       capitalised words that spaCy consistently misclassifies.
+                      Checks both the "common" bucket and the detected-language bucket.
       2. Partial IBAN regex — drops substrings like "IT60 X054" already fully captured
                       by the IBAN_CODE recognizer.
       3. POS filter — discard if spaCy finds no PROPN token in the span; real names,
@@ -334,15 +431,16 @@ def _is_semantic_false_positive(value: str, presidio_entity_type: str, nlp_obj) 
     stripped = value.strip()
     lowered = stripped.lower()
 
-    # Layer 1: deny-list — exact match
-    if lowered in _NER_DENY_LIST:
+    # Layer 1: deny-list — merge common + language-specific entries
+    deny = _NER_DENY_LIST.get("common", frozenset()) | _NER_DENY_LIST.get(lang, frozenset())
+    if lowered in deny:
         return True
     # Multi-line spans: "Formazione\n- Laurea Magistrale …" → first line is "formazione"
     first_line = lowered.split("\n")[0].strip().rstrip(":–—-").strip()
-    if first_line in _NER_DENY_LIST:
+    if first_line in deny:
         return True
     # Prefix match: "Profilo Project Manager" starts with "profilo "
-    if any(lowered.startswith(term + " ") for term in _NER_DENY_LIST):
+    if any(lowered.startswith(term + " ") for term in deny):
         return True
 
     # Layer 2: partial IBAN regex

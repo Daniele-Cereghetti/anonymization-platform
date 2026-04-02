@@ -4,6 +4,9 @@ pydantic>=2.7.0
 requests>=2.31.0
 python-multipart>=0.0.9
 
+# Modulo Conversione — document-to-markdown
+docling>=2.0.0
+
 # Modulo Identificazione — NER ibrido
 presidio-analyzer>=2.2.0
 spacy>=3.7.0

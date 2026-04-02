@@ -12,6 +12,9 @@ class ConversionError(Exception):
     pass
 
 
+# TODO - Maybe add tests for this service, but it would require adding some test files to the repo, which might not be ideal.
+# Alternatively, we could mock the DocumentConverter for testing purposes
+# Remember that dockling is heavy and can be slow, so we might want to consider that when writing tests for this service.
 class ConversionService:
     def __init__(self) -> None:
         self._converter = DocumentConverter()

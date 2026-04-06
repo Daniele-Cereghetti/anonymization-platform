@@ -5,19 +5,24 @@ from pydantic import BaseModel
 
 from ...domain.document import ExtractionResult
 from ...infrastructure.llm.ollama_client import OllamaClient, OllamaError
+from ...services.cache_service import CacheService
 from ...services.extraction_service import ExtractionService
 
 router = APIRouter()
+_cache = CacheService()
 
 
 class ExtractRequest(BaseModel):
     document_id: str
-    content: str
     categories: Optional[List[str]] = None
 
 
 @router.post("/extract", response_model=ExtractionResult)
 async def extract_entities(req: ExtractRequest):
+    content = _cache.get(req.document_id)
+    if content is None:
+        raise HTTPException(status_code=404, detail=f"Document '{req.document_id}' not found or expired.")
+
     client = OllamaClient()
     if not client.is_available():
         raise HTTPException(status_code=503, detail="LLM service not available. Is Ollama running?")
@@ -25,7 +30,7 @@ async def extract_entities(req: ExtractRequest):
     service = ExtractionService(client)
     try:
         return service.extract(
-            content=req.content,
+            content=content,
             document_id=req.document_id,
             categories=req.categories,
         )

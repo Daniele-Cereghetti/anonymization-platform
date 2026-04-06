@@ -252,7 +252,7 @@ Il sistema si limita all'ambito della privacy e non della confidenzialità: l'ob
 
 Persone fisiche: nomi, cognomi, soprannomi e qualsiasi combinazione che permetta di identificare un individuo.
 
-Persone giuridiche: ragioni sociali, nomi di aziende, enti, associazioni e organizzazioni. Dati di contatto: numeri di telefono (fissi e mobili, in tutti i formati nazionali e internazionali), indirizzi e-mail, indirizzi postali completi (via, numero civico, CAP, città, cantone/stato, nazione), URL personali e profili social media.
+Persone giuridiche (fuori dall'ambito privacy, incluse per completezza): ragioni sociali, nomi di aziende, enti, associazioni e organizzazioni. L'anonimizzazione delle persone giuridiche non rientra nell'ambito della protezione dei dati personali (la nLPD tutela esclusivamente le persone fisiche), ma viene inclusa come funzionalità opzionale configurabile dall'utente, sia come buona prassi sia per coprire i casi in cui il nome di un'azienda possa indirettamente ricondurre a una persona fisica (ad esempio, ditte individuali o studi professionali). Dati di contatto: numeri di telefono (fissi e mobili, in tutti i formati nazionali e internazionali), indirizzi e-mail, indirizzi postali completi (via, numero civico, CAP, città, cantone/stato, nazione), URL personali e profili social media.
 
 Identificativi univoci: numeri AVS/AHV (Svizzera), codici fiscali, numeri di passaporto, numeri di carta d'identità, numeri di patente, numeri di assicurazione sanitaria.
 
@@ -260,7 +260,7 @@ Dati finanziari: numeri IBAN, numeri di conto bancario, numeri di carta di credi
 
 Dati temporali sensibili: date di nascita complete, date di eventi che combinati con altri dati possano identificare una persona.
 
-Luoghi specifici: indirizzi di domicilio o residenza, coordinate GPS, nomi di edifici o strutture private.
+Luoghi specifici (se riconducibili a una persona fisica): indirizzi di domicilio o residenza, coordinate GPS, nomi di edifici o strutture private. I luoghi vengono anonimizzati solo quando, nel contesto del documento, sono associati a una persona fisica e la loro presenza potrebbe contribuire alla re-identificazione. Luoghi generici o non riconducibili a individui specifici non vengono modificati.
 
 Dati biometrici e genetici: qualsiasi riferimento testuale a dati biometrici o genetici.
 
@@ -272,7 +272,7 @@ La strategia di sostituzione semantica rappresenta un elemento distintivo del si
 
 **Fondamenti nella letteratura.** L'architettura a tre fasi - riconoscimento delle entità, entity linking e sostituzione - proposta da Francopoulo e Schaub \[7\] nel contesto dell'anonimizzazione per il GDPR, costituisce il riferimento architetturale per la pipeline del presente progetto. Gli autori identificano come requisiti fondamentali la coerenza delle sostituzioni a livello di documento (la stessa entità deve ricevere sempre lo stesso pseudonimo) e la possibilità di scegliere tra pseudonimizzazione locale e globale a seconda del contesto d'uso. L'approccio Anonymous-by-Construction di Albanese et al. \[8\] dimostra che LLM locali (DeepSeek-r1 7B) possono effettuare sostituzione type-consistent - ovvero sostituire ogni PII con un surrogato realistico dello stesso tipo semantico - preservando la fluenza e la struttura del testo, interamente on-premise senza trasferimento dati. Questo approccio raggiunge risultati superiori sia a Presidio sia a Google DLP nel bilanciamento tra privacy e utilità.
 
-Per le persone fisiche, i nomi vengono sostituiti con etichette che riflettono il ruolo della persona nel contesto del documento, ad esempio: "fornitore1", "compratore1", "testimone1", "paziente1", "dipendente1". Per le persone giuridiche si adotta un approccio analogo: "azienda_fornitrice1", "ente_pubblico1", "banca1". I luoghi vengono generalizzati mantenendo il livello gerarchico: "città_A", "cantone_B". I dati numerici identificativi (telefono, IBAN, AVS) vengono sostituiti con segnaposto categorizzati: "\[TELEFONO_1\]", "\[IBAN_1\]", "\[AVS_1\]".
+Per le persone fisiche, i nomi vengono sostituiti con etichette che riflettono il ruolo della persona nel contesto del documento, ad esempio: "fornitore1", "compratore1", "testimone1", "paziente1", "dipendente1". Per le persone giuridiche, qualora l'utente scelga di includerle nel processo di anonimizzazione (cfr. sezione 2.1.3), si adotta un approccio analogo: "azienda_fornitrice1", "ente_pubblico1", "banca1". I luoghi riconducibili a persone fisiche vengono generalizzati mantenendo il livello gerarchico: "città_A", "cantone_B". I dati numerici identificativi (telefono, IBAN, AVS) vengono sostituiti con segnaposto categorizzati: "\[TELEFONO_1\]", "\[IBAN_1\]", "\[AVS_1\]".
 
 La coerenza interna del documento deve essere garantita: la stessa entità deve ricevere sempre la stessa sostituzione all'interno dello stesso documento e, ove necessario, attraverso un corpus di documenti correlati. Una tabella di mappatura interna al processo (non persistente e non esportata) gestisce le corrispondenze durante l'elaborazione. Al termine del processo, questa tabella viene distrutta per garantire l'irreversibilità.
 
@@ -302,7 +302,7 @@ L'implementazione di questo requisito è subordinata alla disponibilità di temp
 
 La nuova Legge federale sulla protezione dei dati (LPD, nLPD), entrata in vigore il 1° settembre 2023, costituisce il quadro normativo di riferimento primario per il sistema, unitamente all'Ordinanza sulla protezione dei dati (OPDa) \[10\]. La nLPD definisce i dati personali come tutte le informazioni concernenti una persona fisica identificata o identificabile (art. 5 lett. a) e stabilisce i principi di proporzionalità, finalità e minimizzazione (art. 6), il principio di Privacy by Design e by Default (art. 7) e l'obbligo di misure di sicurezza adeguate (art. 8).
 
-L'anonimizzazione dei documenti è un'applicazione diretta del principio di minimizzazione: i dati personali vengono rimossi prima dell'invio a sistemi di IA generativa in cloud. Il sistema è progettato affinché l'anonimizzazione sia il trattamento predefinito (Privacy by Default) e affinché l'esecuzione locale e la distruzione della tabella di mappatura rispondano ai requisiti di sicurezza dell'art. 8. La nLPD tutela esclusivamente le persone fisiche; il sistema anonimizza anche i dati di persone giuridiche come buona prassi e per conformità al GDPR europeo.
+L'anonimizzazione dei documenti è un'applicazione diretta del principio di minimizzazione: i dati personali vengono rimossi prima dell'invio a sistemi di IA generativa in cloud. Il sistema è progettato affinché l'anonimizzazione sia il trattamento predefinito (Privacy by Default) e affinché l'esecuzione locale e la distruzione della tabella di mappatura rispondano ai requisiti di sicurezza dell'art. 8. La nLPD tutela esclusivamente le persone fisiche; il sistema offre tuttavia la possibilità configurabile di anonimizzare anche i dati di persone giuridiche, come funzionalità opzionale utile nei casi in cui tali dati possano indirettamente ricondurre a persone fisiche.
 
 ### 2.2.2 Conformità al GDPR europeo
 
@@ -440,25 +440,27 @@ Nessuna tecnica di anonimizzazione offre garanzie assolute. Come dimostrato da R
 
 ## 3.2 Panoramica dei sistemi esistenti
 
-L'analisi del panorama dei sistemi esistenti costituisce una fase preliminare essenziale del progetto, con un duplice scopo: verificare se soluzioni già disponibili soddisfano i requisiti definiti - nel qual caso il valore del progetto si spostersebbe verso l'implementazione sicura e il testing - e identificare componenti open source riutilizzabili per concentrarsi sugli aspetti non coperti. La ricerca è stata condotta consultando la documentazione ufficiale, i repository GitHub e la letteratura tecnica di ciascun sistema. Le fonti sono gestite tramite Zotero e citate secondo lo stile IEEE.
+L'analisi del panorama dei sistemi esistenti costituisce una fase preliminare essenziale del progetto, con un duplice scopo: verificare se soluzioni già disponibili soddisfano i requisiti definiti - nel qual caso il valore del progetto si spostersebbe verso l'implementazione sicura e il testing - e identificare componenti open source riutilizzabili per concentrarsi sugli aspetti non coperti. La ricerca è stata condotta consultando la documentazione ufficiale, i repository GitHub e la letteratura tecnica di ciascun sistema.
+
+**_Overview dei sistemi open source_**
+
+I sistemi open source rappresentano la categoria più rilevante per il presente progetto, in quanto consentono l'esecuzione locale, la personalizzazione del codice e l'integrazione con pipeline di anonimizzazione custom. Di seguito vengono analizzati i due sistemi open source più maturi e pertinenti ai requisiti definiti nel capitolo 2.
 
 ### 3.2.1 Microsoft Presidio
 
 Microsoft Presidio è un framework open source sviluppato da Microsoft per il rilevamento e l'anonimizzazione di informazioni personali (PII) in testi non strutturati, immagini e dati strutturati \[19\]. Il progetto è disponibile su GitHub con licenza MIT e può essere eseguito localmente, in container o in ambienti cloud.
 
-**Architettura e approccio tecnico.** Presidio si articola in due componenti principali: l'AnalyzerEngine, responsabile del rilevamento delle entità PII, e l'AnonymizerEngine, che applica le operazioni di sostituzione sul testo identificato. Il rilevamento si basa su una combinazione di Named Entity Recognition (NER) tramite spaCy \[20\], pattern matching con espressioni regolari e regole contestuali personalizzabili. Il sistema supporta oltre 50 tipologie di entità predefinite (nomi, numeri di telefono, IBAN, codici fiscali, ecc.) ed è estensibile con riconoscitori personalizzati per entità specifiche di un dominio o paese.
+**Architettura e approccio tecnico.** Presidio si articola in due componenti principali: l'AnalyzerEngine, responsabile del rilevamento delle entità PII, e l'AnonymizerEngine, che applica le operazioni di sostituzione sul testo identificato. Il rilevamento si basa su una combinazione di Named Entity Recognition (NER) tramite spaCy \[20\], pattern matching con espressioni regolari e regole contestuali personalizzabili. Il sistema supporta oltre 50 tipologie di entità predefinite (nomi, numeri di telefono, IBAN, ecc.) ed è estensibile con riconoscitori personalizzati per entità specifiche di un dominio o paese.
 
 **Operatori di anonimizzazione.** L'AnonymizerEngine offre diversi operatori built-in: Replace (sostituzione con un'etichetta fissa come "&lt;PERSON&gt;"), Redact (rimozione del testo), Mask (mascheratura parziale con caratteri sostitutivi), Encrypt (cifratura reversibile AES) e Hash. È possibile definire operatori personalizzati per soddisfare esigenze specifiche. Presidio supporta anche la de-anonimizzazione per gli operatori reversibili, come la decifratura del testo cifrato.
 
 **Punti di forza rispetto ai requisiti del progetto.** Presidio soddisfa i requisiti di esecuzione locale (può girare interamente su CPU senza dipendenze cloud), supporta il deployment via Docker e dispone di una REST API che facilita l'integrazione. La maturità del progetto (sviluppo attivo dal 2019, oltre 7.000 stelle su GitHub) e il supporto di Microsoft contribuiscono a una base di codice stabile.
 
-**Limitazioni rispetto ai requisiti del progetto.** L'elemento critico per questo progetto è la strategia di sostituzione semantica: Presidio, per impostazione predefinita, sostituisce le entità con etichette categoriali opache (es. "&lt;PERSON&gt;", "&lt;LOCATION&gt;") che non preservano il ruolo dell'entità nel contesto del documento. Sebbene sia tecnicamente possibile implementare operatori personalizzati che introducano sostituzioni semantiche (es. "fornitore1", "compratore1"), questa funzionalità non è disponibile out-of-the-box e richiederebbe uno sviluppo ad hoc. Analogamente, il processo interattivo di validazione delle sostituzioni (proposta → approvazione utente → applicazione) non è previsto nell'architettura standard. Il supporto multilingue per l'italiano e per identificativi svizzeri (AVS/AHV) richiede la configurazione di riconoscitori personalizzati
-
-**Riferimento.** Repository GitHub: <https://github.com/microsoft/presidio> - Documentazione ufficiale: <https://microsoft.github.io/presidio/>
+**Limitazioni rispetto ai requisiti del progetto.** L'elemento critico per questo progetto è la strategia di sostituzione semantica: Presidio, per impostazione predefinita, sostituisce le entità con etichette categoriali opache (es. "&lt;PERSON&gt;", "&lt;LOCATION&gt;") che non preservano il ruolo dell'entità nel contesto del documento. Sebbene sia tecnicamente possibile implementare operatori personalizzati che introducano sostituzioni semantiche (es. "fornitore1", "compratore1"), questa funzionalità non è disponibile out-of-the-box e richiederebbe uno sviluppo ad hoc. Analogamente, il processo interattivo di validazione delle sostituzioni (proposta → approvazione utente → applicazione) non è previsto nell'architettura standard. Il supporto multilingue per l'italiano e per identificativi svizzeri (AVS/AHV) richiede la configurazione di riconoscitori personalizzati \[19\]
 
 ### 3.2.2 DataFog
 
-DataFog è una libreria Python open source orientata al rilevamento e alla redazione di PII, progettata specificamente per proteggere i dati prima che vengano trasmessi a sistemi di IA generativa (LLM) \[21\]. Il progetto è disponibile su GitHub (organizzazione DataFog) e su PyPI, con licenza MIT.
+DataFog è una libreria Python open source orientata al rilevamento e alla redazione di PII, progettata specificamente per proteggere i dati prima che vengano trasmessi a sistemi di IA generativa (LLM) \[21\].
 
 **Architettura e approccio tecnico.** DataFog adotta un approccio modulare a pipeline, combinando tre motori di rilevamento selezionabili: regex (veloce, senza dipendenze), NLP tramite spaCy e NLP avanzato tramite GLiNER. I motori possono essere combinati in cascata con degradazione graduale (graceful degradation) qualora le dipendenze opzionali non siano installate. L'interfaccia è accessibile via Python SDK, CLI e API REST (quest'ultima disponibile anche come immagine Docker). DataFog include funzioni specifiche per il filtraggio di prompt e output destinati a LLM (scan_prompt, filter_output), il che evidenzia il suo posizionamento principale come guardrail per sistemi di IA generativa.
 
@@ -469,6 +471,10 @@ DataFog è una libreria Python open source orientata al rilevamento e alla redaz
 **Limitazioni rispetto ai requisiti del progetto.** Come Presidio, DataFog non prevede una sostituzione semantica basata sul ruolo contestuale né un flusso interattivo di validazione delle sostituzioni. Il progetto è più giovane e meno maturo (comunity più piccola, documentazione meno estesa). Il supporto per l'italiano e per identificativi specifici svizzeri non è documentato. Il motore regex è ottimizzato principalmente per pattern anglosassoni (SSN, ZIP code americani).
 
 **Riferimento.** Repository GitHub: <https://github.com/DataFog/datafog-python> - Sito ufficiale: <https://datafog.ai/>
+
+**_Overview dei sistemi commerciali_**
+
+_\[Sezione da completare. Analizzare i principali sistemi commerciali di anonimizzazione dei testi (es. Google Cloud DLP, Amazon Comprehend, IBM InfoSphere, Privacera). Per ciascun sistema descrivere: funzionalità principali, modello di deployment (cloud/on-premise), costi, limitazioni rispetto ai requisiti del progetto (in particolare l'esecuzione locale e l'assenza di dipendenze cloud). Motivare perché i sistemi commerciali non sono stati scelti come base per il prototipo.\]_
 
 ## 3.3 Confronto dei sistemi
 
@@ -682,7 +688,7 @@ _\[Sintesi finale del lavoro svolto, degli obiettivi raggiunti e delle lezioni a
 
 # Bibliografia
 
-_Gestire le citazioni con Zotero. Tutte le fonti devono essere citate in modo formale e coerente (es. stile IEEE o APA). Ogni fonte citata nel testo deve comparire in questa sezione e viceversa._
+_Gestire le citazioni con Zotero. Tutte le fonti devono essere citate in modo formale e coerente. Ogni fonte citata nel testo deve comparire in questa sezione e viceversa._
 
 \[1\] «ISO/IEC/IEEE International Standard - Systems and software engineering - Life cycle processes - Requirements engineering», _ISO/IEC/IEEE 29148:2018(E)_, pp. 1-104, nov. 2018, doi: 10.1109/IEEESTD.2018.8559686.
 

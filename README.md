@@ -257,6 +257,8 @@ Le variabili di configurazione possono essere sovrascritte tramite variabili d'a
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Endpoint Ollama |
 | `OLLAMA_MODEL` | `llama3.1:8b` | Modello LLM da utilizzare |
 | `OLLAMA_TIMEOUT` | `120` | Timeout richieste LLM (secondi) |
+| `CACHE_DIR` | `/tmp/anon_cache` | Directory per la cache dei documenti convertiti |
+| `CACHE_MAX_DISK_MB` | `500` | Soglia di eviction LRU (MB) |
 
 Esempio con modello alternativo:
 

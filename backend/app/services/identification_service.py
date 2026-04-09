@@ -63,6 +63,7 @@ _PRESIDIO_ENTITY_MAP: dict[str, tuple[EntityCategory, str]] = {
     "CRYPTO":            (EntityCategory.DATI_FINANZIARI,   "crypto_wallet"),
     "IT_LICENSE_PLATE":  (EntityCategory.IDENTIFICATIVI,    "targa"),
     "IT_IDENTITY_CARD":  (EntityCategory.IDENTIFICATIVI,    "carta_identita"),
+    "CH_AVS_NUMBER":     (EntityCategory.IDENTIFICATIVI,    "numero_avs"),
 }
 
 
@@ -191,6 +192,17 @@ def _load_presidio_analyzer():
                     "documento identità", "carta di identità",
                     "ril.", "rilasciata", "rilasciato",
                 ],
+            ))
+            registry.add_recognizer(PatternRecognizer(
+                supported_entity="CH_AVS_NUMBER",
+                name="ChAvsNumberRecognizer",
+                supported_language=lang,
+                patterns=[Pattern(
+                    name="swiss_avs_number",
+                    regex=_CH_AVS_NUMBER_REGEX,
+                    score=_CH_AVS_NUMBER_SCORE,
+                )],
+                context=["avs", "ahv", "assicurazione", "previdenza"],
             ))
 
         analyzer = AnalyzerEngine(
@@ -402,6 +414,8 @@ _IT_LICENSE_PLATE_REGEX = r"\b[A-Z]{2}\d{3}[A-Z]{2}\b"          # post-1994: FP1
 _IT_LICENSE_PLATE_SCORE = 0.5                                     # boosted to ~0.85 by context
 _IT_IDENTITY_CARD_REGEX = r"\b[A-Z]{2}\d{7}\b"                    # AA1234567 (2 letters + 7 digits)
 _IT_IDENTITY_CARD_SCORE = 0.65                                    # specific enough to not require context boost
+_CH_AVS_NUMBER_REGEX = r"\b756\.\d{4}\.\d{4}\.\d{2}\b"           # 756.XXXX.XXXX.XX (Swiss AVS/AHV)
+_CH_AVS_NUMBER_SCORE = 0.85                                       # highly specific pattern
 
 
 def _is_semantic_false_positive(

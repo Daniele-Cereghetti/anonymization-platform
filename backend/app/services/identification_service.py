@@ -415,6 +415,8 @@ _IT_LICENSE_PLATE_REGEX = r"\b[A-Z]{2}\d{3}[A-Z]{2}\b"          # post-1994: FP1
 _IT_LICENSE_PLATE_SCORE = 0.5                                     # boosted to ~0.85 by context
 _IT_IDENTITY_CARD_REGEX = r"\b[A-Z]{2}\d{7}\b"                    # AA1234567 (2 letters + 7 digits)
 _IT_IDENTITY_CARD_SCORE = 0.65                                    # specific enough to not require context boost
+_IT_IDENTITY_CARD_ELECTRONIC_REGEX = r"\b[A-Z]{2}\d{5}[A-Z]{2}\b"  # CA12345AB (CIE elettronica)
+_IT_IDENTITY_CARD_ELECTRONIC_SCORE = 0.65                           # same confidence as paper ID
 _CH_AVS_NUMBER_REGEX = r"\b756\.\d{4}\.\d{4}\.\d{2}\b"           # 756.XXXX.XXXX.XX (Swiss AVS/AHV)
 _CH_AVS_NUMBER_SCORE = 0.85                                       # highly specific pattern
 

@@ -195,6 +195,21 @@ def _load_presidio_analyzer():
                 ],
             ))
             registry.add_recognizer(PatternRecognizer(
+                supported_entity="IT_IDENTITY_CARD_ELECTRONIC",
+                name="ItIdentityCardElectronicRecognizer",
+                supported_language=lang,
+                patterns=[Pattern(
+                    name="italian_identity_card_electronic",
+                    regex=_IT_IDENTITY_CARD_ELECTRONIC_REGEX,
+                    score=_IT_IDENTITY_CARD_ELECTRONIC_SCORE,
+                )],
+                context=[
+                    "CIE", "CI", "carta identità", "carta d'identità",
+                    "documento identità", "carta di identità",
+                    "ril.", "rilasciata", "rilasciato",
+                ],
+            ))
+            registry.add_recognizer(PatternRecognizer(
                 supported_entity="CH_AVS_NUMBER",
                 name="ChAvsNumberRecognizer",
                 supported_language=lang,

@@ -88,6 +88,32 @@ class TestIdentityCard:
         assert _ID_CARD_RE.search("aa1234567") is None
 
 
+# ---- Italian electronic identity card (CIE): CA12345AB (2 letters + 5 digits + 2 letters) ----
+
+_ID_CARD_ELECTRONIC_RE = re.compile(_IT_IDENTITY_CARD_ELECTRONIC_REGEX)
+
+
+class TestIdentityCardElectronic:
+    def test_valid_standard(self):
+        assert _ID_CARD_ELECTRONIC_RE.search("CA12345AB")
+
+    def test_valid_in_sentence(self):
+        assert _ID_CARD_ELECTRONIC_RE.search("CIE numero CA12345AB rilasciata il")
+
+    def test_invalid_too_few_digits(self):
+        assert _ID_CARD_ELECTRONIC_RE.search("CA1234AB") is None
+
+    def test_invalid_too_many_digits(self):
+        assert _ID_CARD_ELECTRONIC_RE.search("CA123456AB") is None
+
+    def test_invalid_lowercase(self):
+        assert _ID_CARD_ELECTRONIC_RE.search("ca12345ab") is None
+
+    def test_no_collision_with_plate(self):
+        # License plate has 3 digits (AB123CD), CIE has 5 — no overlap
+        assert _ID_CARD_ELECTRONIC_RE.search("AB123CD") is None
+
+
 # ---- Italian fiscal code: ABCDEF12G34H567I (6 letters + 2 digits + letter + ...) ----
 
 

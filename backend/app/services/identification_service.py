@@ -63,6 +63,7 @@ _PRESIDIO_ENTITY_MAP: dict[str, tuple[EntityCategory, str]] = {
     "CRYPTO":            (EntityCategory.DATI_FINANZIARI,   "crypto_wallet"),
     "IT_LICENSE_PLATE":  (EntityCategory.IDENTIFICATIVI,    "targa"),
     "IT_IDENTITY_CARD":  (EntityCategory.IDENTIFICATIVI,    "carta_identita"),
+    "IT_IDENTITY_CARD_ELECTRONIC": (EntityCategory.IDENTIFICATIVI, "carta_identita"),
     "CH_AVS_NUMBER":     (EntityCategory.IDENTIFICATIVI,    "numero_avs"),
 }
 

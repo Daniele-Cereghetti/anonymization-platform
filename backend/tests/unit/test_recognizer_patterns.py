@@ -7,6 +7,7 @@ import re
 from app.services.identification_service import (
     _CH_AVS_NUMBER_REGEX,
     _IT_FISCAL_CODE_RE,
+    _IT_IDENTITY_CARD_ELECTRONIC_REGEX,
     _IT_IDENTITY_CARD_REGEX,
     _IT_LICENSE_PLATE_REGEX,
 )

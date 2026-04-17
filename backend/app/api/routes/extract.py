@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from ...domain.document import ExtractionResult
 from ...infrastructure.llm.ollama_client import OllamaClient, OllamaError
+from ...services.audit_service import log_event
 from ...services.cache_service import CacheService
 from ...services.extraction_service import ExtractionService
 
@@ -29,10 +30,17 @@ async def extract_entities(req: ExtractRequest):
 
     service = ExtractionService(client)
     try:
-        return service.extract(
+        result = service.extract(
             content=content,
             document_id=req.document_id,
             categories=req.categories,
         )
     except OllamaError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e
+
+    log_event(
+        "entities_extracted",
+        req.document_id,
+        entity_count=len(result.entities),
+    )
+    return result

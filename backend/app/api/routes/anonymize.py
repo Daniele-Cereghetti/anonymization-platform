@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from ...domain.document import AnonymizationResult
 from ...domain.entities import Entity
 from ...services.anonymization_service import AnonymizationService
+from ...services.audit_service import log_event
 from ...services.cache_service import CacheService
 
 router = APIRouter()
@@ -24,8 +25,15 @@ async def anonymize_document(req: AnonymizeRequest):
     if content is None:
         raise HTTPException(status_code=404, detail=f"Document '{req.document_id}' not found or expired.")
 
-    return _service.anonymize(
+    result = _service.anonymize(
         content=content,
         entities=req.entities,
         document_id=req.document_id,
     )
+
+    log_event(
+        "document_anonymized",
+        req.document_id,
+        entity_count=len(req.entities),
+    )
+    return result

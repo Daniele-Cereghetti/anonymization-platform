@@ -1,16 +1,17 @@
-fastapi>=0.111.0
-uvicorn[standard]>=0.29.0
-pydantic>=2.7.0
-requests>=2.31.0
-python-multipart>=0.0.9
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+pydantic==2.12.5
+requests==2.33.1
+python-multipart==0.0.24
 
 # Modulo Conversione — document-to-markdown
-docling>=2.0.0
+docling==2.85.0
 
 # Modulo Identificazione — NER ibrido
-presidio-analyzer>=2.2.0
-spacy>=3.7.0
-lingua-language-detector>=2.0.0
+presidio-analyzer==2.2.362
+spacy==3.8.14
+lingua-language-detector==2.2.0
+
 # After installing, download the spaCy models for the languages you need:
 #   python -m spacy download it_core_news_sm   (Italian  — recommended)
 #   python -m spacy download en_core_web_sm    (English)

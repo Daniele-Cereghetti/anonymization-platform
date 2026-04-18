@@ -19,7 +19,7 @@ services:
             - CACHE_DIR=/tmp/anon_cache
             - CACHE_MAX_DISK_MB=500
         ports:
-            - "8000:8000"
+            - "127.0.0.1:8000:8000"
 
     frontend:
         image: nginx:alpine

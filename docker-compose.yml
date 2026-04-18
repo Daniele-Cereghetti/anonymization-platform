@@ -1,0 +1,31 @@
+volumes:
+    ollama_data:
+        driver: local
+
+services:
+    ollama:
+        image: alpine/ollama
+        volumes:
+            - ollama_data:/root/.ollama
+
+    backend:
+        image: "anon-platform-backend"
+        depends_on:
+            - ollama
+        environment:
+            - OLLAMA_BASE_URL=http://ollama:11434
+            - OLLAMA_MODEL=llama3.1:8b
+            - OLLAMA_TIMEOUT=120
+            - CACHE_DIR=/tmp/anon_cache
+            - CACHE_MAX_DISK_MB=500
+        ports:
+            - "8000:8000"
+
+    frontend:
+        image: nginx:alpine
+        volumes:
+            - ./frontend:/usr/share/nginx/html:ro
+        ports:
+            - "8080:80"
+        depends_on:
+            - backend

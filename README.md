@@ -167,6 +167,25 @@ Il frontend si aspetta il backend in ascolto su `http://localhost:8000`.
 
 ---
 
+## Utilizzo tramite docker
+Come prima cosa bisogna buildare il container del backend eseguendo questo comando:
+```
+cd backend
+docker build -t anon-platform-backend .
+```
+Successivamente per alzare tutto lo stack è sufficente usare il seguente comando:
+```
+docker compose up
+```
+Per le versioni vecchie di docker usare `docker-compose`
+
+Per spegnere lo stack invece bisogna scrivere:
+```
+docker compose down
+```
+
+---
+
 ## Architettura della pipeline `/extract`
 
 ```
@@ -263,7 +282,7 @@ Le variabili di configurazione possono essere sovrascritte tramite variabili d'a
 Esempio con modello alternativo:
 
 ```bash
-OLLAMA_MODEL=llama3.2:3b uvicorn main:app --reload
+OLLAMA_MODEL=llama3.2:1b uvicorn main:app --reload
 ```
 
 ---

@@ -19,6 +19,17 @@ class OllamaClient:
         self.model = model
         self.timeout = timeout
 
+    def pull_model(self) -> bool:
+        try:
+            r = requests.post(
+                f"{self.base_url}/api/pull",
+                json={ "model": self.model },
+            )
+            r.raise_for_status()
+            return True
+        except Exception:
+            return False
+
     def is_available(self) -> bool:
         try:
             r = requests.get(f"{self.base_url}/api/tags", timeout=5)

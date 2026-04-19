@@ -50,6 +50,7 @@ _DEFAULT_LANG = "it"
 _PRESIDIO_ENTITY_MAP: dict[str, tuple[EntityCategory, str]] = {
     "PERSON":         (EntityCategory.PERSONE_FISICHE,   "nome_cognome"),
     "ORGANIZATION":   (EntityCategory.PERSONE_GIURIDICHE, "nome_azienda"),
+    "IT_PARTITA_IVA": (EntityCategory.IDENTIFICATIVI,     "partita_iva"),
     "EMAIL_ADDRESS":  (EntityCategory.DATI_CONTATTO,     "email"),
     "PHONE_NUMBER":   (EntityCategory.DATI_CONTATTO,     "telefono"),
     "IBAN_CODE":      (EntityCategory.DATI_FINANZIARI,   "iban"),
@@ -219,6 +220,20 @@ def _load_presidio_analyzer():
                     score=_CH_AVS_NUMBER_SCORE,
                 )],
                 context=["avs", "ahv", "assicurazione", "previdenza"],
+            ))
+            registry.add_recognizer(PatternRecognizer(
+                supported_entity="IT_PARTITA_IVA",
+                name="ItPartitaIvaRecognizer",
+                supported_language=lang,
+                patterns=[Pattern(
+                    name="italian_partita_iva",
+                    regex=_IT_PARTITA_IVA_REGEX,
+                    score=_IT_PARTITA_IVA_SCORE,
+                )],
+                context=[
+                    "P.IVA", "P. IVA", "p.iva", "partita iva",
+                    "Partita IVA", "VAT", "codice IVA",
+                ],
             ))
 
         analyzer = AnalyzerEngine(
@@ -434,6 +449,84 @@ _IT_IDENTITY_CARD_ELECTRONIC_REGEX = r"\b[A-Z]{2}\d{5}[A-Z]{2}\b"  # CA12345AB (
 _IT_IDENTITY_CARD_ELECTRONIC_SCORE = 0.65                           # same confidence as paper ID
 _CH_AVS_NUMBER_REGEX = r"\b756\.\d{4}\.\d{4}\.\d{2}\b"           # 756.XXXX.XXXX.XX (Swiss AVS/AHV)
 _CH_AVS_NUMBER_SCORE = 0.85                                       # highly specific pattern
+_IT_PARTITA_IVA_REGEX = r"\b\d{11}\b"                             # 11-digit Italian P.IVA
+_IT_PARTITA_IVA_SCORE = 0.4                                       # low base — needs context boost
+
+# Corporate suffixes that unambiguously signal a legal entity (persona giuridica).
+# Covers Italian (S.r.l., S.p.A., S.a.s., S.n.c., S.c.r.l.), Swiss/German (SA, AG,
+# GmbH, Sagl), and international (Ltd, Inc., Corp., LLC, PLC).
+_CORPORATE_SUFFIX_RE = re.compile(
+    r"""(?x)
+    \b(?:
+        S\.?r\.?l\.?s?\.?  |   # Società a responsabilità limitata (+ Srls)
+        S\.?p\.?A\.?       |   # Società per Azioni
+        S\.?a\.?s\.?       |   # Società in accomandita semplice
+        S\.?n\.?c\.?       |   # Società in nome collettivo
+        S\.?c\.?r\.?l\.?   |   # Società cooperativa a r.l.
+        S\.?c\.?a\.?       |   # Società in accomandita per azioni
+        S\.?c\.?p\.?a\.?   |   # Società cooperativa per azioni
+        S\.?A\.?           |   # Société Anonyme (Swiss/French)
+        Sagl               |   # Società a garanzia limitata (Ticino)
+        GmbH               |   # Gesellschaft mit beschränkter Haftung
+        AG                 |   # Aktiengesellschaft
+        Ltd\.?             |   # Limited
+        Inc\.?             |   # Incorporated
+        Corp\.?            |   # Corporation
+        LLC                |   # Limited Liability Company
+        PLC                    # Public Limited Company
+    )(?:\b|\s|$|[,;.)])
+    """,
+    re.IGNORECASE,
+)
+
+# Contextual phrases that signal a nearby entity is a legal entity.
+_LEGAL_CONTEXT_PHRASES: list[str] = [
+    "sede legale", "ragione sociale", "denominazione sociale",
+    "registro imprese", "camera di commercio", "REA",
+    "capitale sociale", "legale rappresentante",
+    "P.IVA", "partita iva",
+]
+
+
+def _reclassify_legal_entities(
+    entities: list[Entity],
+    content: str,
+) -> list[Entity]:
+    """
+    Post-processing: reclassifies entities misidentified as persone_fisiche
+    when they contain a corporate suffix or appear near legal context phrases.
+    """
+    for entity in entities:
+        if entity.category != EntityCategory.PERSONE_FISICHE:
+            continue
+
+        # Signal 1: corporate suffix in the entity value itself
+        if _CORPORATE_SUFFIX_RE.search(entity.value):
+            entity.category = EntityCategory.PERSONE_GIURIDICHE
+            entity.entity_type = "nome_azienda"
+            logger.debug(
+                "Reclassified '%s' to persone_giuridiche (corporate suffix).",
+                entity.value,
+            )
+            continue
+
+        # Signal 2: entity value appears near a legal context phrase in the document
+        for phrase in _LEGAL_CONTEXT_PHRASES:
+            pattern = re.compile(
+                rf"(?:{re.escape(phrase)}).{{0,200}}{re.escape(entity.value)}"
+                rf"|{re.escape(entity.value)}.{{0,200}}(?:{re.escape(phrase)})",
+                re.IGNORECASE | re.DOTALL,
+            )
+            if pattern.search(content):
+                entity.category = EntityCategory.PERSONE_GIURIDICHE
+                entity.entity_type = "nome_azienda"
+                logger.debug(
+                    "Reclassified '%s' to persone_giuridiche (context: '%s').",
+                    entity.value, phrase,
+                )
+                break
+
+    return entities
 
 
 def _is_semantic_false_positive(
@@ -559,6 +652,7 @@ class IdentificationService:
         llm_entities = _run_llm_ner(content, categories, self.client)
 
         entities = _merge(ner_entities, llm_entities)
+        entities = _reclassify_legal_entities(entities, content)
 
         logger.debug(
             "Identification: lang=%s ner=%d llm=%d merged=%d",

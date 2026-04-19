@@ -32,9 +32,11 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no expla
 Available categories and entity_types:
   persone_fisiche   → nome_cognome | data_nascita | luogo_nascita | nazionalita
   persone_giuridiche → nome_azienda | nome_organizzazione
+                       (entities with suffixes like S.r.l., S.p.A., GmbH, SA, AG, Ltd, Inc.)
   dati_contatto     → email | telefono | indirizzo | cap_citta | url | profilo_social
   identificativi    → codice_fiscale | passaporto | patente | carta_identita |
-                      tessera_sanitaria | targa | numero_avs | numero_assicurazione
+                      tessera_sanitaria | targa | numero_avs | numero_assicurazione |
+                      partita_iva
   dati_finanziari   → iban | numero_carta | conto_bancario | bic_swift
   dati_temporali    → data_nascita | data_contratto | data_evento | scadenza
 
@@ -42,7 +44,10 @@ Rules:
   - Copy values EXACTLY as they appear (preserve formatting, spaces, punctuation).
   - Do NOT invent or paraphrase values.
   - Do NOT include generic words that are not PII.
-  - If the same value appears multiple times, include it only once.\
+  - If the same value appears multiple times, include it only once.
+  - Entities containing corporate suffixes (S.r.l., S.p.A., GmbH, SA, AG, Ltd, Inc., etc.)
+    are ALWAYS persone_giuridiche/nome_azienda, never persone_fisiche.
+  - "P.IVA" or "Partita IVA" followed by 11 digits is identificativi/partita_iva.\
 """
 
 

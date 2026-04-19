@@ -56,6 +56,7 @@ _TYPE_PLACEHOLDER: dict[str, str] = {
     "targa":            "TARGA",
     "numero_avs":       "AVS",
     "partita_iva":      "PARTITA_IVA",
+    "numero_licenza":   "LICENZA",
     "data_nascita":     "DATA_NASCITA",
     "data_contratto":   "DATA_CONTRATTO",
     "data_evento":      "DATA",
@@ -92,11 +93,32 @@ class AnonymizationService:
     ) -> AnonymizationResult:
         start = time.monotonic()
 
-        # Deduplicate and sort longest-first to avoid partial replacements
+        # Deduplicate and sort longest-first to avoid partial replacements.
+        # Two entities are considered duplicates when they share the same
+        # entity_type and one value is a substring of the other (e.g.
+        # "Marta Bianchi\n-" and "Marta Bianchi").  In that case only the
+        # *clean* (shorter) value is kept so the replacement doesn't destroy
+        # surrounding formatting.
         seen: set = set()
         unique: List[Entity] = []
         for e in sorted(entities, key=lambda x: len(x.value), reverse=True):
-            if e.value not in seen:
+            if e.value in seen:
+                continue
+            # Check if a shorter entity of the same type is a substring of
+            # this one — if so, prefer the shorter (cleaner) value.
+            dominated = False
+            for prev in unique:
+                if prev.entity_type == e.entity_type:
+                    if e.value.lower() in prev.value.lower():
+                        # Already covered by a longer entity kept earlier.
+                        dominated = True
+                        break
+                    if prev.value.lower() in e.value.lower():
+                        # This longer value subsumes an already-kept shorter
+                        # one — skip it and keep the shorter version.
+                        dominated = True
+                        break
+            if not dominated:
                 seen.add(e.value)
                 unique.append(e)
 

@@ -30,18 +30,33 @@ You are a document analysis expert specialised in privacy and anonymisation.
 Given a document and a list of person / organisation entities, assign a single
 contextual role to each entity based on the role they play in the document.
 
+Step 1 — Identify the document type (e.g. CV/resume, rental contract, medical
+record, employment contract, invoice, legal complaint, letter, etc.).
+Step 2 — Assign a role to each entity that reflects its function in this
+specific document type.
+
 Use lowercase Italian role names (underscores allowed, no spaces):
 
 For persons (persone_fisiche):
-  paziente, medico, dottore, infermiere, avvocato, giudice, notaio,
+  candidato, paziente, medico, dottore, infermiere, avvocato, giudice, notaio,
   fornitore, compratore, venditore, locatore, conduttore, datore_lavoro,
-  dipendente, candidato, recruiter, testimone, richiedente, beneficiario,
+  dipendente, recruiter, testimone, richiedente, beneficiario,
   consulente, dirigente, amministratore, rappresentante_legale, controparte
+
+  Common document-type mappings:
+    - CV / resume → the subject person is "candidato"
+    - Medical record → the subject person is "paziente"
+    - Rental contract → "locatore" and "conduttore"
+    - Employment contract → "dipendente" and "datore_lavoro"
 
 For organisations (persone_giuridiche):
   azienda_fornitrice, azienda_cliente, banca, ente_pubblico, ospedale,
   clinica, studio_legale, studio_notarile, assicurazione, agenzia_immobiliare,
   societa_datrice_lavoro, societa_appaltatrice, fondo_pensione, ente_formazione
+
+  Common document-type mappings:
+    - CV / resume → the employer is "societa_datrice_lavoro", a university is "ente_formazione"
+    - Invoice → "azienda_fornitrice" and "azienda_cliente"
 
 Return ONLY a valid JSON object (no markdown, no explanation):
 {
@@ -53,7 +68,8 @@ Return ONLY a valid JSON object (no markdown, no explanation):
 Rules:
   - Include ONLY entities from the provided list.
   - Use the EXACT value as provided.
-  - If the role cannot be determined from context, use "persona" or "organizzazione".
+  - Prefer a specific role over a generic one.  Use "persona" or "organizzazione"
+    ONLY when the document truly provides no contextual clue.
   - Never invent entities not in the list.\
 """
 

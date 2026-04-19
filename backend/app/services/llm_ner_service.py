@@ -16,7 +16,7 @@ from ..infrastructure.llm.ollama_client import OllamaClient
 _SYSTEM_PROMPT = """\
 You are a privacy expert specialised in identifying personally identifiable information (PII).
 Analyse the provided document — which may be in Italian, English, French, or German — and
-extract all sensitive entities.
+extract ALL sensitive entities.  Be thorough: scan every section of the document.
 
 Return ONLY a valid JSON object with this exact structure (no markdown, no explanation):
 {
@@ -29,26 +29,60 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no expla
   ]
 }
 
-Available categories and entity_types:
-  persone_fisiche   → nome_cognome | data_nascita | luogo_nascita | nazionalita
+Available categories and their EXACT entity_type values (use only these names):
+  persone_fisiche    → nome_cognome | data_nascita | luogo_nascita | nazionalita
   persone_giuridiche → nome_azienda | nome_organizzazione
-                       (entities with suffixes like S.r.l., S.p.A., GmbH, SA, AG, Ltd, Inc.)
-  dati_contatto     → email | telefono | indirizzo | cap_citta | url | profilo_social
-  identificativi    → codice_fiscale | passaporto | patente | carta_identita |
-                      tessera_sanitaria | targa | numero_avs | numero_assicurazione |
-                      partita_iva
-  dati_finanziari   → iban | numero_carta | conto_bancario | bic_swift
-  dati_temporali    → data_nascita | data_contratto | data_evento | scadenza
+  dati_contatto      → email | telefono | indirizzo | cap_citta | url | profilo_social
+  identificativi     → codice_fiscale | passaporto | patente | carta_identita |
+                       tessera_sanitaria | targa | numero_avs | numero_assicurazione |
+                       partita_iva | numero_licenza
+  dati_finanziari    → iban | numero_carta | conto_bancario | bic_swift
+  dati_temporali     → data_nascita | data_contratto | data_evento | scadenza
 
 Rules:
   - Copy values EXACTLY as they appear (preserve formatting, spaces, punctuation).
+  - The value must contain ONLY the entity text itself.  Never include surrounding
+    markdown syntax (* _ # -), list markers, newlines, or adjacent labels.
   - Do NOT invent or paraphrase values.
   - Do NOT include generic words that are not PII.
+  - Do NOT extract standalone city or country names (e.g. "Milano", "Italia") when they
+    are already part of a full address you have extracted.
   - If the same value appears multiple times, include it only once.
+  - Extract ALL person names, ALL company/organisation names, and ALL addresses in the
+    document, not only the primary/main ones.
+  - Universities, hospitals, law firms, courts, and public institutions are
+    persone_giuridiche/nome_organizzazione.
   - Entities containing corporate suffixes (S.r.l., S.p.A., GmbH, SA, AG, Ltd, Inc., etc.)
     are ALWAYS persone_giuridiche/nome_azienda, never persone_fisiche.
-  - "P.IVA" or "Partita IVA" followed by 11 digits is identificativi/partita_iva.\
+  - License IDs, certificate numbers, and registration numbers are
+    identificativi/numero_licenza.
+  - "P.IVA" or "Partita IVA" followed by 11 digits is identificativi/partita_iva.
+  - Use ONLY the entity_type names listed above.  Do not use synonyms or variations
+    (e.g. use "targa" not "targa_auto", use "carta_identita" not "documento_identità").\
 """
+
+
+# Map non-canonical entity_type names the LLM may produce to canonical values.
+_TYPE_ALIASES: dict[str, str] = {
+    "targa_auto": "targa",
+    "documento_identità": "carta_identita",
+    "documento_identita": "carta_identita",
+    "carta_di_identita": "carta_identita",
+    "carta_di_identità": "carta_identita",
+    "numero_telefono": "telefono",
+    "indirizzo_email": "email",
+}
+
+
+def _clean_value(raw_value: str) -> str:
+    """Strip markdown artifacts, newlines, and surrounding punctuation from an
+    entity value extracted by the LLM."""
+    # Collapse newlines and everything after them (the LLM sometimes grabs the
+    # next list-item marker, e.g. "Marta Bianchi\n-").
+    value = re.sub(r"[\n\r]+.*", "", raw_value)
+    # Strip leading/trailing whitespace, markdown markers, and list bullets.
+    value = value.strip().strip("-*_#").strip()
+    return value
 
 
 def _parse(raw: str, allowed_categories: List[str]) -> List[Entity]:
@@ -67,11 +101,16 @@ def _parse(raw: str, allowed_categories: List[str]) -> List[Entity]:
             cat = EntityCategory(item.get("category", ""))
             if allowed_categories and cat.value not in allowed_categories:
                 continue
+            value = _clean_value(item["value"])
+            if not value:
+                continue
+            etype = item.get("entity_type", "unknown")
+            etype = _TYPE_ALIASES.get(etype, etype)
             entities.append(
                 Entity(
-                    value=item["value"],
+                    value=value,
                     category=cat,
-                    entity_type=item.get("entity_type", "unknown"),
+                    entity_type=etype,
                 )
             )
         except (ValueError, KeyError):

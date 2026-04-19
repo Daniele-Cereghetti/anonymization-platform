@@ -588,6 +588,36 @@ def _overlaps(val_a: str, val_b: str) -> bool:
     return a in b or b in a
 
 
+def _dedup_ner(ner_entities: List[Entity]) -> List[Entity]:
+    """Deduplicate NER entities by (lowered value, entity_type), keeping the
+    highest-confidence instance.  Presidio can return the same span text many
+    times (e.g. "Milano" for every occurrence in the document)."""
+    best: dict[tuple[str, str], Entity] = {}
+    for e in ner_entities:
+        key = (e.value.lower(), e.entity_type)
+        prev = best.get(key)
+        if prev is None or (e.confidence or 0) > (prev.confidence or 0):
+            best[key] = e
+    return list(best.values())
+
+
+def _is_standalone_location(ner_ent: Entity, llm_entities: List[Entity]) -> bool:
+    """Returns True if *ner_ent* is a single-word location (city/country) that
+    is already contained in a longer LLM address or place-of-birth entity.
+    These standalone fragments cause over-anonymization when replaced globally."""
+    if ner_ent.entity_type != "indirizzo":
+        return False
+    # A standalone location is typically a single word (no comma, no number).
+    stripped = ner_ent.value.strip()
+    if "," in stripped or any(ch.isdigit() for ch in stripped):
+        return False
+    for llm_ent in llm_entities:
+        if llm_ent.entity_type in ("indirizzo", "luogo_nascita", "cap_citta"):
+            if stripped.lower() in llm_ent.value.lower() and stripped.lower() != llm_ent.value.lower():
+                return True
+    return False
+
+
 def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entity]:
     """
     LLM entities take precedence.
@@ -598,7 +628,12 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
     Semantic NER entities (person, org, location) are added ONLY when the LLM
     found an overlapping entity — spaCy's model can produce false positives on
     sentence-initial capitalised words, so LLM confirmation is required.
+
+    Before merging, NER entities are deduplicated by value to avoid adding the
+    same span multiple times. Standalone city/country names already covered by
+    a longer LLM address are also dropped to prevent over-anonymization.
     """
+    ner_entities = _dedup_ner(ner_entities)
     merged = list(llm_entities)
 
     for ner_ent in ner_entities:
@@ -607,6 +642,14 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
         if ner_ent.entity_type in _SEMANTIC_NER_TYPES:
             # Semantic: only add if the LLM independently confirmed it.
             if overlapping_llm:
+                # Drop standalone locations already covered by a longer LLM entity.
+                if _is_standalone_location(ner_ent, llm_entities):
+                    logger.debug(
+                        "Dropping standalone location '%s' — already covered by "
+                        "a longer LLM address.",
+                        ner_ent.value,
+                    )
+                    continue
                 ner_ent.source = "merged"
                 merged.append(ner_ent)
             else:

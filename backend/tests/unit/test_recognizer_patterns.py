@@ -10,6 +10,7 @@ from app.services.identification_service import (
     _IT_IDENTITY_CARD_ELECTRONIC_REGEX,
     _IT_IDENTITY_CARD_REGEX,
     _IT_LICENSE_PLATE_REGEX,
+    _IT_PARTITA_IVA_REGEX,
 )
 
 
@@ -137,3 +138,23 @@ class TestFiscalCode:
 
     def test_invalid_all_digits(self):
         assert _IT_FISCAL_CODE_RE.match("1234567890123456") is None
+
+
+# ---- Italian Partita IVA: 11 digits ----
+
+_PIVA_RE = re.compile(_IT_PARTITA_IVA_REGEX)
+
+
+class TestPartitaIva:
+    def test_valid_11_digits(self):
+        assert _PIVA_RE.search("01234567890")
+
+    def test_valid_in_sentence(self):
+        assert _PIVA_RE.search("P.IVA 01234567890 della società")
+
+    def test_invalid_10_digits(self):
+        assert _PIVA_RE.search("0123456789") is None
+
+    def test_invalid_12_digits_no_boundary(self):
+        # 12 consecutive digits — no word boundary at position 11
+        assert _PIVA_RE.search("012345678901") is None

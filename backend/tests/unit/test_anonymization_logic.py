@@ -109,3 +109,11 @@ class TestBracketedLabels:
         result = _build_replacement(ent, counters)
 
         assert result == "[DATA_NASCITA_1]"
+
+    def test_partita_iva_type_placeholder(self):
+        counters: defaultdict[str, int] = defaultdict(int)
+        ent = _ent("01234567890", "partita_iva", EntityCategory.IDENTIFICATIVI)
+
+        result = _build_replacement(ent, counters)
+
+        assert result == "[PARTITA_IVA_1]"

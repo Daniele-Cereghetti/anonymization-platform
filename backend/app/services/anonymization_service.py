@@ -55,6 +55,7 @@ _TYPE_PLACEHOLDER: dict[str, str] = {
     "tessera_sanitaria":"TESSERA_SANITARIA",
     "targa":            "TARGA",
     "numero_avs":       "AVS",
+    "partita_iva":      "PARTITA_IVA",
     "data_nascita":     "DATA_NASCITA",
     "data_contratto":   "DATA_CONTRATTO",
     "data_evento":      "DATA",

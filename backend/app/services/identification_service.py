@@ -302,6 +302,11 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
         if mapping is None:
             continue
         value = content[result.start:result.end].strip()
+        # spaCy spans sometimes bleed into adjacent markdown tokens
+        # (e.g. "Marta Bianchi\n-" where "\n-" is a list marker).
+        # Strip trailing newlines + markdown punctuation that are not
+        # part of the actual entity value.
+        value = re.sub(r"[\s\-\*\|—–:]+$", "", value)
         if not value:
             continue
 

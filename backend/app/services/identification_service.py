@@ -693,8 +693,14 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                     ner_ent.value, ner_ent.entity_type,
                 )
         else:
-            # Structural: add if not already covered by the LLM.
-            if not overlapping_llm:
+            # Structural: add unless a same-type LLM entity already covers it.
+            # A blob LLM entity (e.g. an address+email+phone lumped into one
+            # nome_organizzazione) should NOT suppress individually-detected
+            # structural entities like emails or phone numbers.
+            same_type_overlap = any(
+                e.entity_type == ner_ent.entity_type for e in overlapping_llm
+            )
+            if not same_type_overlap:
                 ner_ent.source = "merged"
                 merged.append(ner_ent)
 

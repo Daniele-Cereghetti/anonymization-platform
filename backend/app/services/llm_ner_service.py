@@ -45,6 +45,9 @@ Rules:
     markdown syntax (* _ # -), list markers, newlines, or adjacent labels.
   - Do NOT invent or paraphrase values.
   - Do NOT include generic words that are not PII.
+  - Each entity must contain exactly ONE piece of PII.  Never combine multiple
+    data points (e.g. address + email + phone) into a single entity value —
+    extract each one as a separate entity.
   - Do NOT extract standalone city or country names (e.g. "Milano", "Italia") when they
     are already part of a full address you have extracted.
   - If the same value appears multiple times, include it only once.

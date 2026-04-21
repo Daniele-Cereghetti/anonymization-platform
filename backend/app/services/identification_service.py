@@ -389,12 +389,14 @@ _NER_DENY_LIST: dict[str, frozenset[str]] = {
         "agile", "scrum", "lean", "kanban", "pmp",
         # Acronyms / cross-language field labels
         "wms", "pmo", "iban",
+        # Document-type labels (Latin, used across all languages)
+        "curriculum vitae",
     }),
     "it": frozenset({
         # CV / form field labels
         "nome", "cognome", "indirizzo", "telefono", "email", "sede", "iban",
         "documento", "linkedin", "formazione", "standardizzazione", "supporto",
-        "riferimenti", "codice fiscale", "profilo", "curriculum vitae",
+        "riferimenti", "codice fiscale", "profilo",
         "competenze", "esperienza", "disponibili", "certificazioni", "contatti",
         "dati personali",
         # Contract / legal section headers

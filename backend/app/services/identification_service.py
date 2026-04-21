@@ -340,6 +340,18 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
             )
             continue
 
+        # Filter NRP (National Registration/ID) false positives.
+        # spaCy's NRP recognizer is statistical, not regex-based, and
+        # frequently tags common words (e.g. "dans" in FR, "Messen" in DE)
+        # as national IDs.  Only keep NRP entities that match the Italian
+        # fiscal code pattern (16 alphanumeric characters).
+        if result.entity_type == "NRP" and not _IT_FISCAL_CODE_RE.match(value):
+            logger.debug(
+                "Filtered NRP false positive '%s' — does not match "
+                "fiscal code pattern.", value,
+            )
+            continue
+
         entities.append(
             Entity(
                 value=value,
@@ -700,6 +712,22 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                         ner_ent.value, ner_ent.entity_type,
                     )
                     continue
+                # Drop NER entity when the LLM found the exact same value
+                # but classified it in a different category.  The LLM's
+                # semantic classification is more reliable than spaCy's
+                # statistical NER (e.g. spaCy tags "Marta Bianchi" as
+                # ORGANIZATION while the LLM correctly identifies it as
+                # a person name).
+                exact_llm = [e for e in overlapping_llm
+                             if e.value.lower().strip() == ner_ent.value.lower().strip()]
+                if exact_llm and all(e.category != ner_ent.category for e in exact_llm):
+                    logger.debug(
+                        "Dropping NER entity '%s' (%s/%s) — LLM classified "
+                        "same value as %s/%s.",
+                        ner_ent.value, ner_ent.category.value, ner_ent.entity_type,
+                        exact_llm[0].category.value, exact_llm[0].entity_type,
+                    )
+                    continue
                 ner_ent.source = "merged"
                 merged.append(ner_ent)
             else:
@@ -717,6 +745,20 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                 e.entity_type == ner_ent.entity_type for e in overlapping_llm
             )
             if not same_type_overlap:
+                # Suppress URL fragments that are substrings of an email
+                # entity already found by the LLM (e.g. "example.com" or
+                # "marta.bi" extracted from "marta.bianchi88@example.com").
+                if ner_ent.entity_type == "url" and any(
+                    e.entity_type == "email"
+                    and ner_ent.value.lower() in e.value.lower()
+                    for e in overlapping_llm
+                ):
+                    logger.debug(
+                        "Dropping URL fragment '%s' — substring of LLM "
+                        "email entity.",
+                        ner_ent.value,
+                    )
+                    continue
                 ner_ent.source = "merged"
                 merged.append(ner_ent)
 

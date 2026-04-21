@@ -50,6 +50,8 @@ Rules:
   - If the same value appears multiple times, include it only once.
   - Extract ALL person names, ALL company/organisation names, and ALL addresses in the
     document, not only the primary/main ones.
+  - Pay special attention to employment/experience sections: extract the employer name
+    and address for EVERY job listed, including past positions — not just the current one.
   - Universities, hospitals, law firms, courts, and public institutions are
     persone_giuridiche/nome_organizzazione.
   - Entities containing corporate suffixes (S.r.l., S.p.A., GmbH, SA, AG, Ltd, Inc., etc.)

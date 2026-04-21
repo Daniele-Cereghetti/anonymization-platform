@@ -625,6 +625,24 @@ def _is_standalone_location(ner_ent: Entity, llm_entities: List[Entity]) -> bool
     return False
 
 
+def _is_fragment_misclassification(
+    ner_ent: Entity,
+    overlapping_llm: List[Entity],
+) -> bool:
+    """Returns True if *ner_ent* is a strict substring of an overlapping LLM
+    entity that belongs to a different category.
+
+    Example: spaCy tags "Viale Monza" as PERSON (nome_cognome), but the LLM
+    found "Viale Monza 220, 20125 Milan" as an address.  The NER entity is
+    just a fragment of the address, not a real person — it should be dropped."""
+    ner_low = ner_ent.value.strip().lower()
+    for llm_ent in overlapping_llm:
+        if llm_ent.category != ner_ent.category:
+            if ner_low in llm_ent.value.lower() and ner_low != llm_ent.value.lower():
+                return True
+    return False
+
+
 def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entity]:
     """
     LLM entities take precedence.
@@ -655,6 +673,15 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                         "Dropping standalone location '%s' — already covered by "
                         "a longer LLM address.",
                         ner_ent.value,
+                    )
+                    continue
+                # Drop fragments misclassified by spaCy (e.g. a street name
+                # tagged as PERSON that is really part of an LLM address).
+                if _is_fragment_misclassification(ner_ent, overlapping_llm):
+                    logger.debug(
+                        "Dropping fragment '%s' (%s) — substring of a "
+                        "different-category LLM entity.",
+                        ner_ent.value, ner_ent.entity_type,
                     )
                     continue
                 ner_ent.source = "merged"

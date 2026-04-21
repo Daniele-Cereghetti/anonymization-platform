@@ -330,6 +330,16 @@ def _run_presidio(content: str, allowed_categories: List[str], lang: str) -> Lis
                 value, result.entity_type,
             )
             continue
+
+        # Filter generic temporal expressions (e.g. "8 years", "monthly",
+        # "Christmas") that are not PII.  Only keep DATE_TIME entities
+        # that contain a recognisable date pattern (dd/mm/yyyy, etc.).
+        if result.entity_type == "DATE_TIME" and not _SPECIFIC_DATE_RE.search(value):
+            logger.debug(
+                "Filtered generic temporal expression '%s'.", value,
+            )
+            continue
+
         entities.append(
             Entity(
                 value=value,
@@ -438,6 +448,12 @@ _NER_DENY_LIST: dict[str, frozenset[str]] = {
 # a fragment and should be dropped.
 _PARTIAL_IBAN_RE = re.compile(r"^[A-Z]{2}\d{2}[\sA-Z0-9]*$")
 _IBAN_MIN_LEN_NO_SPACES = 15
+
+# A DATE_TIME value is considered a *specific* date (potential PII) only when it
+# contains a numeric date pattern (dd/mm/yyyy, dd-mm-yyyy, yyyy-mm-dd, etc.).
+# Generic temporal expressions ("8 years", "monthly", "Christmas", "2024") are
+# filtered out — they are not personally identifiable.
+_SPECIFIC_DATE_RE = re.compile(r"\d{2,4}[/\-\.]\d{2}")
 
 # Regex to detect Italian fiscal codes (16 chars: 6 letters + 2 digits + letter + 2 digits
 # + letter + 3 digits + letter) misclassified by spaCy as PERSON.

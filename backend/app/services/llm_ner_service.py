@@ -109,6 +109,12 @@ def _parse(raw: str, allowed_categories: List[str]) -> List[Entity]:
             value = _clean_value(item["value"])
             if not value:
                 continue
+            # Reject bundled entities: the LLM sometimes lumps multiple
+            # data points (address + email + phone) into a single value.
+            # A valid single entity should not exceed 120 chars or contain
+            # both '@' and '|' (signal of concatenated contact info).
+            if len(value) > 120 or ("@" in value and "|" in value):
+                continue
             etype = item.get("entity_type", "unknown")
             etype = _TYPE_ALIASES.get(etype, etype)
             entities.append(

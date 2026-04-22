@@ -768,6 +768,23 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
     return merged
 
 
+def _validate_codice_fiscale(entities: List[Entity]) -> List[Entity]:
+    """Drop any codice_fiscale entity whose value does not match the Italian
+    fiscal code pattern (16 alphanumeric chars).  Catches false positives that
+    slip through the NRP filter — e.g. German words like 'Messen' or French
+    prepositions like 'dans' that spaCy tags as NRP."""
+    out: List[Entity] = []
+    for e in entities:
+        if e.entity_type == "codice_fiscale" and not _IT_FISCAL_CODE_RE.match(e.value.strip()):
+            logger.debug(
+                "Dropped invalid codice_fiscale '%s' — does not match "
+                "fiscal code pattern.", e.value,
+            )
+            continue
+        out.append(e)
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Public interface
 # ---------------------------------------------------------------------------
@@ -797,6 +814,7 @@ class IdentificationService:
 
         entities = _merge(ner_entities, llm_entities)
         entities = _reclassify_legal_entities(entities, content)
+        entities = _validate_codice_fiscale(entities)
 
         logger.debug(
             "Identification: lang=%s ner=%d llm=%d merged=%d",

@@ -712,6 +712,24 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                         ner_ent.value, ner_ent.entity_type,
                     )
                     continue
+                # Drop NER entity when it is a strict substring of a
+                # same-type LLM entity (e.g. NER "Via delle Magnolie 12"
+                # vs LLM "Via delle Magnolie 12, 20133 Milano").
+                # These create redundant anonymization mappings.
+                ner_low = ner_ent.value.strip().lower()
+                is_same_type_substr = any(
+                    e.entity_type == ner_ent.entity_type
+                    and ner_low != e.value.strip().lower()
+                    and ner_low in e.value.strip().lower()
+                    for e in overlapping_llm
+                )
+                if is_same_type_substr:
+                    logger.debug(
+                        "Dropping NER fragment '%s' (%s) — strict substring "
+                        "of a same-type LLM entity.",
+                        ner_ent.value, ner_ent.entity_type,
+                    )
+                    continue
                 # Drop NER entity when the LLM found the exact same value
                 # but classified it in a different category.  The LLM's
                 # semantic classification is more reliable than spaCy's
@@ -791,6 +809,63 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
     return merged
 
 
+# ---------------------------------------------------------------------------
+# Regex-based extraction of educational / public institutions
+# ---------------------------------------------------------------------------
+# The LLM inconsistently extracts universities and public institutions across
+# languages.  This regex catches well-known naming patterns so they are not
+# left un-anonymised.
+
+_INSTITUTION_RE = re.compile(
+    r"(?:"
+    # Italian: Politecnico di ..., Università di/degli/delle/del ...
+    r"(?:Politecnico|Universit[àa])\s+(?:di|degli|delle|del)\s+[\w]+"
+    r"|"
+    # English: University of ..., ... University
+    r"University\s+of\s+[\w]+"
+    r"|"
+    r"[\w]+\s+University"
+    r"|"
+    # French: Université de/d'/du ...
+    r"Universit[ée]\s+(?:de|d'|du)\s+[\w]+"
+    r"|"
+    # German: Universität ..., Technische Universität ...
+    r"(?:Technische\s+)?Universit[äa]t\s+[\w]+"
+    r"|"
+    # German: Hochschule, Fachhochschule
+    r"(?:Fach)?[Hh]ochschule\s+[\w]+"
+    r")",
+)
+
+
+def _extract_institutions(
+    content: str,
+    existing: List[Entity],
+) -> List[Entity]:
+    """Find educational institutions via regex that the LLM may have missed."""
+    existing_lower = {e.value.lower() for e in existing}
+    added: List[Entity] = []
+    for m in _INSTITUTION_RE.finditer(content):
+        value = m.group().strip()
+        if value.lower() in existing_lower:
+            continue
+        # Avoid adding if it's a substring of an existing entity
+        if any(value.lower() in ev for ev in existing_lower):
+            continue
+        existing_lower.add(value.lower())
+        added.append(
+            Entity(
+                value=value,
+                category=EntityCategory.PERSONE_GIURIDICHE,
+                entity_type="nome_organizzazione",
+                confidence=0.9,
+                source="regex",
+            )
+        )
+        logger.debug("Extracted institution '%s' via regex.", value)
+    return added
+
+
 def _validate_codice_fiscale(entities: List[Entity]) -> List[Entity]:
     """Drop any codice_fiscale entity whose value does not match the Italian
     fiscal code pattern (16 alphanumeric chars).  Catches false positives that
@@ -838,6 +913,7 @@ class IdentificationService:
         entities = _merge(ner_entities, llm_entities)
         entities = _reclassify_legal_entities(entities, content)
         entities = _validate_codice_fiscale(entities)
+        entities.extend(_extract_institutions(content, entities))
 
         logger.debug(
             "Identification: lang=%s ner=%d llm=%d merged=%d",

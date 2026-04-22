@@ -70,7 +70,12 @@ Rules:
   - Use the EXACT value as provided.
   - Prefer a specific role over a generic one.  Use "persona" or "organizzazione"
     ONLY when the document truly provides no contextual clue.
-  - Never invent entities not in the list.\
+  - Never invent entities not in the list.
+  - The document may be in any language (Italian, English, French, German).
+    Always use the ITALIAN role names listed above, regardless of the document language.
+  - CRITICAL: follow the document-type mappings strictly.  The main subject of a
+    CV / resume is ALWAYS "candidato" — never "dipendente", "paziente", or other roles.
+    "dipendente" is only for employment contracts, "paziente" is only for medical records.\
 """
 
 

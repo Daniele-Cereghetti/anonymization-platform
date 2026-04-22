@@ -1,0 +1,323 @@
+{
+  "run_id": "fe2f5ca4-123f-4340-89d9-6cd7a86d63c4",
+  "timestamp": "2026-04-22T07:57:30.579610Z",
+  "document": "01_CV_IT.md",
+  "document_id": "f4d5361e-934b-4213-8479-0aafa752c903",
+  "model": "llama3.1:8b",
+  "char_count": 2123,
+  "status": "success",
+  "extraction": {
+    "entities_count": 23,
+    "processing_time_ms": 200204,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "Milano (MI), Italia",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "FP123XY",
+        "category": "dati_contatto",
+        "entity_type": "targa",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "Acme S.p.A.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "Via Torino 101, 20123 Milano",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "hr@acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "+39 02 1234 5678",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "value": "Delta S.r.l.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "Viale Monza 220, 20125 Milano",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento"
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "confidence": 0.95,
+        "source": "merged",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "candidato"
+      },
+      {
+        "value": "Via delle Magnolie 12",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "persona"
+      },
+      {
+        "value": "Delta S.r.l",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null
+      },
+      {
+        "value": "Viale Monza 220",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_cliente"
+      },
+      {
+        "value": "10/02/2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.6,
+        "source": "merged",
+        "semantic_role": "documento"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 18,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Milano (MI), Italia",
+        "replacement": "[INDIRIZZO_PERSONA_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "https://www.linkedin.com/in/marta-bianchi",
+        "replacement": "[CONTATTO_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban"
+      },
+      {
+        "original": "Viale Monza 220, 20125 Milano",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "Via Torino 101, 20123 Milano",
+        "replacement": "[INDIRIZZO_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[EMAIL_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "Milano (MI), Italia",
+        "replacement": "persona1",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[TELEFONO_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "hr@acme-italia.it",
+        "replacement": "[EMAIL_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "email"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[CODICE_FISCALE_PERSONA_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale"
+      },
+      {
+        "original": "+39 02 1234 5678",
+        "replacement": "[TELEFONO_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "candidato1",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome"
+      },
+      {
+        "original": "Delta S.r.l.",
+        "replacement": "azienda_cliente1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[CARTA_IDENTITA_PERSONA_1]",
+        "category": "identificativi",
+        "entity_type": "carta_identita"
+      },
+      {
+        "original": "Acme S.p.A.",
+        "replacement": "azienda_fornitrice1",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "persona2",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita"
+      },
+      {
+        "original": "10/02/2024",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[TARGA_PERSONA_1]",
+        "category": "dati_contatto",
+        "entity_type": "targa"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — candidato1\n\n## Dati personali\n- **Nome e Cognome**: candidato1\n- **Data di nascita**: persona2\n- **Luogo di nascita**: persona1\n- **Indirizzo**: [INDIRIZZO_PERSONA_1]\n- **Telefono**: [TELEFONO_CANDIDATO_1]\n- **Email**: [EMAIL_CANDIDATO_1]\n- **Codice Fiscale**: [CODICE_FISCALE_PERSONA_1]\n- **LinkedIn**: [CONTATTO_CANDIDATO_1]\n- **Targa Auto**: [TARGA_PERSONA_1]\n\n## Profilo\nProject Manager con oltre **8 anni** di esperienza in e‑commerce e logistica. Ho guidato team cross‑funzionali fino a 12 persone, con budget superiori a **€ 1,2M**. Credo nella comunicazione chiara, nei K"
+  },
+  "error": null
+}

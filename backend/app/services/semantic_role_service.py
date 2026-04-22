@@ -27,6 +27,99 @@ logger = logging.getLogger(__name__)
 
 _ROLE_CATEGORIES = {EntityCategory.PERSONE_FISICHE, EntityCategory.PERSONE_GIURIDICHE}
 
+# ---------------------------------------------------------------------------
+# Document-type detection and role validation
+# ---------------------------------------------------------------------------
+
+# Patterns that identify a CV / resume (checked against the first 500 chars).
+_CV_PATTERNS = re.compile(
+    r"curriculum\s+vitae|(?:^|\s)CV(?:\s|$|\b)|resume|lebenslauf|"
+    r"données\s+personnelles|personal\s+data|dati\s+personali|persönliche\s+daten",
+    re.IGNORECASE,
+)
+
+# Patterns that identify a medical record.
+_MEDICAL_PATTERNS = re.compile(
+    r"cartella\s+clinica|medical\s+record|dossier\s+m[ée]dical|krankenakte|"
+    r"anamnesi|diagnosi|ricovero|paziente\s*:",
+    re.IGNORECASE,
+)
+
+# Roles that are ONLY valid for specific document types.
+# If a role appears outside its allowed context, it is remapped.
+_ROLE_CONSTRAINTS: dict[str, dict] = {
+    "cv": {
+        # In a CV, "paziente" is never correct — remap to "candidato"
+        "paziente": "candidato",
+        "medico": "candidato",
+        "infermiere": "candidato",
+    },
+    "medical": {
+        # In a medical record, "candidato" is never correct
+        "candidato": "paziente",
+    },
+}
+
+
+def _detect_doc_type(content: str) -> str | None:
+    """Heuristic document-type detection from the first 500 characters."""
+    head = content[:500]
+    if _CV_PATTERNS.search(head):
+        return "cv"
+    if _MEDICAL_PATTERNS.search(head):
+        return "medical"
+    return None
+
+
+def _validate_roles(
+    entities: list[Entity],
+    doc_type: str | None,
+) -> None:
+    """Correct roles that are invalid for the detected document type."""
+    if doc_type is None:
+        return
+    constraints = _ROLE_CONSTRAINTS.get(doc_type)
+    if not constraints:
+        return
+    for entity in entities:
+        if entity.category not in _ROLE_CATEGORIES:
+            continue
+        if entity.semantic_role and entity.semantic_role in constraints:
+            old_role = entity.semantic_role
+            entity.semantic_role = constraints[old_role]
+            logger.debug(
+                "Role validation: corrected '%s' role from '%s' to '%s' "
+                "(doc_type=%s).",
+                entity.value, old_role, entity.semantic_role, doc_type,
+            )
+
+
+def _propagate_roles(entities: list[Entity]) -> None:
+    """Propagate semantic_role from resolved entities to unresolved ones that
+    share the same entity_type and whose value is a substring match.
+
+    Handles cases where NER produces a slightly different surface form than the
+    LLM (e.g. "Delta S.r.l" vs "Delta S.r.l.") and the ownership lookup
+    misses the match.
+    """
+    resolved = [e for e in entities if e.semantic_role]
+    for entity in entities:
+        if entity.semantic_role:
+            continue
+        e_low = entity.value.strip().lower().rstrip(".")
+        for donor in resolved:
+            if donor.entity_type != entity.entity_type:
+                continue
+            d_low = donor.value.strip().lower().rstrip(".")
+            if e_low in d_low or d_low in e_low:
+                entity.semantic_role = donor.semantic_role
+                logger.debug(
+                    "Role propagation: '%s' inherited role '%s' from '%s'.",
+                    entity.value, donor.semantic_role, donor.value,
+                )
+                break
+
+
 _SYSTEM_PROMPT = """\
 You are a document analysis expert specialised in privacy and anonymisation.
 Given a document and a list of person / organisation entities, assign a single
@@ -201,8 +294,15 @@ class SemanticRoleService:
             len(role_entities),
         )
 
+        # --- Pass 1.5: validate roles against document type ---------------
+        doc_type = _detect_doc_type(content)
+        _validate_roles(entities, doc_type)
+
         # --- Pass 2: ownership resolution for all other entities ----------
         self._assign_ownership(content, entities)
+
+        # --- Pass 3: propagate roles to unresolved entities ---------------
+        _propagate_roles(entities)
 
         return entities
 
@@ -250,12 +350,40 @@ class SemanticRoleService:
             )
             return
 
-        # Apply ownership in-place
+        # Build the set of valid owner roles from pass 1
+        valid_roles: set[str] = {
+            e.semantic_role
+            for e in entities
+            if e.category in _ROLE_CATEGORIES and e.semantic_role
+        }
+        valid_roles.add("documento")
+
+        # If there is exactly one person role, use it as the default for
+        # unrecognised ownership roles (the LLM sometimes returns generic
+        # labels like "persona" that don't match any assigned role).
+        person_roles = [
+            e.semantic_role
+            for e in entities
+            if e.category == EntityCategory.PERSONE_FISICHE and e.semantic_role
+        ]
+        unique_person_roles = set(person_roles)
+        default_person_role = (
+            unique_person_roles.pop() if len(unique_person_roles) == 1 else None
+        )
+
+        # Apply ownership in-place, validating against the known role set.
         assigned = 0
         for entity in entities:
             if entity.category not in _ROLE_CATEGORIES:
                 owner_role = ownership.get(entity.value)
                 if owner_role:
+                    if owner_role not in valid_roles and default_person_role:
+                        logger.debug(
+                            "Ownership normalisation: remapped '%s' owner "
+                            "from '%s' to '%s' (not in valid roles).",
+                            entity.value, owner_role, default_person_role,
+                        )
+                        owner_role = default_person_role
                     entity.semantic_role = owner_role
                     assigned += 1
 

@@ -2,15 +2,17 @@
 Modulo Ruoli Semantici
 ======================
 Uses the LLM to assign a contextual role to each person / organisation entity
-identified by the Identification Module.
+identified by the Identification Module, and then resolves **ownership** of
+every other entity (emails, addresses, IBANs, phones, dates, IDs) so that
+the anonymisation module can produce context-aware placeholders like
+"[EMAIL_CANDIDATO_1]" instead of generic "[EMAIL_1]".
 
-Instead of opaque labels like "[PERSONA_1]", the anonymisation module will use
-human-readable role-based replacements like "fornitore1", "paziente1", "locatore1"
-(as required by section 2.1.4 of the project documentation).
-
-Only entities of category persone_fisiche and persone_giuridiche receive a
-semantic role; structured-data entities (emails, IBANs, etc.) keep category
-placeholders like "[IBAN_1]".
+Two-pass pipeline:
+  1. **Role assignment** — persons and organisations receive a role that
+     describes their function in the document (candidato, locatore, …).
+  2. **Ownership resolution** — every remaining entity is linked to the
+     person/org it belongs to, by assigning the owner's role as its
+     semantic_role.
 """
 
 import json
@@ -77,6 +79,53 @@ Rules:
     CV / resume is ALWAYS "candidato" — never "dipendente", "paziente", or other roles.
     "dipendente" is only for employment contracts, "paziente" is only for medical records.\
 """
+
+
+_OWNERSHIP_SYSTEM_PROMPT = """\
+You are a document analysis expert specialised in privacy.
+You are given a document, a list of persons/organisations with their assigned roles,
+and a list of data entities (emails, addresses, phones, dates, IDs, IBANs, etc.).
+
+For each data entity, determine which person or organisation it belongs to and
+return the ROLE of the owner (not the owner's name).
+
+If an entity cannot be clearly attributed to any person/organisation (e.g. a
+generic document date), use "documento" as the owner_role.
+
+Return ONLY a valid JSON object (no markdown, no explanation):
+{
+  "ownership": [
+    { "value": "<exact entity value>", "owner_role": "<role of the owner>" }
+  ]
+}
+
+Rules:
+  - Include ONLY entities from the provided data entities list.
+  - Use the EXACT value as provided.
+  - The owner_role must be one of the roles already assigned to a person/organisation,
+    or "documento" for entities not attributable to any specific person/org.
+  - Never invent entities not in the list.\
+"""
+
+
+def _parse_ownership(raw: str) -> dict[str, str]:
+    """Returns a dict mapping entity value → owner_role."""
+    cleaned = re.sub(r"```[a-z]*\n?", "", raw).strip()
+    match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+    if not match:
+        return {}
+    try:
+        data = json.loads(match.group())
+    except json.JSONDecodeError:
+        return {}
+
+    result: dict[str, str] = {}
+    for item in data.get("ownership", []):
+        value = item.get("value", "").strip()
+        role = item.get("owner_role", "").strip().lower().replace(" ", "_")
+        if value and role:
+            result[value] = role
+    return result
 
 
 def _parse_assignments(raw: str) -> dict[str, str]:

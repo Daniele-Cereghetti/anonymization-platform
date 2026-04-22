@@ -765,6 +765,29 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                 ner_ent.source = "merged"
                 merged.append(ner_ent)
 
+    # Dedup dates that appear in both persone_fisiche (e.g. data_nascita)
+    # and dati_temporali (e.g. data_evento).  Keep the more specific one
+    # (persone_fisiche/data_nascita) and drop the generic temporal entry.
+    pf_date_values: set[str] = set()
+    for e in merged:
+        if e.category == EntityCategory.PERSONE_FISICHE and e.entity_type in ("data_nascita",):
+            pf_date_values.add(e.value.strip().lower())
+    if pf_date_values:
+        deduped: List[Entity] = []
+        for e in merged:
+            if (
+                e.category == EntityCategory.DATI_TEMPORALI
+                and e.value.strip().lower() in pf_date_values
+            ):
+                logger.debug(
+                    "Dropping duplicate temporal entity '%s' — already "
+                    "present as persone_fisiche/data_nascita.",
+                    e.value,
+                )
+                continue
+            deduped.append(e)
+        merged = deduped
+
     return merged
 
 

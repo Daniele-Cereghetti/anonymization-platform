@@ -12,7 +12,10 @@ Replacement strategy (utility-preserving, as per Francopoulo & Schaub / Albanese
     → generic label:     "persona1", "organizzazione1"
 
   All other categories (dati_contatto, identificativi, dati_finanziari, dati_temporali)
-    → bracketed placeholder: "[EMAIL_1]", "[IBAN_1]", "[TELEFONO_1]"
+    WITH ownership → context-aware placeholder: "[EMAIL_CANDIDATO_1]", "[INDIRIZZO_AZIENDA_FORNITRICE_1]"
+
+  All other categories WITHOUT ownership
+    → generic bracketed placeholder: "[EMAIL_1]", "[IBAN_1]", "[TELEFONO_1]"
 
 Consistency guarantee: within a single document, the same original value always
 receives the same replacement.  The mapping table lives only in RAM and is discarded
@@ -80,6 +83,10 @@ def _build_replacement(entity: Entity, counters: defaultdict) -> str:
             entity.entity_type,
             _BRACKET_PLACEHOLDER.get(entity.category.value, "ENTITA"),
         )
+        # Append the owner role when ownership was resolved by the
+        # SemanticRoleService (e.g. EMAIL → EMAIL_CANDIDATO).
+        if entity.semantic_role and entity.semantic_role != "documento":
+            label = f"{label}_{entity.semantic_role.upper()}"
         counters[label] += 1
         return f"[{label}_{counters[label]}]"
 

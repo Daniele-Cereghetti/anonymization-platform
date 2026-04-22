@@ -154,15 +154,19 @@ class SemanticRoleService:
 
     def assign_roles(self, content: str, entities: List[Entity]) -> List[Entity]:
         """
-        Enriches person/organisation entities with a semantic_role.
+        Two-pass enrichment:
+          1. Assigns a contextual role to person/organisation entities.
+          2. Resolves ownership of all other entities (emails, addresses,
+             phones, dates, IDs, IBANs) by linking them to the person/org
+             they belong to.
         Returns the same list with semantic_role populated where applicable.
         """
+        # --- Pass 1: role assignment for persons / organisations -----------
         role_entities = [e for e in entities if e.category in _ROLE_CATEGORIES]
 
         if not role_entities:
             return entities
 
-        # Build entity list for the prompt
         entity_lines = "\n".join(
             f'  - "{e.value}" ({e.category.value})' for e in role_entities
         )
@@ -185,7 +189,6 @@ class SemanticRoleService:
             logger.warning("SemanticRoleService failed: %s. Roles will be empty.", exc)
             assignments = {}
 
-        # Apply roles to entities in-place
         for entity in entities:
             if entity.category in _ROLE_CATEGORIES:
                 role = assignments.get(entity.value)
@@ -193,8 +196,71 @@ class SemanticRoleService:
                     entity.semantic_role = role
 
         logger.debug(
-            "SemanticRoleService: %d/%d entities assigned a role",
+            "SemanticRoleService pass 1 (roles): %d/%d entities assigned a role",
             sum(1 for e in entities if e.semantic_role),
             len(role_entities),
         )
+
+        # --- Pass 2: ownership resolution for all other entities ----------
+        self._assign_ownership(content, entities)
+
         return entities
+
+    def _assign_ownership(self, content: str, entities: List[Entity]) -> None:
+        """Resolves which person/org each non-person entity belongs to."""
+        # Collect assigned roles from pass 1
+        role_summary = []
+        for e in entities:
+            if e.category in _ROLE_CATEGORIES and e.semantic_role:
+                role_summary.append(f'  - "{e.value}" → {e.semantic_role}')
+
+        if not role_summary:
+            return
+
+        # Collect non-person entities that need ownership
+        data_entities = [e for e in entities if e.category not in _ROLE_CATEGORIES]
+        if not data_entities:
+            return
+
+        roles_block = "\n".join(role_summary)
+        entities_block = "\n".join(
+            f'  - "{e.value}" ({e.entity_type})' for e in data_entities
+        )
+        user_message = (
+            f"Given these document roles:\n{roles_block}\n\n"
+            f"Assign each data entity below to its owner "
+            f"(the person/organisation it belongs to).\n"
+            f"Return the owner's ROLE, not the name.\n\n"
+            f"Data entities:\n{entities_block}\n\n"
+            f"Document (first 2000 chars):\n{content[:2000]}"
+        )
+
+        try:
+            raw = self.client.chat(
+                messages=[
+                    {"role": "system", "content": _OWNERSHIP_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_message},
+                ]
+            )
+            ownership = _parse_ownership(raw)
+        except Exception as exc:
+            logger.warning(
+                "SemanticRoleService ownership resolution failed: %s. "
+                "Non-person entities will keep generic placeholders.", exc,
+            )
+            return
+
+        # Apply ownership in-place
+        assigned = 0
+        for entity in entities:
+            if entity.category not in _ROLE_CATEGORIES:
+                owner_role = ownership.get(entity.value)
+                if owner_role:
+                    entity.semantic_role = owner_role
+                    assigned += 1
+
+        logger.debug(
+            "SemanticRoleService pass 2 (ownership): %d/%d data entities "
+            "assigned an owner",
+            assigned, len(data_entities),
+        )

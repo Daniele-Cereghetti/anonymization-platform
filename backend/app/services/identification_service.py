@@ -748,10 +748,13 @@ def _merge(ner_entities: List[Entity], llm_entities: List[Entity]) -> List[Entit
                 # Suppress URL fragments that are substrings of an email
                 # entity already found by the LLM (e.g. "example.com" or
                 # "marta.bi" extracted from "marta.bianchi88@example.com").
+                # Check against ALL LLM emails, not just overlapping ones,
+                # because a short URL like "marta.bi" won't overlap with
+                # the full email address via _overlaps().
                 if ner_ent.entity_type == "url" and any(
                     e.entity_type == "email"
                     and ner_ent.value.lower() in e.value.lower()
-                    for e in overlapping_llm
+                    for e in llm_entities
                 ):
                     logger.debug(
                         "Dropping URL fragment '%s' — substring of LLM "

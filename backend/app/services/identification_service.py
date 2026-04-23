@@ -859,7 +859,7 @@ def _extract_institutions(
                 category=EntityCategory.PERSONE_GIURIDICHE,
                 entity_type="nome_organizzazione",
                 confidence=0.9,
-                source="regex",
+                source="ner",
             )
         )
         logger.debug("Extracted institution '%s' via regex.", value)

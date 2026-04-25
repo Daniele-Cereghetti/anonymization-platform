@@ -10,6 +10,7 @@ services:
 
     backend:
         image: "anon-platform-backend"
+        build: ./backend
         depends_on:
             - ollama
         environment:

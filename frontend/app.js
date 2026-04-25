@@ -93,6 +93,7 @@ const state = {
   currentStep: 1,
   selectedFile: null,
   convertedText: '',          // testo .md risultato di /convert
+  documentId: null,           // id restituito da /convert, riusato da /extract e /anonymize
   mappingRows: [],            // Array di {id, original, category, substitution, status}
   anonymizedText: '',         // testo .md risultato di /anonymize
   anonymizedFilename: 'documento_anonimizzato.md',
@@ -269,7 +270,8 @@ async function convertDocument() {
 
     const result = await apiCall('/api/convert', { method: 'POST', body: formData });
 
-    state.convertedText = result.text;
+    state.convertedText = result.content;
+    state.documentId = result.document_id;
 
     // Il testo è cambiato: azzera l'estrazione precedente
     state.mappingRows = [];
@@ -368,17 +370,27 @@ async function extractEntities() {
     const result = await apiCall('/api/extract', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: state.convertedText, categories }),
+      body: JSON.stringify({ document_id: state.documentId, categories }),
     });
 
-    // Build mapping rows
-    state.mappingRows = (result.entities || []).map(e => ({
-      id: generateId(),
-      original: e.original,
-      category: e.category,
-      substitution: e.proposed,
-      status: 'proposed',   // proposed | accepted | modified | removed
-    }));
+    // Build mapping rows. Il backend (AnonymizationService) genera le
+    // sostituzioni reali solo durante /api/anonymize, quindi qui mostriamo
+    // un placeholder client-side basato su entity_type. Verrà aggiornato
+    // con le sostituzioni effettive dopo l'anonimizzazione.
+    const previewCounters = {};
+    state.mappingRows = (result.entities || []).map(e => {
+      const label = (e.entity_type || e.category || 'entita').toUpperCase();
+      previewCounters[label] = (previewCounters[label] || 0) + 1;
+      return {
+        id: generateId(),
+        original: e.value,
+        category: e.category,
+        entity_type: e.entity_type,
+        semantic_role: e.semantic_role || null,
+        substitution: `[${label}_${previewCounters[label]}]`,
+        status: 'proposed',   // proposed | accepted | modified | removed
+      };
+    });
 
     renderMappingTable();
     document.getElementById('mappingSection').classList.remove('d-none');
@@ -604,9 +616,14 @@ function buildSummary() {
 }
 
 async function anonymizeDocument() {
-  const activeRows = state.mappingRows
+  const activeEntities = state.mappingRows
     .filter(r => r.status === 'accepted' || r.status === 'modified')
-    .map(r => ({ original: r.original, substitution: r.substitution }));
+    .map(r => ({
+      value: r.original,
+      category: r.category,
+      entity_type: r.entity_type,
+      semantic_role: r.semantic_role,
+    }));
 
   showLoading(
     'Anonimizzazione in corso…',
@@ -617,11 +634,20 @@ async function anonymizeDocument() {
     const result = await apiCall('/api/anonymize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: state.convertedText, mapping: activeRows }),
+      body: JSON.stringify({ document_id: state.documentId, entities: activeEntities }),
     });
 
-    state.anonymizedText = result.text;
-    if (result.filename) state.anonymizedFilename = result.filename;
+    state.anonymizedText = result.anonymized_content;
+
+    // Aggiorna le sostituzioni preview con quelle reali calcolate dal backend
+    if (Array.isArray(result.mappings)) {
+      const byOriginal = new Map(result.mappings.map(m => [m.original, m.replacement]));
+      state.mappingRows.forEach(row => {
+        const real = byOriginal.get(row.original);
+        if (real) row.substitution = real;
+      });
+      renderMappingTable();
+    }
 
     // Render anonymized preview
     document.getElementById('anonymizedPreview').innerHTML = marked.parse(state.anonymizedText);

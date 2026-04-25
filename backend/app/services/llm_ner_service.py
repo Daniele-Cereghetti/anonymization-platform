@@ -79,14 +79,35 @@ _TYPE_ALIASES: dict[str, str] = {
 }
 
 
+# Italian field labels that frequently appear *inside* an LLM-extracted value
+# when the model accidentally grabs the start of the next field
+# (e.g. "Marta Bianchi - Data di nascita: 14/02/1988").  The list is kept
+# small and deliberately conservative — only labels actually observed in the
+# project datasets (CV, contratti, cartelle cliniche).
+_FIELD_LABEL_RE = re.compile(
+    r"\s+(?:-\s+)?(?:Data|Luogo|Indirizzo|Telefono|Email|Codice|LinkedIn|"
+    r"Targa|Nome|Cognome|Sede|P\.?\s?IVA|Profilo|Nazionalit[àa])\b",
+    re.IGNORECASE,
+)
+
+
 def _clean_value(raw_value: str) -> str:
     """Strip markdown artifacts, newlines, and surrounding punctuation from an
     entity value extracted by the LLM."""
     # Collapse newlines and everything after them (the LLM sometimes grabs the
     # next list-item marker, e.g. "Marta Bianchi\n-").
     value = re.sub(r"[\n\r]+.*", "", raw_value)
-    # Strip leading/trailing whitespace, markdown markers, and list bullets.
-    value = value.strip().strip("-*_#").strip()
+    # Cut at the first " - " bullet that introduces a new field
+    # (e.g. "Marta Bianchi - Data di nascita: ...").
+    value = re.split(r"\s+-\s+(?=\S)", value, maxsplit=1)[0]
+    # Cut at the first occurrence of a known field label
+    # (e.g. "Marta Bianchi Data di nascita ..." or "Acme S.p.A. Sede:").
+    m = _FIELD_LABEL_RE.search(value)
+    if m and m.start() > 0:
+        value = value[: m.start()]
+    # Strip leading/trailing whitespace, markdown markers, list bullets,
+    # and trailing field-label colons.
+    value = value.strip().strip("-*_#").strip().rstrip(":").strip()
     return value
 
 
@@ -114,6 +135,11 @@ def _parse(raw: str, allowed_categories: List[str]) -> List[Entity]:
             # A valid single entity should not exceed 120 chars or contain
             # both '@' and '|' (signal of concatenated contact info).
             if len(value) > 120 or ("@" in value and "|" in value):
+                continue
+            # Drop values that still contain a residual newline or markdown
+            # bold marker after _clean_value — they are almost certainly the
+            # remains of a bundled multi-field extraction.
+            if "\n" in value or "**" in value:
                 continue
             etype = item.get("entity_type", "unknown")
             etype = _TYPE_ALIASES.get(etype, etype)

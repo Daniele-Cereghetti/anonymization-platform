@@ -5,11 +5,16 @@ Applies semantic replacements following section 2.1.4 of the project documentati
 
 Replacement strategy (utility-preserving, as per Francopoulo & Schaub / Albanese et al.):
 
+  All placeholders share the uniform bracketed shape `[LABEL_N]`.
+
   persone_fisiche / persone_giuridiche WITH semantic_role
-    → role-based label:  "fornitore1", "paziente1", "azienda_fornitrice1"
+    → role-based label:  "[CANDIDATO_1]", "[PAZIENTE_1]", "[AZIENDA_FORNITRICE_1]"
 
   persone_fisiche / persone_giuridiche WITHOUT semantic_role
-    → generic label:     "persona1", "organizzazione1"
+    → generic label:     "[PERSONA_1]", "[ORGANIZZAZIONE_1]"
+
+  persone_fisiche sub-types that are not personal names (luogo_nascita,
+  nazionalita, data_nascita) → dedicated label "[LUOGO_NASCITA_1]" etc.
 
   All other categories (dati_contatto, identificativi, dati_finanziari, dati_temporali)
     WITH ownership → context-aware placeholder: "[EMAIL_CANDIDATO_1]", "[INDIRIZZO_AZIENDA_FORNITRICE_1]"
@@ -22,6 +27,7 @@ receives the same replacement.  The mapping table lives only in RAM and is disca
 after the call (irreversibility — section 2.1.5).
 """
 
+import re
 import time
 from collections import defaultdict
 from typing import List
@@ -66,19 +72,35 @@ _TYPE_PLACEHOLDER: dict[str, str] = {
     "scadenza":         "SCADENZA",
 }
 
+# Sotto-tipi di PERSONE_FISICHE che non sono nomi di persona (sono dati
+# anagrafici geografici/temporali) e quindi non devono ricevere il label
+# "persona" né essere collassati su un semantic_role di una persona.
+_PERSON_SUBTYPE_PLACEHOLDER: dict[str, str] = {
+    "luogo_nascita": "LUOGO_NASCITA",
+    "nazionalita":   "NAZIONALITA",
+    "data_nascita":  "DATA_NASCITA",
+}
+
 
 def _build_replacement(entity: Entity, counters: defaultdict) -> str:
-    if entity.category in _ROLE_CATEGORIES:
+    # 1) Sotto-tipi geografici/temporali di persone_fisiche → label dedicato
+    if (
+        entity.category in _ROLE_CATEGORIES
+        and entity.entity_type in _PERSON_SUBTYPE_PLACEHOLDER
+    ):
+        label = _PERSON_SUBTYPE_PLACEHOLDER[entity.entity_type]
+
+    # 2) Persone fisiche / giuridiche "vere" → ruolo semantico o fallback
+    elif entity.category in _ROLE_CATEGORIES:
         if entity.semantic_role:
-            label = entity.semantic_role.lower().replace(" ", "_")
+            label = entity.semantic_role.upper().replace(" ", "_")
         elif entity.category == EntityCategory.PERSONE_FISICHE:
-            label = "persona"
+            label = "PERSONA"
         else:
-            label = "organizzazione"
-        counters[label] += 1
-        return f"{label}{counters[label]}"
+            label = "ORGANIZZAZIONE"
+
+    # 3) Categorie strutturate (contatti, identificativi, finanziari, temporali)
     else:
-        # Bracketed placeholder — prefer entity_type-specific label
         label = _TYPE_PLACEHOLDER.get(
             entity.entity_type,
             _BRACKET_PLACEHOLDER.get(entity.category.value, "ENTITA"),
@@ -87,8 +109,16 @@ def _build_replacement(entity: Entity, counters: defaultdict) -> str:
         # SemanticRoleService (e.g. EMAIL → EMAIL_CANDIDATO).
         if entity.semantic_role and entity.semantic_role != "documento":
             label = f"{label}_{entity.semantic_role.upper()}"
-        counters[label] += 1
-        return f"[{label}_{counters[label]}]"
+
+    counters[label] += 1
+    return f"[{label}_{counters[label]}]"
+
+
+# Caratteri/sequenze che indicano che il valore di un'entità è "sporco":
+# l'LLM ha incluso parti del campo successivo (es. newline, " - " bullet,
+# ": " label-separator).  Quando una di queste compare, la dedup preferisce
+# sempre il valore più corto, anche tra entity_type diversi.
+_BUNDLED_VALUE_RE = re.compile(r"\n|\s-\s|:\s")
 
 
 class AnonymizationService:
@@ -100,34 +130,43 @@ class AnonymizationService:
     ) -> AnonymizationResult:
         start = time.monotonic()
 
-        # Deduplicate and sort longest-first to avoid partial replacements.
-        # Two entities are considered duplicates when they share the same
-        # entity_type and one value is a substring of the other (e.g.
-        # "Marta Bianchi\n-" and "Marta Bianchi").  In that case only the
-        # *clean* (shorter) value is kept so the replacement doesn't destroy
-        # surrounding formatting.
+        # Sort *shortest-first*: when an LLM produces a "bundled" value that
+        # accidentally swallows the next field (e.g. "Marta Bianchi\n- Data di
+        # nascita: 14/02/1988" tagged as nome_azienda), processing the clean
+        # short value first lets us reject the longer bundled one as soon as
+        # we detect the substring relationship — even when entity_types differ.
         seen: set = set()
         unique: List[Entity] = []
-        for e in sorted(entities, key=lambda x: len(x.value), reverse=True):
+        for e in sorted(entities, key=lambda x: len(x.value)):
             if e.value in seen:
                 continue
-            # Check if a shorter entity of the same type is a substring of
-            # this one — if so, prefer the shorter (cleaner) value.
             dominated = False
             for prev in unique:
-                if prev.entity_type == e.entity_type:
-                    if e.value.lower() in prev.value.lower():
-                        # Already covered by a longer entity kept earlier.
+                a_low = e.value.lower()
+                b_low = prev.value.lower()
+                # Substring relation in either direction
+                if a_low == b_low or a_low in b_low or b_low in a_low:
+                    # Same entity_type → standard dedup (keep shorter, already
+                    # in `unique` since we sort shortest-first).
+                    if prev.entity_type == e.entity_type:
                         dominated = True
                         break
-                    if prev.value.lower() in e.value.lower():
-                        # This longer value subsumes an already-kept shorter
-                        # one — skip it and keep the shorter version.
+                    # Different entity_type → only collapse when the *longer*
+                    # value contains bundling markers (newline / " - " / ": ").
+                    # That's the symptom of an LLM that grabbed an adjacent
+                    # field; the cleaner short value wins.
+                    longer = e.value if len(e.value) >= len(prev.value) else prev.value
+                    if _BUNDLED_VALUE_RE.search(longer):
                         dominated = True
                         break
             if not dominated:
                 seen.add(e.value)
                 unique.append(e)
+
+        # Re-sort longest-first for the actual replacement pass so that
+        # longer entities (e.g. full address) are substituted before any
+        # shorter substring would consume them.
+        unique.sort(key=lambda x: len(x.value), reverse=True)
 
         counters: defaultdict = defaultdict(int)
         mappings: List[AnonymizationMapping] = []

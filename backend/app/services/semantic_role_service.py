@@ -31,7 +31,7 @@ _ROLE_CATEGORIES = {EntityCategory.PERSONE_FISICHE, EntityCategory.PERSONE_GIURI
 # Document-type detection and role validation
 # ---------------------------------------------------------------------------
 
-# Patterns that identify a CV / resume (checked against the first 500 chars).
+# Patterns that identify a CV / resume (checked against the first chars).
 _CV_PATTERNS = re.compile(
     r"curriculum\s+vitae|(?:^|\s)CV(?:\s|$|\b)|resume|lebenslauf|"
     r"données\s+personnelles|personal\s+data|dati\s+personali|persönliche\s+daten",
@@ -42,6 +42,38 @@ _CV_PATTERNS = re.compile(
 _MEDICAL_PATTERNS = re.compile(
     r"cartella\s+clinica|medical\s+record|dossier\s+m[ée]dical|krankenakte|"
     r"anamnesi|diagnosi|ricovero|paziente\s*:",
+    re.IGNORECASE,
+)
+
+# Patterns that identify a legal act / court document.
+_LEGAL_PATTERNS = re.compile(
+    r"tribunale|sentenza|ricorso|ricorrente|convenuto|"
+    r"n\.\s*r\.?g\.?|p\.?q\.?m\.?|udienza|ill\.?mo|"
+    r"corte\s+d[i']\s+appello|procura\s+della\s+repubblica",
+    re.IGNORECASE,
+)
+
+# Patterns that identify a contract (rental / employment / commercial).
+_CONTRACT_PATTERNS = re.compile(
+    r"contratto\s+di\s+(?:locazione|lavoro|affitto|fornitura|prestazione)|"
+    r"locatore|conduttore|datore\s+di\s+lavoro|tra\s+le\s+parti|"
+    r"\bart(?:icolo)?\.?\s*1\b|le\s+parti\s+convengono",
+    re.IGNORECASE,
+)
+
+# Patterns that identify an invoice / commercial document.
+_INVOICE_PATTERNS = re.compile(
+    r"\bfattura\b|\binvoice\b|p\.?\s*iva|partita\s+iva|"
+    r"imponibile|aliquota\s+iva|spett\.?le|nr?\.?\s*fattura|"
+    r"causale|importo\s+totale",
+    re.IGNORECASE,
+)
+
+# Patterns that identify a generic letter / written communication.
+# Kept as a last-resort fallback because these markers are very generic.
+_LETTER_PATTERNS = re.compile(
+    r"egregio|gentile|in\s+fede|cordiali\s+saluti|distinti\s+saluti|"
+    r"oggetto\s*:",
     re.IGNORECASE,
 )
 
@@ -58,16 +90,51 @@ _ROLE_CONSTRAINTS: dict[str, dict] = {
         # In a medical record, "candidato" is never correct
         "candidato": "paziente",
     },
+    "contract": {
+        # A contract has no candidato/paziente
+        "candidato": "dipendente",
+        "paziente": "controparte",
+    },
+    "invoice": {
+        # An invoice has no candidato/paziente
+        "candidato": "cliente",
+        "paziente": "cliente",
+        "locatore": "fornitore",
+        "conduttore": "cliente",
+    },
+    "legal": {
+        # In a legal act, the main person is ricorrente, not candidato/paziente
+        "candidato": "ricorrente",
+        "paziente": "ricorrente",
+    },
+    # "letter" intentionally left without strict remaps — generic context
+    "letter": {},
 }
 
 
+# Allowed override values from the API (frontend dropdown).
+ALLOWED_DOC_TYPES = {"cv", "medical", "contract", "invoice", "legal", "letter"}
+
+
 def _detect_doc_type(content: str) -> str | None:
-    """Heuristic document-type detection from the first 500 characters."""
-    head = content[:500]
+    """Heuristic document-type detection from the first 800 characters.
+
+    Order matters: more specific markers (CV, medical, legal) are checked
+    before more ambiguous ones (contract → invoice → letter).
+    """
+    head = content[:800]
     if _CV_PATTERNS.search(head):
         return "cv"
     if _MEDICAL_PATTERNS.search(head):
         return "medical"
+    if _LEGAL_PATTERNS.search(head):
+        return "legal"
+    if _CONTRACT_PATTERNS.search(head):
+        return "contract"
+    if _INVOICE_PATTERNS.search(head):
+        return "invoice"
+    if _LETTER_PATTERNS.search(head):
+        return "letter"
     return None
 
 
@@ -245,20 +312,38 @@ class SemanticRoleService:
     def __init__(self, client: OllamaClient):
         self.client = client
 
-    def assign_roles(self, content: str, entities: List[Entity]) -> List[Entity]:
+    def assign_roles(
+        self,
+        content: str,
+        entities: List[Entity],
+        doc_type_override: str | None = None,
+    ) -> tuple[List[Entity], str | None]:
         """
         Two-pass enrichment:
           1. Assigns a contextual role to person/organisation entities.
           2. Resolves ownership of all other entities (emails, addresses,
              phones, dates, IDs, IBANs) by linking them to the person/org
              they belong to.
-        Returns the same list with semantic_role populated where applicable.
+
+        ``doc_type_override`` lets the caller force the detected document
+        type (e.g. coming from the user via the frontend dropdown). When
+        ``None`` the heuristic ``_detect_doc_type`` is used.
+
+        Returns a tuple ``(entities, doc_type)`` so the caller can surface
+        the detected/used document type to the frontend.
         """
+        # Resolve doc_type up-front so we always return a value even on
+        # the early-exit path (no person/org entities).
+        if doc_type_override and doc_type_override in ALLOWED_DOC_TYPES:
+            doc_type: str | None = doc_type_override
+        else:
+            doc_type = _detect_doc_type(content)
+
         # --- Pass 1: role assignment for persons / organisations -----------
         role_entities = [e for e in entities if e.category in _ROLE_CATEGORIES]
 
         if not role_entities:
-            return entities
+            return entities, doc_type
 
         entity_lines = "\n".join(
             f'  - "{e.value}" ({e.category.value})' for e in role_entities
@@ -278,6 +363,12 @@ class SemanticRoleService:
                 ]
             )
             assignments = _parse_assignments(raw)
+            if not assignments:
+                logger.warning(
+                    "SemanticRoleService pass 1: LLM returned no parseable "
+                    "assignments. doc_type=%s. Raw output (first 500 chars): %s",
+                    doc_type, (raw or "")[:500],
+                )
         except Exception as exc:
             logger.warning("SemanticRoleService failed: %s. Roles will be empty.", exc)
             assignments = {}
@@ -288,14 +379,15 @@ class SemanticRoleService:
                 if role:
                     entity.semantic_role = role
 
-        logger.debug(
-            "SemanticRoleService pass 1 (roles): %d/%d entities assigned a role",
-            sum(1 for e in entities if e.semantic_role),
+        logger.info(
+            "SemanticRoleService pass 1 (roles): doc_type=%s, %d/%d "
+            "person/org entities assigned a role",
+            doc_type,
+            sum(1 for e in entities if e.semantic_role and e.category in _ROLE_CATEGORIES),
             len(role_entities),
         )
 
         # --- Pass 1.5: validate roles against document type ---------------
-        doc_type = _detect_doc_type(content)
         _validate_roles(entities, doc_type)
 
         # --- Pass 2: ownership resolution for all other entities ----------
@@ -304,7 +396,7 @@ class SemanticRoleService:
         # --- Pass 3: propagate roles to unresolved entities ---------------
         _propagate_roles(entities)
 
-        return entities
+        return entities, doc_type
 
     def _assign_ownership(self, content: str, entities: List[Entity]) -> None:
         """Resolves which person/org each non-person entity belongs to."""
@@ -343,6 +435,12 @@ class SemanticRoleService:
                 ]
             )
             ownership = _parse_ownership(raw)
+            if not ownership:
+                logger.warning(
+                    "SemanticRoleService pass 2: LLM returned no parseable "
+                    "ownership. Raw output (first 500 chars): %s",
+                    (raw or "")[:500],
+                )
         except Exception as exc:
             logger.warning(
                 "SemanticRoleService ownership resolution failed: %s. "
@@ -387,7 +485,7 @@ class SemanticRoleService:
                     entity.semantic_role = owner_role
                     assigned += 1
 
-        logger.debug(
+        logger.info(
             "SemanticRoleService pass 2 (ownership): %d/%d data entities "
             "assigned an owner",
             assigned, len(data_entities),

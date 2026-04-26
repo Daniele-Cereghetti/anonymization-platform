@@ -179,6 +179,7 @@ class AnonymizationService:
                     replacement=replacement,
                     category=entity.category,
                     entity_type=entity.entity_type,
+                    semantic_role=entity.semantic_role,
                 )
             )
 

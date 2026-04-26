@@ -28,3 +28,4 @@ class AnonymizationMapping(BaseModel):
     replacement: str
     category: EntityCategory
     entity_type: str
+    semantic_role: Optional[str] = None

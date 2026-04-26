@@ -16,6 +16,7 @@ _cache = CacheService()
 class ExtractRequest(BaseModel):
     document_id: str
     categories: Optional[List[str]] = None
+    document_type: Optional[str] = None
 
 
 @router.post("/extract", response_model=ExtractionResult)
@@ -34,6 +35,7 @@ async def extract_entities(req: ExtractRequest):
             content=content,
             document_id=req.document_id,
             categories=req.categories,
+            doc_type_override=req.document_type,
         )
     except OllamaError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e

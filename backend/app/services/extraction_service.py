@@ -32,6 +32,7 @@ class ExtractionService:
         content: str,
         document_id: str,
         categories: Optional[List[str]] = None,
+        doc_type_override: Optional[str] = None,
     ) -> ExtractionResult:
         if categories is None:
             categories = [c.value for c in EntityCategory]
@@ -42,7 +43,11 @@ class ExtractionService:
         entities = self._identification.identify(content=content, categories=categories)
 
         # Stage 2: contextual role assignment
-        entities = self._semantic_roles.assign_roles(content=content, entities=entities)
+        entities, doc_type = self._semantic_roles.assign_roles(
+            content=content,
+            entities=entities,
+            doc_type_override=doc_type_override,
+        )
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
 
@@ -52,4 +57,5 @@ class ExtractionService:
             categories_requested=categories,
             processing_time_ms=elapsed_ms,
             model=self.client.model,
+            document_type=doc_type,
         )

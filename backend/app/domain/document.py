@@ -20,6 +20,7 @@ class ExtractionResult(BaseModel):
     categories_requested: List[str]
     processing_time_ms: int
     model: str
+    document_type: Optional[str] = None
 
 
 class AnonymizationResult(BaseModel):

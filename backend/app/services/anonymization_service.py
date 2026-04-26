@@ -14,7 +14,10 @@ Replacement strategy (utility-preserving, as per Francopoulo & Schaub / Albanese
     → generic label:     "[PERSONA_1]", "[ORGANIZZAZIONE_1]"
 
   persone_fisiche sub-types that are not personal names (luogo_nascita,
-  nazionalita, data_nascita) → dedicated label "[LUOGO_NASCITA_1]" etc.
+  nazionalita, data_nascita) → dedicated label, suffixed with the owner role
+  when ownership has been resolved: "[DATA_NASCITA_CANDIDATO_1]",
+  "[LUOGO_NASCITA_PAZIENTE_1]".  Falls back to "[DATA_NASCITA_1]" when
+  the owner is unknown.
 
   All other categories (dati_contatto, identificativi, dati_finanziari, dati_temporali)
     WITH ownership → context-aware placeholder: "[EMAIL_CANDIDATO_1]", "[INDIRIZZO_AZIENDA_FORNITRICE_1]"
@@ -83,12 +86,15 @@ _PERSON_SUBTYPE_PLACEHOLDER: dict[str, str] = {
 
 
 def _build_replacement(entity: Entity, counters: defaultdict) -> str:
-    # 1) Sotto-tipi geografici/temporali di persone_fisiche → label dedicato
+    # 1) Sotto-tipi geografici/temporali di persone_fisiche → label dedicato,
+    #    arricchito col ruolo del proprietario quando risolto via ownership
     if (
         entity.category in _ROLE_CATEGORIES
         and entity.entity_type in _PERSON_SUBTYPE_PLACEHOLDER
     ):
         label = _PERSON_SUBTYPE_PLACEHOLDER[entity.entity_type]
+        if entity.semantic_role and entity.semantic_role != "documento":
+            label = f"{label}_{entity.semantic_role.upper().replace(' ', '_')}"
 
     # 2) Persone fisiche / giuridiche "vere" → ruolo semantico o fallback
     elif entity.category in _ROLE_CATEGORIES:

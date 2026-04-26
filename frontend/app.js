@@ -389,21 +389,26 @@ async function extractEntities() {
       docTypeSelect.value = state.documentType || '';
     }
 
-    // Build mapping rows. Il backend (AnonymizationService) genera le
-    // sostituzioni reali solo durante /api/anonymize, quindi qui mostriamo
-    // un placeholder client-side basato su entity_type. Verrà aggiornato
-    // con le sostituzioni effettive dopo l'anonimizzazione.
-    const previewCounters = {};
+    // Build mapping rows. Il backend pre-computa il placeholder finale
+    // (con il ruolo del proprietario, es. [DATA_NASCITA_CANDIDATO_1]) e lo
+    // restituisce in entity.proposed_replacement.  Lo usiamo come default
+    // per la sostituzione mostrata in tabella; il fallback su entity_type
+    // copre solo il caso in cui il backend non lo abbia popolato.
+    const fallbackCounters = {};
     state.mappingRows = (result.entities || []).map(e => {
-      const label = (e.entity_type || e.category || 'entita').toUpperCase();
-      previewCounters[label] = (previewCounters[label] || 0) + 1;
+      let substitution = e.proposed_replacement;
+      if (!substitution) {
+        const label = (e.entity_type || e.category || 'entita').toUpperCase();
+        fallbackCounters[label] = (fallbackCounters[label] || 0) + 1;
+        substitution = `[${label}_${fallbackCounters[label]}]`;
+      }
       return {
         id: generateId(),
         original: e.value,
         category: e.category,
         entity_type: e.entity_type,
         semantic_role: e.semantic_role || null,
-        substitution: `[${label}_${previewCounters[label]}]`,
+        substitution,
         status: 'proposed',   // proposed | accepted | modified | removed
       };
     });

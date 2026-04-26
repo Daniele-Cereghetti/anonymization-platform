@@ -18,7 +18,7 @@ def _ent(
 
 
 class TestRoleBasedLabels:
-    """Persone fisiche / giuridiche → readable labels without brackets."""
+    """Persone fisiche / giuridiche → bracketed [ROLE_N] / [PERSONA_N] labels."""
 
     def test_person_with_semantic_role(self):
         counters: defaultdict[str, int] = defaultdict(int)
@@ -26,7 +26,7 @@ class TestRoleBasedLabels:
 
         result = _build_replacement(ent, counters)
 
-        assert result == "fornitore1"
+        assert result == "[FORNITORE_1]"
 
     def test_person_without_role(self):
         counters: defaultdict[str, int] = defaultdict(int)
@@ -34,7 +34,7 @@ class TestRoleBasedLabels:
 
         result = _build_replacement(ent, counters)
 
-        assert result == "persona1"
+        assert result == "[PERSONA_1]"
 
     def test_organization_without_role(self):
         counters: defaultdict[str, int] = defaultdict(int)
@@ -42,7 +42,7 @@ class TestRoleBasedLabels:
 
         result = _build_replacement(ent, counters)
 
-        assert result == "organizzazione1"
+        assert result == "[ORGANIZZAZIONE_1]"
 
     def test_role_with_spaces_normalized(self):
         counters: defaultdict[str, int] = defaultdict(int)
@@ -50,7 +50,7 @@ class TestRoleBasedLabels:
 
         result = _build_replacement(ent, counters)
 
-        assert result == "sede_legale1"
+        assert result == "[SEDE_LEGALE_1]"
 
     def test_counters_increment(self):
         counters: defaultdict[str, int] = defaultdict(int)
@@ -60,8 +60,59 @@ class TestRoleBasedLabels:
         r1 = _build_replacement(ent1, counters)
         r2 = _build_replacement(ent2, counters)
 
-        assert r1 == "persona1"
-        assert r2 == "persona2"
+        assert r1 == "[PERSONA_1]"
+        assert r2 == "[PERSONA_2]"
+
+
+class TestAnagraphicSubtypeLabels:
+    """persone_fisiche sub-types (data_nascita, luogo_nascita, nazionalita)
+    use a dedicated label suffixed with the owner's role when known."""
+
+    def test_data_nascita_with_owner_role(self):
+        counters: defaultdict[str, int] = defaultdict(int)
+        ent = _ent(
+            "14/02/1988", "data_nascita",
+            EntityCategory.PERSONE_FISICHE, semantic_role="candidato",
+        )
+
+        result = _build_replacement(ent, counters)
+
+        assert result == "[DATA_NASCITA_CANDIDATO_1]"
+
+    def test_luogo_nascita_with_owner_role(self):
+        counters: defaultdict[str, int] = defaultdict(int)
+        ent = _ent(
+            "Milano (MI), Italia", "luogo_nascita",
+            EntityCategory.PERSONE_FISICHE, semantic_role="paziente",
+        )
+
+        result = _build_replacement(ent, counters)
+
+        assert result == "[LUOGO_NASCITA_PAZIENTE_1]"
+
+    def test_anagraphic_subtype_without_role_falls_back(self):
+        counters: defaultdict[str, int] = defaultdict(int)
+        ent = _ent(
+            "14/02/1988", "data_nascita",
+            EntityCategory.PERSONE_FISICHE,
+        )
+
+        result = _build_replacement(ent, counters)
+
+        assert result == "[DATA_NASCITA_1]"
+
+    def test_anagraphic_subtype_with_documento_role_falls_back(self):
+        """'documento' is the catch-all for unattributed entities and must
+        NOT leak into the placeholder."""
+        counters: defaultdict[str, int] = defaultdict(int)
+        ent = _ent(
+            "14/02/1988", "data_nascita",
+            EntityCategory.PERSONE_FISICHE, semantic_role="documento",
+        )
+
+        result = _build_replacement(ent, counters)
+
+        assert result == "[DATA_NASCITA_1]"
 
 
 class TestBracketedLabels:

@@ -12,11 +12,13 @@ Orchestrates the two-stage /extract pipeline:
 """
 
 import time
+from collections import defaultdict
 from typing import List, Optional
 
 from ..domain.document import ExtractionResult
 from ..domain.entities import EntityCategory
 from ..infrastructure.llm.ollama_client import OllamaClient
+from .anonymization_service import build_replacement
 from .identification_service import IdentificationService
 from .semantic_role_service import SemanticRoleService
 
@@ -48,6 +50,16 @@ class ExtractionService:
             entities=entities,
             doc_type_override=doc_type_override,
         )
+
+        # Stage 3 (preview): compute the placeholder each entity will get
+        # in the anonymised document.  Lets the frontend show the final
+        # role-aware replacement (e.g. [DATA_NASCITA_CANDIDATO_1]) already
+        # in the mapping table, instead of a generic [DATA_NASCITA_1].
+        # Iterate longest-first so numbering matches the actual anonymise
+        # pass which sorts the same way before substitution.
+        preview_counters: defaultdict = defaultdict(int)
+        for entity in sorted(entities, key=lambda e: len(e.value), reverse=True):
+            entity.proposed_replacement = build_replacement(entity, preview_counters)
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
 

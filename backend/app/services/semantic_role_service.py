@@ -27,6 +27,13 @@ logger = logging.getLogger(__name__)
 
 _ROLE_CATEGORIES = {EntityCategory.PERSONE_FISICHE, EntityCategory.PERSONE_GIURIDICHE}
 
+# Entity types that represent the *actor* itself (a real person or org), as
+# opposed to anagraphic sub-entities like data_nascita / luogo_nascita that
+# happen to share the persone_fisiche category.  Only these get a contextual
+# role from Pass 1; everything else flows through Pass 2 (ownership).
+PERSON_ROLE_TYPES = {"nome_cognome"}
+ORG_ROLE_TYPES = {"nome_azienda", "nome_organizzazione"}
+
 # ---------------------------------------------------------------------------
 # Document-type detection and role validation
 # ---------------------------------------------------------------------------
@@ -85,6 +92,16 @@ _ROLE_CONSTRAINTS: dict[str, dict] = {
         "paziente": "candidato",
         "medico": "candidato",
         "infermiere": "candidato",
+        "dipendente": "candidato",
+        "richiedente": "candidato",
+        # Note: NO "persona" → "candidato" remap.  After Pass-1 scoping,
+        # only true persons (nome_cognome) reach _validate_roles, so a
+        # residual "persona" here is acceptable; the anonymisation module
+        # will emit "[PERSONA_N]" in that edge case.
+        # Org-side: in a CV there are no "clients", any commercial relation
+        # is with a previous/current employer.
+        "azienda_cliente": "societa_datrice_lavoro",
+        "organizzazione": "societa_datrice_lavoro",
     },
     "medical": {
         # In a medical record, "candidato" is never correct
@@ -161,15 +178,24 @@ def _validate_roles(
             )
 
 
-def _propagate_roles(entities: list[Entity]) -> None:
-    """Propagate semantic_role from resolved entities to unresolved ones that
-    share the same entity_type and whose value is a substring match.
+_PROXIMITY_DONOR_TYPES = {"nome_azienda", "nome_organizzazione", "nome_cognome"}
+_PROXIMITY_THRESHOLD = 200
 
-    Handles cases where NER produces a slightly different surface form than the
-    LLM (e.g. "Delta S.r.l" vs "Delta S.r.l.") and the ownership lookup
-    misses the match.
+
+def _propagate_roles(entities: list[Entity], content: str = "") -> None:
+    """Propagate semantic_role from resolved entities to unresolved ones.
+
+    Pass A — same entity_type substring match: handles surface variants
+    (e.g. "Delta S.r.l" vs "Delta S.r.l.") missed by ownership lookup.
+
+    Pass B — cross-type proximity: an unresolved entity inherits the role
+    of the closest resolved person/org in the document text, within
+    ``_PROXIMITY_THRESHOLD`` characters.  Lets an address inherit the role
+    of the nearby company even when entity_types differ.
     """
     resolved = [e for e in entities if e.semantic_role]
+
+    # Pass A — same entity_type substring match
     for entity in entities:
         if entity.semantic_role:
             continue
@@ -181,10 +207,44 @@ def _propagate_roles(entities: list[Entity]) -> None:
             if e_low in d_low or d_low in e_low:
                 entity.semantic_role = donor.semantic_role
                 logger.debug(
-                    "Role propagation: '%s' inherited role '%s' from '%s'.",
+                    "Role propagation (same-type): '%s' inherited role "
+                    "'%s' from '%s'.",
                     entity.value, donor.semantic_role, donor.value,
                 )
                 break
+
+    if not content:
+        return
+
+    # Pass B — cross-entity-type proximity
+    proximity_donors = [
+        e for e in entities
+        if e.semantic_role and e.entity_type in _PROXIMITY_DONOR_TYPES
+    ]
+    if not proximity_donors:
+        return
+
+    for entity in entities:
+        if entity.semantic_role:
+            continue
+        idx = content.find(entity.value)
+        if idx < 0:
+            continue
+        best, best_dist = None, _PROXIMITY_THRESHOLD + 1
+        for donor in proximity_donors:
+            d_idx = content.find(donor.value)
+            if d_idx < 0:
+                continue
+            dist = abs(d_idx - idx)
+            if dist < best_dist:
+                best_dist, best = dist, donor
+        if best:
+            entity.semantic_role = best.semantic_role
+            logger.debug(
+                "Role propagation (proximity %d chars): '%s' inherited "
+                "role '%s' from '%s'.",
+                best_dist, entity.value, best.semantic_role, best.value,
+            )
 
 
 _SYSTEM_PROMPT = """\
@@ -217,8 +277,15 @@ For organisations (persone_giuridiche):
   societa_datrice_lavoro, societa_appaltatrice, fondo_pensione, ente_formazione
 
   Common document-type mappings:
-    - CV / resume → the employer is "societa_datrice_lavoro", a university is "ente_formazione"
+    - CV / resume → ALL employers (current AND past) are "societa_datrice_lavoro"
+      or "azienda_fornitrice".  NEVER "azienda_cliente" — a CV does not describe
+      the candidate's clients.  A university / school is "ente_formazione".
     - Invoice → "azienda_fornitrice" and "azienda_cliente"
+
+Few-shot example (CV with two employers):
+  Document fragment: "2017–2021 — PMO Analyst, Delta S.r.l. ... 2021–oggi —
+  Project Manager, Acme S.p.A."
+  Both Delta S.r.l. and Acme S.p.A. → "societa_datrice_lavoro".
 
 Return ONLY a valid JSON object (no markdown, no explanation):
 {
@@ -230,8 +297,8 @@ Return ONLY a valid JSON object (no markdown, no explanation):
 Rules:
   - Include ONLY entities from the provided list.
   - Use the EXACT value as provided.
-  - Prefer a specific role over a generic one.  Use "persona" or "organizzazione"
-    ONLY when the document truly provides no contextual clue.
+  - Do NOT use the generic labels "persona" or "organizzazione".  If the role
+    is unclear, pick the closest specific role from the lists above.
   - Never invent entities not in the list.
   - The document may be in any language (Italian, English, French, German).
     Always use the ITALIAN role names listed above, regardless of the document language.
@@ -339,8 +406,18 @@ class SemanticRoleService:
         else:
             doc_type = _detect_doc_type(content)
 
-        # --- Pass 1: role assignment for persons / organisations -----------
-        role_entities = [e for e in entities if e.category in _ROLE_CATEGORIES]
+        # --- Pass 1: role assignment for *actor* persons / organisations ---
+        # Anagraphic sub-entities (data_nascita, luogo_nascita, nazionalita)
+        # share the persone_fisiche category but are not themselves persons —
+        # they are attributes of a person.  Excluding them here means they
+        # flow through Pass 2 (ownership) and inherit the owner's role.
+        role_entities = [
+            e for e in entities
+            if (e.category == EntityCategory.PERSONE_FISICHE
+                and e.entity_type in PERSON_ROLE_TYPES)
+            or (e.category == EntityCategory.PERSONE_GIURIDICHE
+                and e.entity_type in ORG_ROLE_TYPES)
+        ]
 
         if not role_entities:
             return entities, doc_type
@@ -373,17 +450,19 @@ class SemanticRoleService:
             logger.warning("SemanticRoleService failed: %s. Roles will be empty.", exc)
             assignments = {}
 
+        role_entity_ids = {id(e) for e in role_entities}
         for entity in entities:
-            if entity.category in _ROLE_CATEGORIES:
-                role = assignments.get(entity.value)
-                if role:
-                    entity.semantic_role = role
+            if id(entity) not in role_entity_ids:
+                continue
+            role = assignments.get(entity.value)
+            if role:
+                entity.semantic_role = role
 
         logger.info(
             "SemanticRoleService pass 1 (roles): doc_type=%s, %d/%d "
-            "person/org entities assigned a role",
+            "actor entities assigned a role",
             doc_type,
-            sum(1 for e in entities if e.semantic_role and e.category in _ROLE_CATEGORIES),
+            sum(1 for e in role_entities if e.semantic_role),
             len(role_entities),
         )
 
@@ -394,23 +473,46 @@ class SemanticRoleService:
         self._assign_ownership(content, entities)
 
         # --- Pass 3: propagate roles to unresolved entities ---------------
-        _propagate_roles(entities)
+        _propagate_roles(entities, content)
+
+        # --- Pass 3.5: re-validate (some roles may have arrived via
+        # propagation or been returned as non-canonical labels by the LLM)
+        _validate_roles(entities, doc_type)
 
         return entities, doc_type
 
     def _assign_ownership(self, content: str, entities: List[Entity]) -> None:
-        """Resolves which person/org each non-person entity belongs to."""
-        # Collect assigned roles from pass 1
+        """Resolves which person/org each non-person entity belongs to.
+
+        After Pass 1 the only entities with a semantic_role are the *actors*
+        (nome_cognome / nome_azienda / nome_organizzazione).  Everything else
+        — including persone_fisiche sub-types like data_nascita and
+        luogo_nascita — is treated as data needing an owner.
+        """
+        # Collect assigned roles from pass 1 (actors only)
         role_summary = []
         for e in entities:
-            if e.category in _ROLE_CATEGORIES and e.semantic_role:
+            if (
+                e.category in _ROLE_CATEGORIES
+                and e.entity_type in (PERSON_ROLE_TYPES | ORG_ROLE_TYPES)
+                and e.semantic_role
+            ):
                 role_summary.append(f'  - "{e.value}" → {e.semantic_role}')
 
         if not role_summary:
             return
 
-        # Collect non-person entities that need ownership
-        data_entities = [e for e in entities if e.category not in _ROLE_CATEGORIES]
+        # Data entities = anything that isn't an *actor* and still needs
+        # an owner.  This intentionally includes anagraphic sub-entities
+        # of persone_fisiche (data_nascita, luogo_nascita, nazionalita).
+        data_entities = [
+            e for e in entities
+            if not (
+                e.category in _ROLE_CATEGORIES
+                and e.entity_type in (PERSON_ROLE_TYPES | ORG_ROLE_TYPES)
+            )
+            and not e.semantic_role
+        ]
         if not data_entities:
             return
 
@@ -448,21 +550,25 @@ class SemanticRoleService:
             )
             return
 
-        # Build the set of valid owner roles from pass 1
+        # Build the set of valid owner roles from pass 1 (actors only)
         valid_roles: set[str] = {
             e.semantic_role
             for e in entities
-            if e.category in _ROLE_CATEGORIES and e.semantic_role
+            if e.category in _ROLE_CATEGORIES
+            and e.entity_type in (PERSON_ROLE_TYPES | ORG_ROLE_TYPES)
+            and e.semantic_role
         }
         valid_roles.add("documento")
 
-        # If there is exactly one person role, use it as the default for
-        # unrecognised ownership roles (the LLM sometimes returns generic
-        # labels like "persona" that don't match any assigned role).
+        # If there is exactly one *real person* role (computed only from
+        # actors, not from anagraphic sub-entities), use it as the default
+        # for unrecognised ownership roles like "persona".
         person_roles = [
             e.semantic_role
             for e in entities
-            if e.category == EntityCategory.PERSONE_FISICHE and e.semantic_role
+            if e.category == EntityCategory.PERSONE_FISICHE
+            and e.entity_type in PERSON_ROLE_TYPES
+            and e.semantic_role
         ]
         unique_person_roles = set(person_roles)
         default_person_role = (
@@ -470,20 +576,24 @@ class SemanticRoleService:
         )
 
         # Apply ownership in-place, validating against the known role set.
+        # Skip the actor entities themselves; touch everything else (incl.
+        # anagraphic sub-entities now classified as data).
+        data_ids = {id(e) for e in data_entities}
         assigned = 0
         for entity in entities:
-            if entity.category not in _ROLE_CATEGORIES:
-                owner_role = ownership.get(entity.value)
-                if owner_role:
-                    if owner_role not in valid_roles and default_person_role:
-                        logger.debug(
-                            "Ownership normalisation: remapped '%s' owner "
-                            "from '%s' to '%s' (not in valid roles).",
-                            entity.value, owner_role, default_person_role,
-                        )
-                        owner_role = default_person_role
-                    entity.semantic_role = owner_role
-                    assigned += 1
+            if id(entity) not in data_ids:
+                continue
+            owner_role = ownership.get(entity.value)
+            if owner_role:
+                if owner_role not in valid_roles and default_person_role:
+                    logger.debug(
+                        "Ownership normalisation: remapped '%s' owner "
+                        "from '%s' to '%s' (not in valid roles).",
+                        entity.value, owner_role, default_person_role,
+                    )
+                    owner_role = default_person_role
+                entity.semantic_role = owner_role
+                assigned += 1
 
         logger.info(
             "SemanticRoleService pass 2 (ownership): %d/%d data entities "

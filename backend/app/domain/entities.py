@@ -21,6 +21,9 @@ class Entity(BaseModel):
     source: Optional[Literal["ner", "llm", "merged"]] = None
     # Set by SemanticRoleService: e.g. "fornitore", "paziente", "locatore"
     semantic_role: Optional[str] = None
+    # Set by ExtractionService after Stage 2 — preview of the placeholder
+    # that AnonymizationService will produce in the final document.
+    proposed_replacement: Optional[str] = None
 
 
 class AnonymizationMapping(BaseModel):

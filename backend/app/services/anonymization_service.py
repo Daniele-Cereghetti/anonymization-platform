@@ -85,6 +85,14 @@ _PERSON_SUBTYPE_PLACEHOLDER: dict[str, str] = {
 }
 
 
+def build_replacement(entity: Entity, counters: defaultdict) -> str:
+    """Public placeholder builder shared with the extraction preview.
+
+    Mutates ``counters`` in-place (same defaultdict semantics as before).
+    """
+    return _build_replacement(entity, counters)
+
+
 def _build_replacement(entity: Entity, counters: defaultdict) -> str:
     # 1) Sotto-tipi geografici/temporali di persone_fisiche → label dedicato,
     #    arricchito col ruolo del proprietario quando risolto via ownership

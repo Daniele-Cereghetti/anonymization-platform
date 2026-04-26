@@ -97,6 +97,7 @@ const state = {
   mappingRows: [],            // Array di {id, original, category, substitution, status}
   anonymizedText: '',         // testo .md risultato di /anonymize
   anonymizedFilename: 'documento_anonimizzato.md',
+  documentType: null,         // tipo documento rilevato/forzato (cv|medical|contract|invoice|legal|letter|null)
 };
 
 // ===========================================================================
@@ -275,6 +276,9 @@ async function convertDocument() {
 
     // Il testo è cambiato: azzera l'estrazione precedente
     state.mappingRows = [];
+    state.documentType = null;
+    const docTypeSelect = document.getElementById('docTypeSelect');
+    if (docTypeSelect) docTypeSelect.value = '';
     document.getElementById('mappingSection').classList.add('d-none');
 
     // Render markdown preview
@@ -367,11 +371,23 @@ async function extractEntities() {
   );
 
   try {
+    const payload = { document_id: state.documentId, categories };
+    if (state.documentType) {
+      payload.document_type = state.documentType;
+    }
     const result = await apiCall('/api/extract', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ document_id: state.documentId, categories }),
+      body: JSON.stringify(payload),
     });
+
+    // Sync detected document type with the dropdown (only when the user
+    // hasn't forced an override — in that case keep their choice visible).
+    state.documentType = result.document_type || state.documentType || null;
+    const docTypeSelect = document.getElementById('docTypeSelect');
+    if (docTypeSelect) {
+      docTypeSelect.value = state.documentType || '';
+    }
 
     // Build mapping rows. Il backend (AnonymizationService) genera le
     // sostituzioni reali solo durante /api/anonymize, quindi qui mostriamo
@@ -424,14 +440,18 @@ function renderMappingTable() {
     const badgeClass = CATEGORY_BADGE_CLASS[row.category] || 'bg-secondary';
     const isEditing = row._editing === true;
     const isRemoved = row.status === 'removed';
+    const roleCell = row.semantic_role
+      ? `<span class="badge bg-light text-dark border" style="font-size:0.68rem;">${escapeHtml(row.semantic_role)}</span>`
+      : `<span class="text-muted small">&mdash;</span>`;
 
     tr.innerHTML = `
       <td>
         <span class="entity-text">${escapeHtml(row.original)}</span>
       </td>
       <td>
-        <span class="badge ${badgeClass}" style="font-size:0.7rem;">${catLabel}</span>
+        <span class="badge ${badgeClass}" style="font-size:0.7rem;">${escapeHtml(catLabel)}</span>
       </td>
+      <td>${roleCell}</td>
       <td>
         ${isEditing
           ? `<input class="substitution-input" id="editInput_${row.id}"
@@ -641,10 +661,13 @@ async function anonymizeDocument() {
 
     // Aggiorna le sostituzioni preview con quelle reali calcolate dal backend
     if (Array.isArray(result.mappings)) {
-      const byOriginal = new Map(result.mappings.map(m => [m.original, m.replacement]));
+      const byOriginal = new Map(result.mappings.map(m => [m.original, m]));
       state.mappingRows.forEach(row => {
-        const real = byOriginal.get(row.original);
-        if (real) row.substitution = real;
+        const m = byOriginal.get(row.original);
+        if (m) {
+          row.substitution = m.replacement;
+          if (m.semantic_role) row.semantic_role = m.semantic_role;
+        }
       });
       renderMappingTable();
     }
@@ -691,6 +714,9 @@ function startOver() {
   state.convertedText = '';
   state.mappingRows = [];
   state.anonymizedText = '';
+  state.documentType = null;
+  const docTypeSelect = document.getElementById('docTypeSelect');
+  if (docTypeSelect) docTypeSelect.value = '';
 
   // Reset UI
   removeFile();
@@ -747,6 +773,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnExtract').addEventListener('click', extractEntities);
   document.getElementById('btnAcceptAll').addEventListener('click', acceptAllRows);
   document.getElementById('btnRemoveAll').addEventListener('click', removeAllRows);
+
+  // Document type override: re-run extraction with the chosen type so the
+  // SemanticRoleService produces role labels appropriate for that document.
+  document.getElementById('docTypeSelect').addEventListener('change', (ev) => {
+    const newType = ev.target.value || null;
+    if (newType === state.documentType) return;
+    state.documentType = newType;
+    if (state.documentId) {
+      extractEntities();
+    }
+  });
 
   document.getElementById('btnToStep3').addEventListener('click', () => {
     const proposed = state.mappingRows.filter(r => r.status === 'proposed').length;

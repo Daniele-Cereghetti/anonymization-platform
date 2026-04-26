@@ -199,6 +199,26 @@
               </div>
             </div>
 
+            <!-- Document type detection / override -->
+            <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded border bg-light">
+              <i class="bi bi-file-earmark-text text-primary"></i>
+              <label for="docTypeSelect" class="mb-0 small fw-semibold">
+                Tipo documento rilevato:
+              </label>
+              <select id="docTypeSelect" class="form-select form-select-sm" style="width:auto;">
+                <option value="">Auto-rilevato</option>
+                <option value="cv">CV / Curriculum</option>
+                <option value="medical">Cartella clinica</option>
+                <option value="contract">Contratto</option>
+                <option value="invoice">Fattura</option>
+                <option value="legal">Atto legale</option>
+                <option value="letter">Lettera</option>
+              </select>
+              <small class="text-muted ms-auto">
+                Cambiare il tipo riavvia l'estrazione con i ruoli appropriati.
+              </small>
+            </div>
+
             <!-- Validation progress -->
             <div class="progress mb-3" style="height: 6px;">
               <div class="progress-bar bg-success" id="validationProgress" style="width: 0%"></div>
@@ -209,10 +229,11 @@
               <table class="table table-sm table-hover align-middle mb-2" id="mappingTable">
                 <thead class="table-light">
                   <tr>
-                    <th style="width:28%">Entità trovata</th>
-                    <th style="width:16%">Categoria</th>
-                    <th style="width:28%">Sostituzione proposta</th>
-                    <th style="width:12%">Stato</th>
+                    <th style="width:24%">Entità trovata</th>
+                    <th style="width:14%">Categoria</th>
+                    <th style="width:14%">Ruolo</th>
+                    <th style="width:22%">Sostituzione proposta</th>
+                    <th style="width:10%">Stato</th>
                     <th style="width:16%">Azioni</th>
                   </tr>
                 </thead>

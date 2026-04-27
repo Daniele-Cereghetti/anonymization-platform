@@ -1152,23 +1152,53 @@ Le metriche di valutazione derivano direttamente dai requisiti di qualità defin
 
 ## 7.4 Risultati
 
-Una run eseguita sul sottoinsieme dei curricula (01*CV*\*) con il modello **llama3.1:8b** ha prodotto i seguenti risultati:
+La valutazione quantitativa è stata eseguita confrontando l'output della pipeline con una ground truth annotata manualmente (vedi Sezione 7.2), utilizzando lo script backend/tests/dataset_tests/evaluate.py.
 
-| Metrica                   | Valore           |
-| ------------------------- | ---------------- |
-| Documenti processati      | 4 / 4 (100%)     |
-| Entità totali rilevate    | 92               |
-| persone_fisiche           | 15               |
-| persone_giuridiche        | 15               |
-| dati_contatto             | 46               |
-| identificativi            | 8                |
-| dati_finanziari           | 4                |
-| dati_temporali            | 4                |
-| Tempo medio di estrazione | ~190 s/documento |
+La run di riferimento riportata è stata eseguita con il modello llama3.1:8b sul gruppo dei curricula (01*CV*\*), nelle quattro lingue supportate, in modalità strict (match sulla coppia (valore, categoria)).
 
-I risultati confermano una buona copertura sulle categorie più strutturate (dati_contatto e identificativi), grazie al contributo dei pattern regex di Presidio. Le categorie persone_fisiche e persone_giuridiche dipendono invece in misura prevalente dal componente LLM.
+**7.4.1 Risultati globali**
 
-Il tempo di estrazione, dominato dall'inferenza dell'LLM in locale, rappresenta il principale collo di bottiglia rispetto al requisito 2.3.2 ed è attualmente oggetto di ottimizzazione (vedi Sezione 9).
+| Metrica   | Valore |
+| --------- | ------ |
+| TP        | 60     |
+| FP        | 20     |
+| FN        | 16     |
+| Precision | 0.750  |
+| Recall    | 0.789  |
+| F1-score  | 0.769  |
+
+**7.4.2 Risultati per categoria**
+
+| Categoria          | TP  | FP  | FN  | Precision | Recall | F1    |
+| ------------------ | --- | --- | --- | --------- | ------ | ----- |
+| persone_fisiche    | 4   | 8   | 0   | 0.333     | 1.000  | 0.500 |
+| persone_giuridiche | 10  | 0   | 2   | 1.000     | 0.833  | 0.909 |
+| dati_contatto      | 30  | 12  | 2   | 0.714     | 0.938  | 0.811 |
+| identificativi     | 8   | 0   | 8   | 1.000     | 0.500  | 0.667 |
+| dati_finanziari    | 4   | 0   | 0   | 1.000     | 1.000  | 1.000 |
+| dati_temporali     | 4   | 0   | 4   | 1.000     | 0.500  | 0.667 |
+
+**7.4.3 Risultati per lingua**
+
+| Lingua | TP  | FP  | FN  | Precision | Recall | F1    |
+| ------ | --- | --- | --- | --------- | ------ | ----- |
+| DE     | 15  | 6   | 4   | 0.714     | 0.789  | 0.750 |
+| EN     | 14  | 4   | 5   | 0.778     | 0.737  | 0.757 |
+| FR     | 16  | 5   | 3   | 0.762     | 0.842  | 0.800 |
+| IT     | 15  | 5   | 4   | 0.750     | 0.789  | 0.769 |
+
+**7.4.4 Discussione dei risultati**
+
+I dati confermano un comportamento coerente tra le quattro lingue, con valori di F1 compresi tra 0,750 e 0,800. Il francese risulta leggermente in testa, mentre il tedesco si posiziona in coda, con uno scarto comunque compatibile con la ridotta dimensione del campione.
+
+A livello di categoria emergono profili di errore differenziati:
+
+- **dati_finanziari** raggiunge una performance perfetta (P = R = F1 = 1,000), grazie ai pattern regex deterministici per gli IBAN.
+- **persone_giuridiche** e **dati_contatto** mostrano F1 elevati (rispettivamente 0,909 e 0,811). La prima beneficia delle regole di riclassificazione basate sui suffissi societari, la seconda dei riconoscitori Presidio per email e numeri di telefono. I 12 falsi positivi su _dati_contatto_ derivano principalmente da elementi di contorno (URL personali, handle social) erroneamente classificati come recapiti.
+- **identificativi** e **dati_temporali** presentano precision perfetta ma recall pari a 0,500: il sistema non inventa identificativi, ma ne omette una quota significativa (8 FN su 16 GT per gli identificativi e 4 su 8 per le date). Trattandosi della metrica più critica ai fini della conformità a LPD/GDPR (Sezione 7.3.1), rappresenta il principale punto di intervento per le evoluzioni future.
+- **persone_fisiche** mostra il pattern opposto: recall perfetto (1,000) ma precision bassa (0,333), con 8 falsi positivi a fronte di soli 4 veri positivi. L'LLM tende a sovra-segnalare nomi di persona, includendo anche riferimenti a soggetti non sensibili (ad esempio nomi citati in referenze o autori di pubblicazioni). Questo problema impatta la leggibilità del documento anonimizzato, ma non la conformità privacy.
+
+Il tempo medio di estrazione rimane dell'ordine di ~190 secondi per documento e costituisce il principale collo di bottiglia rispetto al requisito 2.3.2 (vedi Sezione 9).
 
 ## 7.5 Test di re-identificazione
 
@@ -1198,7 +1228,14 @@ Rispetto ai requisiti definiti nel Capitolo 2, i risultati ottenuti possono esse
 - **Esecuzione locale (req. 2.3.1)** - L'intera pipeline viene eseguita in container Docker su una singola macchina, senza alcuna chiamata a servizi cloud. Il modello LLM viene caricato ed eseguito localmente tramite Ollama.
 - **API e UI (req. 2.4)** - L'API REST esposta da FastAPI fornisce gli endpoint per estrazione, anteprima e anonimizzazione. L'interfaccia web di proof-of-concept permette all'utente finale di caricare un documento, visualizzare le entità rilevate, i mapping proposti e il testo anonimizzato.
 
-Sul piano quantitativo, le run di riferimento sul sottoinsieme dei curricula con il modello **llama3.1:8b** mostrano una distribuzione coerente delle entità tra le sei categorie e una buona stabilità tra le quattro lingue supportate (IT, EN, FR, DE). Su curricula omologhi si osserva uno scarto contenuto nel numero di entità rilevate per documento (range 21-24).
+Sul piano quantitativo, la run di riferimento sul sottoinsieme dei curricula con il modello **llama3.1:8b** raggiunge un F1 globale di 0,769 (Precision 0,750, Recall 0,789), con prestazioni stabili tra le quattro lingue supportate (F1 nell'intervallo 0,750-0,800).
+
+La pipeline ottiene risultati eccellenti sulle categorie gestite dai riconoscitori deterministici (**dati_finanziari** F1=1,000, **persone_giuridiche** F1=0,909, **dati_contatto** F1=0,811), mentre le categorie più dipendenti dall'LLM mostrano profili di errore complementari:
+
+- **persone_fisiche** con recall completa ma precision bassa (a causa della sovra-segnalazione);
+- **identificativi** e **dati_temporali** con precision perfetta ma recall ridotta (dovuta a omissioni).
+
+Il dettaglio per categoria e per lingua è riportato nella Sezione 7.4.
 
 ## 8.2 Limiti del prototipo
 
@@ -1210,7 +1247,7 @@ Pur soddisfacendo i principali requisiti funzionali, il prototipo presenta alcun
 - **Dipendenza dalla qualità dell'LLM** Il riconoscimento di nomi propri di persona e di entità giuridiche "non standard" (denominazioni senza suffissi societari, soprannomi, alias) eredita le limitazioni del modello open-weight scelto. Modelli più grandi migliorano la recall, ma risultano incompatibili con il vincolo di esecuzione interamente locale.
 - **Lingue e domini** Il dataset di test copre quattro lingue e cinque tipologie documentali. Il comportamento su lingue meno rappresentate (ad esempio il romancio) o su domini altamente specializzati (es. brevetti, atti notarili) non è stato validato.
 - **Quasi-identificatori e inferenza contestuale** Il sistema tratta ogni entità in modo indipendente. Combinazioni di attributi residui (città + professione + fascia d'età, ecc.) possono teoricamente consentire una re-identificazione indiretta. Si tratta di un problema noto nella letteratura sull'anonimizzazione, non risolvibile unicamente con il riconoscimento di entità superficiali.
-- **Assenza di una ground truth annotata** Le metriche di precision e recall sono attualmente calcolate su run di riferimento e ispezione manuale. Manca un dataset formalmente annotato che consenta il calcolo automatico e ripetibile delle metriche descritte nella Sezione 7.3.
+- **Estensione del dataset annotato**. La ground truth attualmente disponibile copre solo il sottoinsieme dei curricula in quattro lingue (4 documenti, 76 entità). L'estensione dell'annotazione manuale all'intero dataset (40 documenti, comprendenti contratti di locazione, di servizio, di lavoro e cartelle cliniche) permetterà di consolidare le metriche su domini più eterogenei e di evidenziare eventuali profili di errore specifici per tipologia documentale.
 - **Robustezza dell'output LLM** Nonostante il parser sia in grado di tollerare code fence e variazioni di formato, output JSON malformati prodotti dal modello possono causare la perdita di entità in singoli documenti. Il fallback su Presidio mitiga il problema, ma non lo elimina completamente.
 
 ## 8.3 Confronto con i sistemi esistenti

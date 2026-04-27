@@ -1,0 +1,471 @@
+{
+  "run_id": "90be25e7-8fa0-4be3-928c-57a6f797acd6",
+  "timestamp": "2026-04-27T11:45:49.028053Z",
+  "document": "04_ContrattoLocazione_DE.md",
+  "document_id": "0d28d3ab-3871-4693-bc54-fb83283c998e",
+  "model": "llama3.1:8b",
+  "char_count": 1564,
+  "status": "success",
+  "extraction": {
+    "entities_count": 31,
+    "processing_time_ms": 259890,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Luca Ferraro",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[VERMIETER_1]"
+      },
+      {
+        "value": "Sara Conti",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[MIETER_1]"
+      },
+      {
+        "value": "Turin (TO)",
+        "category": "dati_contatto",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[CONTATTO_VERMIETER_1]"
+      },
+      {
+        "value": "05.05.1978",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_NASCITA_1]"
+      },
+      {
+        "value": "Via Po 14, 10124 Turin",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[INDIRIZZO_VERMIETER_1]"
+      },
+      {
+        "value": "FRRLCU78E05L219R",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[CODICE_FISCALE_VERMIETER_1]"
+      },
+      {
+        "value": "luca.ferraro@dominio.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[EMAIL_VERMIETER_1]"
+      },
+      {
+        "value": "+39 011 554 7789",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_1]"
+      },
+      {
+        "value": "Parma (PR)",
+        "category": "dati_contatto",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[CONTATTO_1]"
+      },
+      {
+        "value": "03.09.1991",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_NASCITA_2]"
+      },
+      {
+        "value": "Via Garibaldi 8, 43121 Parma",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[INDIRIZZO_MIETER_1]"
+      },
+      {
+        "value": "sara.conti@esempio.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[EMAIL_MIETER_1]"
+      },
+      {
+        "value": "+39 348 990 22 33",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[TELEFONO_MIETER_1]"
+      },
+      {
+        "value": "Via Roma 22, Innen 3B, 00186 Rom (RM)",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "immobilie",
+        "proposed_replacement": "[IMMOBILIE_1]"
+      },
+      {
+        "value": "IT44 C030 0203 2001 0000 0123 999",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[IBAN_1]"
+      },
+      {
+        "value": "Luca Ferraro",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[VERMIETER_2]"
+      },
+      {
+        "value": "IT-DF-7A9C-0021",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TESSERA_SANITARIA_1]"
+      },
+      {
+        "value": "2",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_6]"
+      },
+      {
+        "value": "IT-001E1234567890",
+        "category": "identificativi",
+        "entity_type": "numero_licenza",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[LICENZA_1]"
+      },
+      {
+        "value": "PDR Gas",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_5]"
+      },
+      {
+        "value": "IT-001E1234567890",
+        "category": "identificativi",
+        "entity_type": "numero_licenza",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[LICENZA_2]"
+      },
+      {
+        "value": "0123456789",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_2]"
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[CARTA_IDENTITA_MIETER_1]"
+      },
+      {
+        "value": "Luca Ferraro",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "vermieter",
+        "proposed_replacement": "[VERMIETER_3]"
+      },
+      {
+        "value": "Sara Conti",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "mieter",
+        "proposed_replacement": "[MIETER_2]"
+      },
+      {
+        "value": "LR-2026-0042",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_1]"
+      },
+      {
+        "value": "10.02.2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_2]"
+      },
+      {
+        "value": "01.04.2026",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.6,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_3]"
+      },
+      {
+        "value": "31.03.2030",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.6,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATA_4]"
+      },
+      {
+        "value": "05.05.1978",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": 0.4,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_3]"
+      },
+      {
+        "value": "03.09.1991",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": 0.4,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_4]"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 23,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via Roma 22, Innen 3B, 00186 Rom (RM)",
+        "replacement": "[IMMOBILIE_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "semantic_role": "immobilie"
+      },
+      {
+        "original": "IT44 C030 0203 2001 0000 0123 999",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Via Garibaldi 8, 43121 Parma",
+        "replacement": "[INDIRIZZO_MIETER_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "mieter"
+      },
+      {
+        "original": "luca.ferraro@dominio.it",
+        "replacement": "[EMAIL_VERMIETER_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "vermieter"
+      },
+      {
+        "original": "Via Po 14, 10124 Turin",
+        "replacement": "[INDIRIZZO_VERMIETER_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "vermieter"
+      },
+      {
+        "original": "sara.conti@esempio.com",
+        "replacement": "[EMAIL_MIETER_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "mieter"
+      },
+      {
+        "original": "IT-001E1234567890",
+        "replacement": "[LICENZA_1]",
+        "category": "identificativi",
+        "entity_type": "numero_licenza",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "FRRLCU78E05L219R",
+        "replacement": "[CODICE_FISCALE_VERMIETER_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "semantic_role": "vermieter"
+      },
+      {
+        "original": "+39 011 554 7789",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "IT-DF-7A9C-0021",
+        "replacement": "[TESSERA_SANITARIA_1]",
+        "category": "identificativi",
+        "entity_type": "tessera_sanitaria",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Luca Ferraro",
+        "replacement": "[VERMIETER_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": "vermieter"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[CARTA_IDENTITA_MIETER_1]",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "semantic_role": "mieter"
+      },
+      {
+        "original": "LR-2026-0042",
+        "replacement": "[DATA_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Sara Conti",
+        "replacement": "[MIETER_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": "mieter"
+      },
+      {
+        "original": "Turin (TO)",
+        "replacement": "[CONTATTO_VERMIETER_1]",
+        "category": "dati_contatto",
+        "entity_type": "luogo_nascita",
+        "semantic_role": "vermieter"
+      },
+      {
+        "original": "05.05.1978",
+        "replacement": "[DATA_NASCITA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Parma (PR)",
+        "replacement": "[CONTATTO_1]",
+        "category": "dati_contatto",
+        "entity_type": "luogo_nascita",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "03.09.1991",
+        "replacement": "[DATA_NASCITA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "10.02.2024",
+        "replacement": "[DATA_2]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "01.04.2026",
+        "replacement": "[DATA_3]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "31.03.2030",
+        "replacement": "[DATA_4]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "PDR Gas",
+        "replacement": "[TELEFONO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "2",
+        "replacement": "[TELEFONO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "documento"
+      }
+    ],
+    "anonymized_preview": "# WOHNRAUMMIETVERTRAG\n\n**Vermieter**: [VERMIETER_1], geboren in [CONTATTO_VERMIETER_1] am [DATA_NASCITA_1],\nSteuernummer (CF): **[CODICE_FISCALE_VERMIETER_1]**, wohnhaft in [INDIRIZZO_VERMIETER_1].\nE-Mail: [EMAIL_VERMIETER_1] | Tel: [TELEFONO_1]\n\n**Mieter**: [MIETER_1], geboren in [CONTATTO_1] am [DATA_NASCITA_[TELEFONO_3]],\nSteuernummer (CF): **CNTSAR91P43G337F**, wohnhaft in [INDIRIZZO_MIETER_1].\nE-Mail: [EMAIL_MIETER_1] | Tel: +39 348 990 [TELEFONO_3][TELEFONO_3] 33\n\n**Immobilie**: [IMMOBILIE_1], Kataster: Blatt 1[TELEFONO_3], Parzelle 345, Sub 7.\n**Dauer**: 4 + 4 Jahre ([DATA_3] – [DATA_4]"
+  },
+  "error": null
+}

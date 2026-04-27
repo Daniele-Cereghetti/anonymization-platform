@@ -1,0 +1,346 @@
+{
+  "run_id": "bc93f489-deb8-4f70-8c8c-dc1669a20152",
+  "timestamp": "2026-04-27T11:43:22.820650Z",
+  "document": "03_CV_IT.md",
+  "document_id": "1b124820-3b00-457e-8cd8-272667c1924a",
+  "model": "llama3.1:8b",
+  "char_count": 1467,
+  "status": "success",
+  "extraction": {
+    "entities_count": 21,
+    "processing_time_ms": 146167,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Claire Dupont",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[PERSONA_1]"
+      },
+      {
+        "value": "22/11/1987",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[DATA_NASCITA_1]"
+      },
+      {
+        "value": "10 rue de la République, 69002 Lione, Francia",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[INDIRIZZO_1]"
+      },
+      {
+        "value": "+33 6 12 34 56 78",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[TELEFONO_1]"
+      },
+      {
+        "value": "claire.dupont@example.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[EMAIL_1]"
+      },
+      {
+        "value": "1 87 11 69 123 456 78",
+        "category": "identificativi",
+        "entity_type": "n° di previdenza sociale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[ID_1]"
+      },
+      {
+        "value": "B",
+        "category": "identificativi",
+        "entity_type": "patente_di_guida",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[ID_2]"
+      },
+      {
+        "value": "9 anni",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[DATA_CONTRATTO_1]"
+      },
+      {
+        "value": "BoutiqueNova SAS",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[ORGANIZZAZIONE_2]"
+      },
+      {
+        "value": "22 avenue Foch, 75016 Parigi",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[INDIRIZZO_3]"
+      },
+      {
+        "value": "rh@boutiquenova.fr",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[EMAIL_2]"
+      },
+      {
+        "value": "+01 44 55 66 77",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[TELEFONO_3]"
+      },
+      {
+        "value": "HexaMedia",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[ORGANIZZAZIONE_4]"
+      },
+      {
+        "value": "5 place Bellecour, 69002 Lione",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[INDIRIZZO_2]"
+      },
+      {
+        "value": "EM Lyon Business School",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[ORGANIZZAZIONE_1]"
+      },
+      {
+        "value": "FR76 3000 6000 0112 3456 7890 189",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[DATO_FIN_1]"
+      },
+      {
+        "value": "+33 7 77 66 55 44",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": null,
+        "proposed_replacement": "[TELEFONO_2]"
+      },
+      {
+        "value": "FR76 3000 6000 0112 3456 7890 189",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": null,
+        "proposed_replacement": "[IBAN_1]"
+      },
+      {
+        "value": "Claire Dupont",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null,
+        "proposed_replacement": "[PERSONA_2]"
+      },
+      {
+        "value": "brand",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null,
+        "proposed_replacement": "[PERSONA_3]"
+      },
+      {
+        "value": "BoutiqueNova SAS",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": null,
+        "proposed_replacement": "[ORGANIZZAZIONE_3]"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 18,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "10 rue de la République, 69002 Lione, Francia",
+        "replacement": "[INDIRIZZO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": null
+      },
+      {
+        "original": "FR76 3000 6000 0112 3456 7890 189",
+        "replacement": "[DATO_FIN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "RIB/IBAN",
+        "semantic_role": null
+      },
+      {
+        "original": "5 place Bellecour, 69002 Lione",
+        "replacement": "[INDIRIZZO_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": null
+      },
+      {
+        "original": "22 avenue Foch, 75016 Parigi",
+        "replacement": "[INDIRIZZO_3]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": null
+      },
+      {
+        "original": "claire.dupont@example.fr",
+        "replacement": "[EMAIL_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": null
+      },
+      {
+        "original": "EM Lyon Business School",
+        "replacement": "[ORGANIZZAZIONE_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "semantic_role": null
+      },
+      {
+        "original": "1 87 11 69 123 456 78",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "n° di previdenza sociale",
+        "semantic_role": null
+      },
+      {
+        "original": "rh@boutiquenova.fr",
+        "replacement": "[EMAIL_2]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": null
+      },
+      {
+        "original": "+33 6 12 34 56 78",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": null
+      },
+      {
+        "original": "+33 7 77 66 55 44",
+        "replacement": "[TELEFONO_2]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": null
+      },
+      {
+        "original": "BoutiqueNova SAS",
+        "replacement": "[ORGANIZZAZIONE_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": null
+      },
+      {
+        "original": "+01 44 55 66 77",
+        "replacement": "[TELEFONO_3]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": null
+      },
+      {
+        "original": "Claire Dupont",
+        "replacement": "[PERSONA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": null
+      },
+      {
+        "original": "22/11/1987",
+        "replacement": "[DATA_NASCITA_1]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "semantic_role": null
+      },
+      {
+        "original": "HexaMedia",
+        "replacement": "[ORGANIZZAZIONE_3]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": null
+      },
+      {
+        "original": "9 anni",
+        "replacement": "[DATA_CONTRATTO_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_contratto",
+        "semantic_role": null
+      },
+      {
+        "original": "brand",
+        "replacement": "[PERSONA_2]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": null
+      },
+      {
+        "original": "B",
+        "replacement": "[ID_2]",
+        "category": "identificativi",
+        "entity_type": "patente_di_guida",
+        "semantic_role": null
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [PERSONA_1]\n\n## Dati personali\n- **Nome e Cognome**: [PERSONA_1]\n- **Data di nascita**: [DATA_NASCITA_1]\n- **Indirizzo**: [INDIRIZZO_1]\n- **Telefono**: [TELEFONO_1]\n- **Email**: [EMAIL_1]\n- **N° di previdenza sociale**: [ID_1]\n- **Patente di guida**: [ID_2]\n\n## Profilo\nDigital Marketing Manager con **[DATA_CONTRATTO_1]** di esperienza nel retail. Abituata alla gestione di team agili, all'A/[ID_2] testing e alla misurazione del ROI multicanale. Do un'importanza particolare alla qualità dei dati e alla coerenza del [PERSONA_2].\n\n## Esperienza\n**2020–oggi — Head of Digital, ["
+  },
+  "error": null
+}

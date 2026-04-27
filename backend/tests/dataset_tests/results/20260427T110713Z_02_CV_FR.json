@@ -1,0 +1,346 @@
+{
+  "run_id": "d1bfc5bd-a59a-45cf-a3ef-79ac1004059b",
+  "timestamp": "2026-04-27T11:27:50.267260Z",
+  "document": "02_CV_FR.md",
+  "document_id": "23975b61-41c4-4549-bd40-1993ac2d04b5",
+  "model": "llama3.1:8b",
+  "char_count": 1892,
+  "status": "success",
+  "extraction": {
+    "entities_count": 21,
+    "processing_time_ms": 209290,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Daniel Carter",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[CANDIDATO_1]"
+      },
+      {
+        "value": "29/03/1990",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[DATA_NASCITA_CANDIDATO_1]"
+      },
+      {
+        "value": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[INDIRIZZO_CANDIDATO_1]"
+      },
+      {
+        "value": "+1 (217) 555-0199",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[TELEFONO_CANDIDATO_1]"
+      },
+      {
+        "value": "dan.carter90@example.org",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[EMAIL_CANDIDATO_1]"
+      },
+      {
+        "value": "123-45-6789",
+        "category": "identificativi",
+        "entity_type": "SSN",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[ID_CANDIDATO_3]"
+      },
+      {
+        "value": "C123-4567-8901 (IL)",
+        "category": "identificativi",
+        "entity_type": "permis_de_conduire",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[ID_CANDIDATO_1]"
+      },
+      {
+        "value": "NorthStar Analytics Inc.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[AZIENDA_FORNITRICE_1]"
+      },
+      {
+        "value": "350 W Adams St, Chicago, IL 60606",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[INDIRIZZO_AZIENDA_FORNITRICE_1]"
+      },
+      {
+        "value": "+1 312-555-0147",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[TELEFONO_AZIENDA_FORNITRICE_1]"
+      },
+      {
+        "value": "payroll@northstar.ai",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[EMAIL_AZIENDA_FORNITRICE_1]"
+      },
+      {
+        "value": "BlueBrick Co.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[AZIENDA_FORNITRICE_3]"
+      },
+      {
+        "value": "55 Main St, St. Louis, MO 63101",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[INDIRIZZO_AZIENDA_FORNITRICE_2]"
+      },
+      {
+        "value": "UIUC",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "ente_formazione",
+        "proposed_replacement": "[ENTE_FORMAZIONE_1]"
+      },
+      {
+        "value": "AWS-ML-00A1B2",
+        "category": "identificativi",
+        "entity_type": "numero_certification",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[ID_CANDIDATO_2]"
+      },
+      {
+        "value": "GB33BUKB20201555555555",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[IBAN_1]"
+      },
+      {
+        "value": "+1 217-555-0172",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[TELEFONO_1]"
+      },
+      {
+        "value": "KB2020155",
+        "category": "identificativi",
+        "entity_type": "licenza_medica",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[ID_1]"
+      },
+      {
+        "value": "Daniel Carter",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[CANDIDATO_2]"
+      },
+      {
+        "value": "NorthStar Analytics Inc.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[AZIENDA_FORNITRICE_2]"
+      },
+      {
+        "value": "BlueBrick Co.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[AZIENDA_FORNITRICE_4]"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 18,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "742 Evergreen Terrace, Springfield, IL 62704, USA",
+        "replacement": "[INDIRIZZO_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "350 W Adams St, Chicago, IL 60606",
+        "replacement": "[INDIRIZZO_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "55 Main St, St. Louis, MO 63101",
+        "replacement": "[INDIRIZZO_AZIENDA_FORNITRICE_2]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "dan.carter90@example.org",
+        "replacement": "[EMAIL_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "NorthStar Analytics Inc.",
+        "replacement": "[AZIENDA_FORNITRICE_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "GB33BUKB20201555555555",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "payroll@northstar.ai",
+        "replacement": "[EMAIL_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "C123-4567-8901 (IL)",
+        "replacement": "[ID_CANDIDATO_1]",
+        "category": "identificativi",
+        "entity_type": "permis_de_conduire",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "+1 (217) 555-0199",
+        "replacement": "[TELEFONO_CANDIDATO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "+1 312-555-0147",
+        "replacement": "[TELEFONO_AZIENDA_FORNITRICE_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "+1 217-555-0172",
+        "replacement": "[TELEFONO_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Daniel Carter",
+        "replacement": "[CANDIDATO_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "BlueBrick Co.",
+        "replacement": "[AZIENDA_FORNITRICE_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "AWS-ML-00A1B2",
+        "replacement": "[ID_CANDIDATO_2]",
+        "category": "identificativi",
+        "entity_type": "numero_certification",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "123-45-6789",
+        "replacement": "[ID_CANDIDATO_3]",
+        "category": "identificativi",
+        "entity_type": "SSN",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "29/03/1990",
+        "replacement": "[DATA_NASCITA_CANDIDATO_1]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "KB2020155",
+        "replacement": "[ID_1]",
+        "category": "identificativi",
+        "entity_type": "licenza_medica",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "UIUC",
+        "replacement": "[ENTE_FORMAZIONE_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "semantic_role": "ente_formazione"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [CANDIDATO_1]\n\n## Données personnelles\n- **Nom et Prénom** : [CANDIDATO_1]\n- **Date de naissance** : [DATA_NASCITA_CANDIDATO_1]\n- **Adresse** : [INDIRIZZO_CANDIDATO_1]\n- **Téléphone** : [TELEFONO_CANDIDATO_1]\n- **Email** : [EMAIL_CANDIDATO_1]\n- **SSN** : [ID_CANDIDATO_3]\n- **Permis de conduire** : [ID_CANDIDATO_1]\n\n## Résumé\nData Scientist spécialisé en **NLP** et en **détection de fraudes**. Plus de six ans d'expérience dans la mise en production de modèles ML, du prototype à la production (AWS + Kubernetes). J'accorde de l'importance à la reproductibilité, à la validatio"
+  },
+  "error": null
+}

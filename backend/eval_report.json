@@ -1,0 +1,214 @@
+{
+  "run_id": "20260422T074801Z",
+  "lenient_category": false,
+  "skipped": [],
+  "per_document": {
+    "01_CV_DE.md": {
+      "lang": "DE",
+      "n_pred": 24,
+      "n_gt": 19,
+      "counts": {
+        "persone_fisiche": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0
+        },
+        "persone_giuridiche": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_contatto": {
+          "tp": 7,
+          "fp": 4,
+          "fn": 1
+        },
+        "identificativi": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2
+        },
+        "dati_finanziari": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_temporali": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 1
+        }
+      }
+    },
+    "01_CV_EN.md": {
+      "lang": "EN",
+      "n_pred": 21,
+      "n_gt": 19,
+      "counts": {
+        "persone_fisiche": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0
+        },
+        "persone_giuridiche": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 1
+        },
+        "dati_contatto": {
+          "tp": 7,
+          "fp": 2,
+          "fn": 1
+        },
+        "identificativi": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2
+        },
+        "dati_finanziari": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_temporali": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 1
+        }
+      }
+    },
+    "01_CV_FR.md": {
+      "lang": "FR",
+      "n_pred": 24,
+      "n_gt": 19,
+      "counts": {
+        "persone_fisiche": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0
+        },
+        "persone_giuridiche": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_contatto": {
+          "tp": 8,
+          "fp": 3,
+          "fn": 0
+        },
+        "identificativi": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2
+        },
+        "dati_finanziari": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_temporali": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 1
+        }
+      }
+    },
+    "01_CV_IT.md": {
+      "lang": "IT",
+      "n_pred": 23,
+      "n_gt": 19,
+      "counts": {
+        "persone_fisiche": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0
+        },
+        "persone_giuridiche": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 1
+        },
+        "dati_contatto": {
+          "tp": 8,
+          "fp": 3,
+          "fn": 0
+        },
+        "identificativi": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2
+        },
+        "dati_finanziari": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0
+        },
+        "dati_temporali": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 1
+        }
+      }
+    }
+  },
+  "by_category": {
+    "persone_fisiche": {
+      "tp": 4,
+      "fp": 8,
+      "fn": 0
+    },
+    "persone_giuridiche": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 2
+    },
+    "dati_contatto": {
+      "tp": 30,
+      "fp": 12,
+      "fn": 2
+    },
+    "identificativi": {
+      "tp": 8,
+      "fp": 0,
+      "fn": 8
+    },
+    "dati_finanziari": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "dati_temporali": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 4
+    }
+  },
+  "by_language": {
+    "DE": {
+      "tp": 15,
+      "fp": 6,
+      "fn": 4
+    },
+    "EN": {
+      "tp": 14,
+      "fp": 4,
+      "fn": 5
+    },
+    "FR": {
+      "tp": 16,
+      "fp": 5,
+      "fn": 3
+    },
+    "IT": {
+      "tp": 15,
+      "fp": 5,
+      "fn": 4
+    }
+  },
+  "total": {
+    "tp": 60,
+    "fp": 20,
+    "fn": 16
+  }
+}

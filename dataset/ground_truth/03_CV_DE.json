@@ -1,0 +1,22 @@
+{
+  "document": "03_CV_DE.md",
+  "entities": [
+    {"value": "Claire Dupont", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "Paul Dupont", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "BoutiqueNova SAS", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "HexaMedia", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "EM Lyon Business School", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "10 rue de la République, 69002 Lyon, Frankreich", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "+33 6 12 34 56 78", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "claire.dupont@example.fr", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "22 avenue Foch, 75016 Paris", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "rh@boutiquenova.fr", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "01 44 55 66 77", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "5 place Bellecour, 69002 Lyon", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "+33 7 77 66 55 44", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "1 87 11 69 123 456 78", "category": "identificativi", "entity_type": "ssn"},
+    {"value": "GA-123456-7", "category": "identificativi", "entity_type": "cliente_id"},
+    {"value": "FR76 3000 6000 0112 3456 7890 189", "category": "dati_finanziari", "entity_type": "iban"},
+    {"value": "22.11.1987", "category": "dati_temporali", "entity_type": "data_nascita"}
+  ]
+}

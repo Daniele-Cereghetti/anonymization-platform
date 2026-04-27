@@ -1,0 +1,23 @@
+{
+  "document": "02_CV_DE.md",
+  "entities": [
+    {"value": "Daniel Carter", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "Emily Carter", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "NorthStar Analytics Inc.", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "BlueBrick Co.", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "UIUC", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "742 Evergreen Terrace, Springfield, IL 62704, USA", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "+1 (217) 555-0199", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "dan.carter90@example.org", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "350 W Adams St, Chicago, IL 60606", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "payroll@northstar.ai", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "+1 312-555-0147", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "55 Main St, St. Louis, MO 63101", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "+1 217-555-0172", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "123-45-6789", "category": "identificativi", "entity_type": "ssn"},
+    {"value": "C123-4567-8901", "category": "identificativi", "entity_type": "patente_guida"},
+    {"value": "AWS-ML-00A1B2", "category": "identificativi", "entity_type": "credential_id"},
+    {"value": "GB33BUKB20201555555555", "category": "dati_finanziari", "entity_type": "iban"},
+    {"value": "29.03.1990", "category": "dati_temporali", "entity_type": "data_nascita"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "document": "01_CV_DE.md",
+  "entities": [
+    {"value": "Marta Bianchi", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "Acme S.p.A.", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "Delta S.r.l.", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "Politecnico di Milano", "category": "persone_giuridiche", "entity_type": "ragione_sociale"},
+    {"value": "Via delle Magnolie 12, 20133 Mailand (MI), Italien", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "+39 335 123 45 67", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "marta.bianchi88@example.com", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "https://www.linkedin.com/in/marta-bianchi", "category": "dati_contatto", "entity_type": "linkedin"},
+    {"value": "Via Torino 101, 20123 Mailand", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "hr@acme-italia.it", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "+39 02 1234 5678", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "Viale Monza 220, 20125 Mailand", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "BNCMRT88B54F205X", "category": "identificativi", "entity_type": "codice_fiscale"},
+    {"value": "FP123XY", "category": "identificativi", "entity_type": "targa_auto"},
+    {"value": "1234567", "category": "identificativi", "entity_type": "license_id"},
+    {"value": "CI AA1234567", "category": "identificativi", "entity_type": "carta_identita"},
+    {"value": "IT60 X054 2811 1010 0000 0123 456", "category": "dati_finanziari", "entity_type": "iban"},
+    {"value": "14/02/1988", "category": "dati_temporali", "entity_type": "data_nascita"},
+    {"value": "10/02/2024", "category": "dati_temporali", "entity_type": "data_documento"}
+  ]
+}

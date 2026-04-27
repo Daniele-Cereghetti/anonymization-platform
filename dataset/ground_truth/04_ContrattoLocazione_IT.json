@@ -1,0 +1,27 @@
+{
+  "document": "04_ContrattoLocazione_IT.md",
+  "entities": [
+    {"value": "Luca Ferraro", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "Sara Conti", "category": "persone_fisiche", "entity_type": "nome_cognome"},
+    {"value": "Via Po 14, 10124 Torino", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "luca.ferraro@dominio.it", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "+39 011 554 7789", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "Via Garibaldi 8, 43121 Parma", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "sara.conti@esempio.com", "category": "dati_contatto", "entity_type": "email"},
+    {"value": "+39 348 990 22 33", "category": "dati_contatto", "entity_type": "telefono"},
+    {"value": "Via Roma 22, Interno 3B, 00186 Roma (RM)", "category": "dati_contatto", "entity_type": "indirizzo"},
+    {"value": "FRRLCU78E05L219R", "category": "identificativi", "entity_type": "codice_fiscale"},
+    {"value": "CNTSAR91P43G337F", "category": "identificativi", "entity_type": "codice_fiscale"},
+    {"value": "LR-2026-0042", "category": "identificativi", "entity_type": "contratto_id"},
+    {"value": "IT001E1234567890", "category": "identificativi", "entity_type": "pod"},
+    {"value": "0123456789", "category": "identificativi", "entity_type": "pdr"},
+    {"value": "IT-DF-7A9C-0021", "category": "identificativi", "entity_type": "signature_id"},
+    {"value": "CI AA1234567", "category": "identificativi", "entity_type": "carta_identita"},
+    {"value": "IT44 C030 0203 2001 0000 0123 999", "category": "dati_finanziari", "entity_type": "iban"},
+    {"value": "05/05/1978", "category": "dati_temporali", "entity_type": "data_nascita"},
+    {"value": "03/09/1991", "category": "dati_temporali", "entity_type": "data_nascita"},
+    {"value": "01/04/2026", "category": "dati_temporali", "entity_type": "data_inizio"},
+    {"value": "31/03/2030", "category": "dati_temporali", "entity_type": "data_fine"},
+    {"value": "10/02/2024", "category": "dati_temporali", "entity_type": "data_documento"}
+  ]
+}

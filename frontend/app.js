@@ -98,6 +98,7 @@ const state = {
   anonymizedText: '',         // testo .md risultato di /anonymize
   anonymizedFilename: 'documento_anonimizzato.md',
   documentType: null,         // tipo documento rilevato/forzato (cv|medical|contract|invoice|legal|letter|null)
+  language: null,             // lingua rilevata dal backend (it|en|fr|de) — usata per localizzare i placeholder
 };
 
 // ===========================================================================
@@ -384,6 +385,7 @@ async function extractEntities() {
     // Sync detected document type with the dropdown (only when the user
     // hasn't forced an override — in that case keep their choice visible).
     state.documentType = result.document_type || state.documentType || null;
+    state.language = result.language || null;
     const docTypeSelect = document.getElementById('docTypeSelect');
     if (docTypeSelect) {
       docTypeSelect.value = state.documentType || '';
@@ -659,7 +661,7 @@ async function anonymizeDocument() {
     const result = await apiCall('/api/anonymize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ document_id: state.documentId, entities: activeEntities }),
+      body: JSON.stringify({ document_id: state.documentId, entities: activeEntities, language: state.language }),
     });
 
     state.anonymizedText = result.anonymized_content;

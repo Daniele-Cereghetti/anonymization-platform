@@ -41,14 +41,18 @@ class ExtractionService:
 
         start = time.monotonic()
 
-        # Stage 1: hybrid NER
-        entities = self._identification.identify(content=content, categories=categories)
+        # Stage 1: hybrid NER (also returns the detected document language
+        # so we can render placeholders in that language downstream)
+        entities, language = self._identification.identify(
+            content=content, categories=categories,
+        )
 
         # Stage 2: contextual role assignment
         entities, doc_type = self._semantic_roles.assign_roles(
             content=content,
             entities=entities,
             doc_type_override=doc_type_override,
+            language=language,
         )
 
         # Stage 3 (preview): compute the placeholder each entity will get
@@ -59,7 +63,9 @@ class ExtractionService:
         # pass which sorts the same way before substitution.
         preview_counters: defaultdict = defaultdict(int)
         for entity in sorted(entities, key=lambda e: len(e.value), reverse=True):
-            entity.proposed_replacement = build_replacement(entity, preview_counters)
+            entity.proposed_replacement = build_replacement(
+                entity, preview_counters, language,
+            )
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
 
@@ -70,4 +76,5 @@ class ExtractionService:
             processing_time_ms=elapsed_ms,
             model=self.client.model,
             document_type=doc_type,
+            language=language,
         )

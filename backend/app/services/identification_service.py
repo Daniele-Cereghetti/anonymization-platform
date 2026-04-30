@@ -900,7 +900,7 @@ class IdentificationService:
         self,
         content: str,
         categories: Optional[List[str]] = None,
-    ) -> List[Entity]:
+    ) -> tuple[List[Entity], str]:
         if categories is None:
             categories = [c.value for c in EntityCategory]
 
@@ -919,4 +919,4 @@ class IdentificationService:
             "Identification: lang=%s ner=%d llm=%d merged=%d",
             lang, len(ner_entities), len(llm_entities), len(entities),
         )
-        return entities
+        return entities, lang

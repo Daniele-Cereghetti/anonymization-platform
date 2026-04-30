@@ -21,6 +21,7 @@ class ExtractionResult(BaseModel):
     processing_time_ms: int
     model: str
     document_type: Optional[str] = None
+    language: Optional[str] = None
 
 
 class AnonymizationResult(BaseModel):
@@ -29,3 +30,4 @@ class AnonymizationResult(BaseModel):
     anonymized_content: str
     mappings: List[AnonymizationMapping]
     processing_time_ms: int
+    language: Optional[str] = None

@@ -384,6 +384,7 @@ class SemanticRoleService:
         content: str,
         entities: List[Entity],
         doc_type_override: str | None = None,
+        language: str = "it",
     ) -> tuple[List[Entity], str | None]:
         """
         Two-pass enrichment:

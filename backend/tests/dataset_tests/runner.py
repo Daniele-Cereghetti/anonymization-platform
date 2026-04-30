@@ -184,6 +184,7 @@ def _run_single(
         content=content,
         entities=ext.entities,
         document_id=document_id,
+        language=ext.language or "it",
     )
     record["anonymization"] = {
         "mappings_count": len(anon.mappings),

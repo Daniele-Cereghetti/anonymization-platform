@@ -1,0 +1,46 @@
+{
+  "run_timestamp": "20260430T072736Z",
+  "model": "llama3.1:8b",
+  "total_documents": 4,
+  "success": 4,
+  "errors": 0,
+  "total_entities_found": 84,
+  "entities_by_category": {
+    "persone_fisiche": 15,
+    "persone_giuridiche": 13,
+    "dati_contatto": 40,
+    "identificativi": 8,
+    "dati_finanziari": 4,
+    "dati_temporali": 4
+  },
+  "documents": [
+    {
+      "document": "01_CV_DE.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 198365,
+      "error": null
+    },
+    {
+      "document": "01_CV_EN.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 178780,
+      "error": null
+    },
+    {
+      "document": "01_CV_FR.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 212877,
+      "error": null
+    },
+    {
+      "document": "01_CV_IT.md",
+      "status": "success",
+      "entities_count": 21,
+      "extraction_time_ms": 206279,
+      "error": null
+    }
+  ]
+}

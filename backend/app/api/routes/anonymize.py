@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -17,6 +17,7 @@ _cache = CacheService()
 class AnonymizeRequest(BaseModel):
     document_id: str
     entities: List[Entity]
+    language: Optional[str] = None
 
 
 @router.post("/anonymize", response_model=AnonymizationResult)
@@ -29,6 +30,7 @@ async def anonymize_document(req: AnonymizeRequest):
         content=content,
         entities=req.entities,
         document_id=req.document_id,
+        language=req.language or "it",
     )
 
     log_event(

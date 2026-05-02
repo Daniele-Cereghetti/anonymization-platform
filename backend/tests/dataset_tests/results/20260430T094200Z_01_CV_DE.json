@@ -1,0 +1,369 @@
+{
+  "run_id": "fdfcf441-3dfa-45ad-8746-fdb33bdaaddf",
+  "timestamp": "2026-04-30T09:42:00.638774Z",
+  "document": "01_CV_DE.md",
+  "document_id": "c25e089f-1621-453b-90c0-eaef9aad3f52",
+  "model": "llama3.1:8b",
+  "char_count": 2249,
+  "status": "success",
+  "extraction": {
+    "entities_count": 22,
+    "processing_time_ms": 348347,
+    "categories_requested": [
+      "persone_fisiche",
+      "persone_giuridiche",
+      "dati_contatto",
+      "identificativi",
+      "dati_finanziari",
+      "dati_temporali"
+    ],
+    "entities": [
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[BEWERBER_1]"
+      },
+      {
+        "value": "14/02/1988",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[GEBURTSDATUM_BEWERBER_1]"
+      },
+      {
+        "value": "Mailand (MI), Italien",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[GEBURTSORT_BEWERBER_1]"
+      },
+      {
+        "value": "Via delle Magnolie 12, 20133 Mailand (MI), Italien",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[ADRESSE_BEWERBER_1]"
+      },
+      {
+        "value": "+39 335 123 45 67",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[TELEFON_BEWERBER_1]"
+      },
+      {
+        "value": "marta.bianchi88@example.com",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[EMAIL_BEWERBER_1]"
+      },
+      {
+        "value": "BNCMRT88B54F205X",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[STEUER_ID_BEWERBER_1]"
+      },
+      {
+        "value": "FP123XY",
+        "category": "dati_contatto",
+        "entity_type": "targa",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[KENNZEICHEN_1]"
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[KONTAKT_1]"
+      },
+      {
+        "value": "Acme S.p.A.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[LIEFERFIRMA_1]"
+      },
+      {
+        "value": "Delta S.r.l.",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "societa_datrice_lavoro",
+        "proposed_replacement": "[ARBEITGEBERFIRMA_1]"
+      },
+      {
+        "value": "Viale Monza 220, 20125 Mailand",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "societa_datrice_lavoro",
+        "proposed_replacement": "[ADRESSE_ARBEITGEBERFIRMA_1]"
+      },
+      {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[IBAN_1]"
+      },
+      {
+        "value": "CI AA1234567",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "confidence": null,
+        "source": "llm",
+        "semantic_role": "documento",
+        "proposed_replacement": "[PERSONALAUSWEIS_1]"
+      },
+      {
+        "value": "hr@acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "confidence": 1.0,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[EMAIL_LIEFERFIRMA_1]"
+      },
+      {
+        "value": "https://www.linkedin.com/in/marta-bianchi",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "confidence": 0.95,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[URL_1]"
+      },
+      {
+        "value": "Marta Bianchi",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "candidato",
+        "proposed_replacement": "[BEWERBER_2]"
+      },
+      {
+        "value": "Delta S.r.l",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "confidence": 0.85,
+        "source": "merged",
+        "semantic_role": "societa_datrice_lavoro",
+        "proposed_replacement": "[ARBEITGEBERFIRMA_2]"
+      },
+      {
+        "value": "10/02/2024",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "confidence": 0.6,
+        "source": "merged",
+        "semantic_role": "documento",
+        "proposed_replacement": "[DATUM_1]"
+      },
+      {
+        "value": "acme-italia.it",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "confidence": 0.5,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[URL_LIEFERFIRMA_1]"
+      },
+      {
+        "value": "+39 02 1234 5678",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "confidence": 0.4,
+        "source": "merged",
+        "semantic_role": "azienda_fornitrice",
+        "proposed_replacement": "[TELEFON_LIEFERFIRMA_1]"
+      },
+      {
+        "value": "Politecnico di Milano",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "confidence": 0.9,
+        "source": "ner",
+        "semantic_role": "ente_formazione",
+        "proposed_replacement": "[BILDUNGSEINRICHTUNG_1]"
+      }
+    ]
+  },
+  "anonymization": {
+    "mappings_count": 20,
+    "processing_time_ms": 0,
+    "mappings": [
+      {
+        "original": "Via delle Magnolie 12, 20133 Mailand (MI), Italien",
+        "replacement": "[ADRESSE_BEWERBER_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "https://www.linkedin.com/in/marta-bianchi",
+        "replacement": "[KONTAKT_1]",
+        "category": "dati_contatto",
+        "entity_type": "profilo_social",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "IT60 X054 2811 1010 0000 0123 456",
+        "replacement": "[IBAN_1]",
+        "category": "dati_finanziari",
+        "entity_type": "iban",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Viale Monza 220, 20125 Mailand",
+        "replacement": "[ADRESSE_ARBEITGEBERFIRMA_1]",
+        "category": "dati_contatto",
+        "entity_type": "indirizzo",
+        "semantic_role": "societa_datrice_lavoro"
+      },
+      {
+        "original": "marta.bianchi88@example.com",
+        "replacement": "[EMAIL_BEWERBER_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "Mailand (MI), Italien",
+        "replacement": "[GEBURTSORT_BEWERBER_1]",
+        "category": "persone_fisiche",
+        "entity_type": "luogo_nascita",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "Politecnico di Milano",
+        "replacement": "[BILDUNGSEINRICHTUNG_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "semantic_role": "ente_formazione"
+      },
+      {
+        "original": "+39 335 123 45 67",
+        "replacement": "[TELEFON_BEWERBER_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "hr@acme-italia.it",
+        "replacement": "[EMAIL_LIEFERFIRMA_1]",
+        "category": "dati_contatto",
+        "entity_type": "email",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "BNCMRT88B54F205X",
+        "replacement": "[STEUER_ID_BEWERBER_1]",
+        "category": "identificativi",
+        "entity_type": "codice_fiscale",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "+39 02 1234 5678",
+        "replacement": "[TELEFON_LIEFERFIRMA_1]",
+        "category": "dati_contatto",
+        "entity_type": "telefono",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "acme-italia.it",
+        "replacement": "[URL_LIEFERFIRMA_1]",
+        "category": "dati_contatto",
+        "entity_type": "url",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "Marta Bianchi",
+        "replacement": "[BEWERBER_1]",
+        "category": "persone_fisiche",
+        "entity_type": "nome_cognome",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "Delta S.r.l.",
+        "replacement": "[ARBEITGEBERFIRMA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_organizzazione",
+        "semantic_role": "societa_datrice_lavoro"
+      },
+      {
+        "original": "CI AA1234567",
+        "replacement": "[PERSONALAUSWEIS_1]",
+        "category": "identificativi",
+        "entity_type": "carta_identita",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "Acme S.p.A.",
+        "replacement": "[LIEFERFIRMA_1]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": "azienda_fornitrice"
+      },
+      {
+        "original": "Delta S.r.l",
+        "replacement": "[ARBEITGEBERFIRMA_2]",
+        "category": "persone_giuridiche",
+        "entity_type": "nome_azienda",
+        "semantic_role": "societa_datrice_lavoro"
+      },
+      {
+        "original": "14/02/1988",
+        "replacement": "[GEBURTSDATUM_BEWERBER_1]",
+        "category": "persone_fisiche",
+        "entity_type": "data_nascita",
+        "semantic_role": "candidato"
+      },
+      {
+        "original": "10/02/2024",
+        "replacement": "[DATUM_1]",
+        "category": "dati_temporali",
+        "entity_type": "data_evento",
+        "semantic_role": "documento"
+      },
+      {
+        "original": "FP123XY",
+        "replacement": "[KENNZEICHEN_1]",
+        "category": "dati_contatto",
+        "entity_type": "targa",
+        "semantic_role": "documento"
+      }
+    ],
+    "anonymized_preview": "# Curriculum Vitae — [BEWERBER_1]\n\n## Persönliche Daten\n- **Vor- und Nachname**: [BEWERBER_1]\n- **Geburtsdatum**: [GEBURTSDATUM_BEWERBER_1]\n- **Geburtsort**: [GEBURTSORT_BEWERBER_1]\n- **Adresse**: [ADRESSE_BEWERBER_1]\n- **Telefon**: [TELEFON_BEWERBER_1]\n- **E-Mail**: [EMAIL_BEWERBER_1]\n- **Steuernummer**: [STEUER_ID_BEWERBER_1]\n- **LinkedIn**: [KONTAKT_1]\n- **Kfz-Kennzeichen**: [KENNZEICHEN_1]\n\n## Profil\nProject Manager mit über **8 Jahren** Erfahrung in E-Commerce und Logistik. Ich habe funktionsübergreifende Teams von bis zu 12 Personen geleitet, mit Budgets von über **1,2 Mio. €**. Ich glau"
+  },
+  "error": null
+}

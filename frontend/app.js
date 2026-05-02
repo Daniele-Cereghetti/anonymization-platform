@@ -411,7 +411,7 @@ async function extractEntities() {
         entity_type: e.entity_type,
         semantic_role: e.semantic_role || null,
         substitution,
-        status: 'proposed',   // proposed | accepted | modified | removed
+        status: 'proposed',   // proposed | accepted | removed
       };
     });
 
@@ -445,7 +445,6 @@ function renderMappingTable() {
 
     const catLabel = CATEGORIES.find(c => c.id === row.category)?.label || row.category;
     const badgeClass = CATEGORY_BADGE_CLASS[row.category] || 'bg-secondary';
-    const isEditing = row._editing === true;
     const isRemoved = row.status === 'removed';
     const roleCell = row.semantic_role
       ? `<span class="badge bg-light text-dark border" style="font-size:0.68rem;">${escapeHtml(row.semantic_role)}</span>`
@@ -460,11 +459,7 @@ function renderMappingTable() {
       </td>
       <td>${roleCell}</td>
       <td>
-        ${isEditing
-          ? `<input class="substitution-input" id="editInput_${row.id}"
-               value="${escapeHtml(row.substitution)}" />`
-          : `<span class="substitution-display">${escapeHtml(row.substitution)}</span>`
-        }
+        <span class="substitution-display">${escapeHtml(row.substitution)}</span>
       </td>
       <td>${statusBadge(row.status)}</td>
       <td>
@@ -472,22 +467,12 @@ function renderMappingTable() {
           ? `<button class="btn btn-sm btn-outline-secondary" onclick="restoreRow('${row.id}')" title="Ripristina">
                <i class="bi bi-arrow-counterclockwise"></i>
              </button>`
-          : isEditing
-            ? `<button class="btn btn-sm btn-success me-1" onclick="saveEdit('${row.id}')" title="Salva">
-                 <i class="bi bi-check-lg"></i>
-               </button>
-               <button class="btn btn-sm btn-outline-secondary" onclick="cancelEdit('${row.id}')" title="Annulla">
-                 <i class="bi bi-x-lg"></i>
-               </button>`
-            : `<button class="btn btn-sm btn-outline-success me-1" onclick="acceptRow('${row.id}')" title="Accetta">
-                 <i class="bi bi-check-lg"></i>
-               </button>
-               <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow('${row.id}')" title="Modifica">
-                 <i class="bi bi-pencil"></i>
-               </button>
-               <button class="btn btn-sm btn-outline-danger" onclick="removeRow('${row.id}')" title="Rimuovi">
-                 <i class="bi bi-x-lg"></i>
-               </button>`
+          : `<button class="btn btn-sm btn-outline-success me-1" onclick="acceptRow('${row.id}')" title="Accetta">
+               <i class="bi bi-check-lg"></i>
+             </button>
+             <button class="btn btn-sm btn-outline-danger" onclick="removeRow('${row.id}')" title="Rimuovi">
+               <i class="bi bi-x-lg"></i>
+             </button>`
         }
       </td>
     `;
@@ -502,7 +487,6 @@ function statusBadge(status) {
   const map = {
     proposed: '<span class="badge bg-warning text-dark">Proposta</span>',
     accepted: '<span class="badge bg-success">Accettata</span>',
-    modified: '<span class="badge bg-primary">Modificata</span>',
     removed:  '<span class="badge bg-danger">Rimossa</span>',
   };
   return map[status] || '';
@@ -511,13 +495,12 @@ function statusBadge(status) {
 function updateMappingStats() {
   const total    = state.mappingRows.length;
   const accepted = state.mappingRows.filter(r => r.status === 'accepted').length;
-  const modified = state.mappingRows.filter(r => r.status === 'modified').length;
   const removed  = state.mappingRows.filter(r => r.status === 'removed').length;
   const proposed = state.mappingRows.filter(r => r.status === 'proposed').length;
-  const validated = accepted + modified + removed;
+  const validated = accepted + removed;
 
   document.getElementById('mappingStats').textContent =
-    `${total} entità trovate · ${accepted} accettate · ${modified} modificate · ${removed} rimosse · ${proposed} in attesa`;
+    `${total} entità trovate · ${accepted} accettate · ${removed} rimosse · ${proposed} in attesa`;
 
   const pct = total > 0 ? (validated / total) * 100 : 0;
   document.getElementById('validationProgress').style.width = `${pct}%`;
@@ -538,37 +521,6 @@ function acceptRow(id) {
   const row = state.mappingRows.find(r => r.id === id);
   if (!row) return;
   row.status = 'accepted';
-  row._editing = false;
-  renderMappingTable();
-}
-
-function editRow(id) {
-  const row = state.mappingRows.find(r => r.id === id);
-  if (!row) return;
-  row._editing = true;
-  renderMappingTable();
-  document.getElementById(`editInput_${id}`)?.focus();
-}
-
-function saveEdit(id) {
-  const row = state.mappingRows.find(r => r.id === id);
-  if (!row) return;
-  const input = document.getElementById(`editInput_${id}`);
-  const newValue = input?.value.trim();
-  if (!newValue) {
-    showToast('La sostituzione non può essere vuota.', 'warning');
-    return;
-  }
-  row.substitution = newValue;
-  row.status = 'modified';
-  row._editing = false;
-  renderMappingTable();
-}
-
-function cancelEdit(id) {
-  const row = state.mappingRows.find(r => r.id === id);
-  if (!row) return;
-  row._editing = false;
   renderMappingTable();
 }
 
@@ -576,7 +528,6 @@ function removeRow(id) {
   const row = state.mappingRows.find(r => r.id === id);
   if (!row) return;
   row.status = 'removed';
-  row._editing = false;
   renderMappingTable();
 }
 
@@ -597,7 +548,6 @@ function acceptAllRows() {
 function removeAllRows() {
   state.mappingRows.forEach(row => {
     row.status = 'removed';
-    row._editing = false;
   });
   renderMappingTable();
 }
@@ -609,9 +559,8 @@ function removeAllRows() {
 function buildSummary() {
   const rows    = state.mappingRows;
   const accepted = rows.filter(r => r.status === 'accepted').length;
-  const modified = rows.filter(r => r.status === 'modified').length;
   const removed  = rows.filter(r => r.status === 'removed').length;
-  const active   = accepted + modified;
+  const active   = accepted;
 
   const summaryEl = document.getElementById('summaryStats');
   summaryEl.innerHTML = `
@@ -619,12 +568,6 @@ function buildSummary() {
       <div class="text-center p-2 rounded bg-white">
         <div class="fs-4 fw-bold text-success">${accepted}</div>
         <div class="small text-muted">Accettate</div>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="text-center p-2 rounded bg-white">
-        <div class="fs-4 fw-bold text-primary">${modified}</div>
-        <div class="small text-muted">Modificate</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
@@ -644,7 +587,7 @@ function buildSummary() {
 
 async function anonymizeDocument() {
   const activeEntities = state.mappingRows
-    .filter(r => r.status === 'accepted' || r.status === 'modified')
+    .filter(r => r.status === 'accepted')
     .map(r => ({
       value: r.original,
       category: r.category,
@@ -813,24 +756,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnDownload').addEventListener('click', downloadAnonymized);
   document.getElementById('btnStartOver').addEventListener('click', startOver);
 
-  // --- Keyboard shortcut for editing (Enter = save, Esc = cancel) ---
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && e.target.classList.contains('substitution-input')) {
-      const id = e.target.id.replace('editInput_', '');
-      saveEdit(id);
-    }
-    if (e.key === 'Escape' && e.target.classList.contains('substitution-input')) {
-      const id = e.target.id.replace('editInput_', '');
-      cancelEdit(id);
-    }
-  });
-
 });
 
 // Make row-action functions accessible from inline onclick handlers
 window.acceptRow  = acceptRow;
-window.editRow    = editRow;
-window.saveEdit   = saveEdit;
-window.cancelEdit = cancelEdit;
 window.removeRow  = removeRow;
 window.restoreRow = restoreRow;

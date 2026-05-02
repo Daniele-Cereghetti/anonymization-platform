@@ -199,7 +199,7 @@ function goToStep(step) {
 }
 
 // ===========================================================================
-// STEP 1 — CARICAMENTO E CONVERSIONE
+// STEP 1 — INGESTIONE E NORMALIZZAZIONE
 // ===========================================================================
 
 function initDropZone() {
@@ -264,7 +264,10 @@ function removeFile() {
 async function convertDocument() {
   if (!state.selectedFile) return;
 
-  showLoading('Conversione documento in corso…', 'Il file viene convertito in formato Markdown.');
+  showLoading(
+    'Normalizzazione del documento in corso…',
+    'Il file sorgente viene parsato (estrazione di testo, layout e tabelle) e convertito nel formato canonico Markdown utilizzato dalle fasi successive. La durata dipende dalla dimensione e dalla complessità del documento. Non chiudere la pagina.'
+  );
 
   try {
     const formData = new FormData();
@@ -287,9 +290,9 @@ async function convertDocument() {
     document.getElementById('rawText').textContent = state.convertedText;
     document.getElementById('previewSection').classList.remove('d-none');
 
-    showToast('Documento convertito con successo!', 'success');
+    showToast('Normalizzazione completata.', 'success');
   } catch (err) {
-    showToast(`Errore durante la conversione: ${err.message}`, 'danger');
+    showToast(`Errore nella normalizzazione: ${err.message}`, 'danger');
   } finally {
     hideLoading();
   }
@@ -359,7 +362,7 @@ async function extractEntities() {
   const categories = getSelectedCategories();
 
   if (categories.length === 0) {
-    showToast('Seleziona almeno una categoria.', 'warning');
+    showToast('Selezionare almeno una categoria di entità.', 'warning');
     return;
   }
 
@@ -367,8 +370,8 @@ async function extractEntities() {
   document.getElementById('mappingSection').classList.add('d-none');
 
   showLoading(
-    'Estrazione entità in corso…',
-    'Il modello LLM locale sta analizzando il documento. Questa operazione può richiedere qualche minuto.'
+    'Riconoscimento entità (NER) in corso…',
+    'Il modello LLM locale sta analizzando il testo per identificare entità nominative (PII) appartenenti alle categorie selezionate e proporre i relativi placeholder. L\'inferenza avviene interamente in locale, senza invio dati a servizi esterni; il tempo richiesto dipende dalla lunghezza del documento e dalle risorse hardware disponibili. Non chiudere la pagina.'
   );
 
   try {
@@ -426,9 +429,9 @@ async function extractEntities() {
       document.getElementById('mappingTable').classList.remove('d-none');
     }
 
-    showToast(`${state.mappingRows.length} entità trovate.`, 'success');
+    showToast(`${state.mappingRows.length} entità rilevate.`, 'success');
   } catch (err) {
-    showToast(`Errore durante l'estrazione: ${err.message}`, 'danger');
+    showToast(`Errore nel riconoscimento entità: ${err.message}`, 'danger');
   } finally {
     hideLoading();
   }
@@ -464,13 +467,13 @@ function renderMappingTable() {
       <td>${statusBadge(row.status)}</td>
       <td>
         ${isRemoved
-          ? `<button class="btn btn-sm btn-outline-secondary" onclick="restoreRow('${row.id}')" title="Ripristina">
+          ? `<button class="btn btn-sm btn-outline-secondary" onclick="restoreRow('${row.id}')" title="Reintroduci entità">
                <i class="bi bi-arrow-counterclockwise"></i>
              </button>`
-          : `<button class="btn btn-sm btn-outline-success me-1" onclick="acceptRow('${row.id}')" title="Accetta">
+          : `<button class="btn btn-sm btn-outline-success me-1" onclick="acceptRow('${row.id}')" title="Accetta placeholder">
                <i class="bi bi-check-lg"></i>
              </button>
-             <button class="btn btn-sm btn-outline-danger" onclick="removeRow('${row.id}')" title="Rimuovi">
+             <button class="btn btn-sm btn-outline-danger" onclick="removeRow('${row.id}')" title="Scarta entità">
                <i class="bi bi-x-lg"></i>
              </button>`
         }
@@ -485,9 +488,9 @@ function renderMappingTable() {
 
 function statusBadge(status) {
   const map = {
-    proposed: '<span class="badge bg-warning text-dark">Proposta</span>',
+    proposed: '<span class="badge bg-warning text-dark">In attesa</span>',
     accepted: '<span class="badge bg-success">Accettata</span>',
-    removed:  '<span class="badge bg-danger">Rimossa</span>',
+    removed:  '<span class="badge bg-danger">Scartata</span>',
   };
   return map[status] || '';
 }
@@ -500,7 +503,7 @@ function updateMappingStats() {
   const validated = accepted + removed;
 
   document.getElementById('mappingStats').textContent =
-    `${total} entità trovate · ${accepted} accettate · ${removed} rimosse · ${proposed} in attesa`;
+    `${total} entità rilevate · ${accepted} accettate · ${removed} scartate · ${proposed} in attesa di validazione`;
 
   const pct = total > 0 ? (validated / total) * 100 : 0;
   document.getElementById('validationProgress').style.width = `${pct}%`;
@@ -579,7 +582,7 @@ function buildSummary() {
     <div class="col-6 col-md-3">
       <div class="text-center p-2 rounded bg-white">
         <div class="fs-4 fw-bold text-dark">${active}</div>
-        <div class="small text-muted">Sostituzioni attive</div>
+        <div class="small text-muted">Placeholder attivi</div>
       </div>
     </div>
   `;
@@ -596,8 +599,8 @@ async function anonymizeDocument() {
     }));
 
   showLoading(
-    'Anonimizzazione in corso…',
-    'Il LLM locale sta applicando le sostituzioni semantiche. La tabella di mappatura verrà distrutta al termine.'
+    'Redazione del documento in corso…',
+    'Il modello LLM locale applica i placeholder approvati al testo originale, preservando struttura e formattazione Markdown. Al termine la mappa di sostituzione viene eliminata dalla memoria del processo: l\'operazione è irreversibile e i valori originali non saranno più recuperabili. Non chiudere la pagina.'
   );
 
   try {
@@ -630,9 +633,9 @@ async function anonymizeDocument() {
     // Scroll to result
     document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    showToast('Documento anonimizzato con successo!', 'success');
+    showToast('Redazione completata.', 'success');
   } catch (err) {
-    showToast(`Errore durante l'anonimizzazione: ${err.message}`, 'danger');
+    showToast(`Errore nella redazione: ${err.message}`, 'danger');
   } finally {
     hideLoading();
   }
@@ -710,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnToStep2').addEventListener('click', () => {
     if (!state.convertedText) {
-      showToast('Prima converti il documento.', 'warning');
+      showToast('Eseguire prima la normalizzazione del documento.', 'warning');
       return;
     }
     goToStep(2);
@@ -738,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnToStep3').addEventListener('click', () => {
     const proposed = state.mappingRows.filter(r => r.status === 'proposed').length;
     if (proposed > 0) {
-      showToast(`Ci sono ancora ${proposed} entità in attesa di validazione.`, 'warning');
+      showToast(`${proposed} entità ancora in attesa di validazione.`, 'warning');
       return;
     }
     buildSummary();

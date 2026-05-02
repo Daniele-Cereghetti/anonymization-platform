@@ -46,7 +46,7 @@
         <div class="step-circle active" id="stepCircle1">
           <i class="bi bi-upload"></i>
         </div>
-        <small class="step-label mt-1">Caricamento</small>
+        <small class="step-label mt-1">Ingestione</small>
       </div>
       <div class="step-line" id="stepLine1"></div>
       <!-- Step 2 -->
@@ -66,21 +66,21 @@
       </div>
     </div>
 
-    <!-- ===================== STEP 1: CARICAMENTO ===================== -->
+    <!-- ===================== STEP 1: INGESTIONE ===================== -->
     <div id="step1" class="step-panel">
       <div class="card shadow-sm">
         <div class="card-header bg-white">
-          <h5 class="mb-0"><i class="bi bi-upload me-2 text-primary"></i>Fase 1 — Caricamento e Conversione</h5>
+          <h5 class="mb-0"><i class="bi bi-upload me-2 text-primary"></i>Fase 1 — Ingestione e Normalizzazione</h5>
         </div>
         <div class="card-body">
 
           <!-- Drop Zone -->
           <div id="dropZone" class="drop-zone text-center p-5 rounded mb-3">
             <i class="bi bi-cloud-arrow-up-fill drop-icon mb-3"></i>
-            <p class="fs-5 fw-medium mb-1">Trascina qui il documento</p>
+            <p class="fs-5 fw-medium mb-1">Rilascia qui il documento sorgente</p>
             <p class="text-muted mb-3">oppure</p>
             <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('fileInput').click()">
-              <i class="bi bi-folder2-open me-1"></i>Sfoglia file
+              <i class="bi bi-folder2-open me-1"></i>Seleziona file
             </button>
             <input type="file" id="fileInput" class="d-none"
               accept=".pdf,.docx,.doc,.txt,.rtf,.odt,.html,.htm" />
@@ -112,21 +112,21 @@
           <!-- Convert Button -->
           <div class="d-flex justify-content-end mt-3">
             <button class="btn btn-primary" id="btnConvert" disabled>
-              <i class="bi bi-arrow-repeat me-1"></i>Converti in Markdown
+              <i class="bi bi-arrow-repeat me-1"></i>Normalizza in Markdown
             </button>
           </div>
 
           <!-- Preview Section (shown after conversion) -->
           <div id="previewSection" class="d-none mt-4">
             <div class="d-flex align-items-center justify-content-between mb-2">
-              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Anteprima documento convertito</h6>
+              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Anteprima documento normalizzato</h6>
               <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-success">Conversione completata</span>
+                <span class="badge bg-success">Normalizzazione completata</span>
                 <div class="btn-group btn-group-sm" role="group">
-                  <button class="btn btn-outline-secondary active" id="btnViewRendered" title="Vista renderizzata">
+                  <button class="btn btn-outline-secondary active" id="btnViewRendered" title="Render Markdown">
                     <i class="bi bi-file-richtext"></i>
                   </button>
-                  <button class="btn btn-outline-secondary" id="btnViewRaw" title="Vista testo grezzo">
+                  <button class="btn btn-outline-secondary" id="btnViewRaw" title="Sorgente Markdown">
                     <i class="bi bi-code-slash"></i>
                   </button>
                 </div>
@@ -140,7 +140,7 @@
             <!-- Next Step -->
             <div class="d-flex justify-content-end mt-3">
               <button class="btn btn-success" id="btnToStep2">
-                Procedi all'estrazione <i class="bi bi-arrow-right ms-1"></i>
+                Procedi al riconoscimento entità <i class="bi bi-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
@@ -153,7 +153,7 @@
     <div id="step2" class="step-panel d-none">
       <div class="card shadow-sm">
         <div class="card-header bg-white d-flex align-items-center justify-content-between">
-          <h5 class="mb-0"><i class="bi bi-search me-2 text-primary"></i>Fase 2 — Estrazione e Validazione Entità</h5>
+          <h5 class="mb-0"><i class="bi bi-search me-2 text-primary"></i>Fase 2 — Riconoscimento e Validazione Entità (NER)</h5>
           <button class="btn btn-sm btn-outline-secondary" id="btnBackToStep1">
             <i class="bi bi-arrow-left me-1"></i>Indietro
           </button>
@@ -163,7 +163,7 @@
           <!-- Category Selection -->
           <div class="mb-4">
             <div class="d-flex align-items-center justify-content-between mb-2">
-              <h6 class="mb-0">Seleziona le categorie da estrarre</h6>
+              <h6 class="mb-0">Categorie di entità da rilevare</h6>
               <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-link p-0" id="btnSelectAll">Seleziona tutte</button>
                 <span class="text-muted">|</span>
@@ -178,7 +178,7 @@
           <!-- Extract Button -->
           <div class="d-flex justify-content-end mb-4">
             <button class="btn btn-primary" id="btnExtract">
-              <i class="bi bi-search me-1"></i>Estrai entità
+              <i class="bi bi-search me-1"></i>Esegui riconoscimento
             </button>
           </div>
 
@@ -186,15 +186,15 @@
           <div id="mappingSection" class="d-none">
             <div class="d-flex align-items-center justify-content-between mb-2">
               <div>
-                <h6 class="mb-0">Tabella di mappatura</h6>
+                <h6 class="mb-0">Mappa di sostituzione</h6>
                 <small class="text-muted" id="mappingStats">—</small>
               </div>
               <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-outline-success" id="btnAcceptAll">
-                  <i class="bi bi-check-all me-1"></i>Accetta tutte
+                  <i class="bi bi-check-all me-1"></i>Accetta tutto
                 </button>
                 <button class="btn btn-sm btn-outline-danger" id="btnRemoveAll">
-                  <i class="bi bi-x-circle me-1"></i>Rimuovi tutte
+                  <i class="bi bi-x-circle me-1"></i>Scarta tutto
                 </button>
               </div>
             </div>
@@ -203,7 +203,7 @@
             <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded border bg-light">
               <i class="bi bi-file-earmark-text text-primary"></i>
               <label for="docTypeSelect" class="mb-0 small fw-semibold">
-                Tipo documento rilevato:
+                Tipologia documento (rilevata):
               </label>
               <select id="docTypeSelect" class="form-select form-select-sm" style="width:auto;">
                 <option value="">Auto-rilevato</option>
@@ -215,7 +215,7 @@
                 <option value="letter">Lettera</option>
               </select>
               <small class="text-muted ms-auto">
-                Cambiare il tipo riavvia l'estrazione con i ruoli appropriati.
+                Modificare la tipologia rilancia il riconoscimento con i ruoli semantici corrispondenti.
               </small>
             </div>
 
@@ -229,10 +229,10 @@
               <table class="table table-sm table-hover align-middle mb-2" id="mappingTable">
                 <thead class="table-light">
                   <tr>
-                    <th style="width:24%">Entità trovata</th>
+                    <th style="width:24%">Entità rilevata</th>
                     <th style="width:14%">Categoria</th>
                     <th style="width:14%">Ruolo</th>
-                    <th style="width:22%">Sostituzione proposta</th>
+                    <th style="width:22%">Placeholder proposto</th>
                     <th style="width:10%">Stato</th>
                     <th style="width:16%">Azioni</th>
                   </tr>
@@ -246,13 +246,13 @@
             <!-- Empty state -->
             <div id="mappingEmpty" class="d-none text-center py-4 text-muted">
               <i class="bi bi-search fs-2 mb-2 d-block"></i>
-              Nessuna entità trovata con le categorie selezionate.
+              Nessuna entità rilevata per le categorie selezionate.
             </div>
 
             <!-- Next Step -->
             <div class="d-flex justify-content-end mt-3">
               <button class="btn btn-success" id="btnToStep3">
-                Procedi all'anonimizzazione <i class="bi bi-arrow-right ms-1"></i>
+                Procedi alla redazione <i class="bi bi-arrow-right ms-1"></i>
               </button>
             </div>
           </div>
@@ -265,7 +265,7 @@
     <div id="step3" class="step-panel d-none">
       <div class="card shadow-sm">
         <div class="card-header bg-white d-flex align-items-center justify-content-between">
-          <h5 class="mb-0"><i class="bi bi-file-earmark-check me-2 text-primary"></i>Fase 3 — Anonimizzazione</h5>
+          <h5 class="mb-0"><i class="bi bi-file-earmark-check me-2 text-primary"></i>Fase 3 — Sostituzione e Redazione</h5>
           <button class="btn btn-sm btn-outline-secondary" id="btnBackToStep2">
             <i class="bi bi-arrow-left me-1"></i>Indietro
           </button>
@@ -274,14 +274,14 @@
 
           <!-- Summary -->
           <div class="alert alert-info mb-4" id="anonymizationSummary">
-            <h6 class="alert-heading"><i class="bi bi-info-circle me-1"></i>Riepilogo anonimizzazione</h6>
+            <h6 class="alert-heading"><i class="bi bi-info-circle me-1"></i>Riepilogo della redazione</h6>
             <div class="row g-3 mt-1" id="summaryStats">
               <!-- generated by JS -->
             </div>
             <hr />
             <p class="mb-0 small">
               <i class="bi bi-lock-fill me-1"></i>
-              La tabella di mappatura verrà <strong>distrutta</strong> al termine del processo.
+              La mappa di sostituzione verrà <strong>eliminata in memoria</strong> al termine del processo.
               L'operazione è <strong>irreversibile</strong>.
             </p>
           </div>
@@ -290,15 +290,15 @@
           <div class="alert alert-warning d-flex gap-2 mb-4">
             <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
             <div>
-              <strong>Attenzione:</strong> Verificare attentamente la tabella di mappatura prima di procedere.
-              Una volta anonimizzato, non sarà possibile risalire ai dati originali.
+              <strong>Attenzione:</strong> verificare la mappa di sostituzione prima di procedere.
+              Dopo la redazione i valori originali non sono più recuperabili.
             </div>
           </div>
 
           <!-- Anonymize button -->
           <div class="d-flex justify-content-end mb-4">
             <button class="btn btn-danger btn-lg" id="btnAnonymize">
-              <i class="bi bi-shield-check me-2"></i>Anonimizza documento
+              <i class="bi bi-shield-check me-2"></i>Esegui redazione
             </button>
           </div>
 
@@ -307,22 +307,22 @@
             <div class="alert alert-success d-flex align-items-center gap-2">
               <i class="bi bi-check-circle-fill fs-4"></i>
               <div>
-                <strong>Anonimizzazione completata con successo!</strong>
+                <strong>Redazione completata.</strong>
                 <div class="small mt-1">
-                  La tabella di mappatura è stata distrutta. Il documento anonimizzato è pronto per il download.
+                  La mappa di sostituzione è stata eliminata. Il documento redatto è disponibile per l'esportazione.
                 </div>
               </div>
             </div>
 
             <!-- Preview of anonymized document -->
             <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
-              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Documento anonimizzato</h6>
+              <h6 class="mb-0"><i class="bi bi-eye me-1 text-success"></i>Documento redatto</h6>
               <div class="d-flex align-items-center gap-2">
                 <div class="btn-group btn-group-sm" role="group">
-                  <button class="btn btn-outline-secondary active" id="btnViewAnonymizedRendered" title="Vista renderizzata">
+                  <button class="btn btn-outline-secondary active" id="btnViewAnonymizedRendered" title="Render Markdown">
                     <i class="bi bi-file-richtext"></i>
                   </button>
-                  <button class="btn btn-outline-secondary" id="btnViewAnonymizedRaw" title="Vista testo grezzo">
+                  <button class="btn btn-outline-secondary" id="btnViewAnonymizedRaw" title="Sorgente Markdown">
                     <i class="bi bi-code-slash"></i>
                   </button>
                 </div>
@@ -336,10 +336,10 @@
             <!-- Download -->
             <div class="d-flex justify-content-end gap-2">
               <button class="btn btn-outline-secondary" id="btnStartOver">
-                <i class="bi bi-arrow-counterclockwise me-1"></i>Nuovo documento
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Nuova sessione
               </button>
               <button class="btn btn-success btn-lg" id="btnDownload">
-                <i class="bi bi-download me-2"></i>Scarica documento anonimizzato (.md)
+                <i class="bi bi-download me-2"></i>Esporta documento redatto (.md)
               </button>
             </div>
           </div>
@@ -367,6 +367,9 @@
     <div class="loading-card">
       <div class="spinner-border text-white mb-3" style="width: 2.75rem; height: 2.75rem; border-width: 3px;" role="status"></div>
       <div class="fw-semibold text-white mb-1" id="loadingMessage">Elaborazione in corso…</div>
+      <div class="text-warning small mt-2" style="font-size: 0.78rem;">
+        <i class="bi bi-exclamation-circle me-1"></i>Non chiudere o ricaricare la pagina durante l'esecuzione.
+      </div>
       <div class="text-white-50" style="font-size: 0.82rem;" id="loadingSubMessage"></div>
     </div>
   </div>

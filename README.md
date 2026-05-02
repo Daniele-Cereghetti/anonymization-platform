@@ -1,84 +1,85 @@
 # Anonymization Platform
 
-Piattaforma di Anonimizzazione Documenti tramite IA Generativa Locale
-SUPSI — Anno Accademico 2025/2026
+Document Anonymization Platform via Local Generative AI
+SUPSI — Semester Project C11149 — Academic Year 2025/2026
+
+All inference (LLM and NER) runs **locally**: no data leaves the machine.
 
 ---
 
-## Prerequisiti
+## Quickstart (Docker)
 
-- [Docker](https://www.docker.com/get-started) installato e funzionante
-- Python 3.10 o superiore
+The fastest way to try out the platform. Only requires [Docker](https://www.docker.com/get-started).
 
----
-
-## 1. Avviare Ollama con Docker
+### 1. Start Ollama and download the LLM model
 
 ```bash
-# Prima volta — scarica l'immagine e avvia il container
 docker run -d -v ollama_data:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-```
-
-Nelle sessioni successive (container già esistente):
-
-```bash
-docker start ollama
-docker ps   # deve mostrare il container "ollama"
-```
-
----
-
-## 2. Scaricare il modello LLM
-
-```bash
 docker exec -it ollama ollama pull llama3.1:8b
 ```
 
-> Il download richiede ~5 GB. Viene eseguito una sola volta; il modello viene salvato nel volume `ollama_data`.
+> The pull downloads about 5 GB and runs only once (the model is kept in the `ollama_data` volume).
 
-Per verificare i modelli disponibili:
+In subsequent sessions just run `docker start ollama`.
+
+### 2. Build the backend and start the stack
 
 ```bash
-docker exec -it ollama ollama list
+cd backend
+docker build -t anon-platform-backend .
+cd ..
+docker compose up
 ```
+
+(For older Docker versions: `docker-compose`.)
+
+The stack exposes:
+- **Frontend** → `http://localhost:8080` (served by Nginx)
+- **Backend (API + Swagger)** → `http://localhost:8000` ([Swagger UI](http://localhost:8000/docs))
+
+To stop the stack: `docker compose down`.
 
 ---
 
-## 3. Installare le dipendenze Python
+## Quickstart (local development, without Docker for the backend)
 
-Il venv va creato **dentro `backend/`**. Il file `backend/.venv/` è già nel `.gitignore`.
+Useful for editing backend code with auto-reload.
+
+### Prerequisites
+- Docker (for Ollama)
+- Python 3.10+
+
+### 1. Start Ollama (see above)
+
+### 2. Python backend
+
+The virtual environment must be created **inside `backend/`** (`backend/.venv/` is already in `.gitignore`).
 
 ```bash
 cd backend/
 python3 -m venv .venv
-source .venv/bin/activate        # macOS/Linux
-# oppure: .venv\Scripts\activate  # Windows
+source .venv/bin/activate           # macOS/Linux
+# .venv\Scripts\activate            # Windows
 
 pip install -r requirements.txt
 ```
 
-Dopo l'installazione, scarica almeno un modello spaCy per il Modulo Identificazione (Presidio/spaCy).
-Il modello italiano è quello consigliato per documenti in italiano:
+### 3. (Optional) spaCy models for the hybrid NER layer
+
+The Identification module combines **Presidio + spaCy** (pattern-based: email, IBAN, phone numbers, fiscal codes, …) with **semantic NER via LLM**. To enable the Presidio layer download at least one spaCy model:
 
 ```bash
-python -m spacy download it_core_news_sm   # italiano (consigliato)
-python -m spacy download en_core_web_sm    # inglese
-python -m spacy download fr_core_news_sm   # francese
-python -m spacy download de_core_news_sm   # tedesco
+python -m spacy download it_core_news_sm   # Italian (recommended)
+python -m spacy download en_core_web_sm    # English
+python -m spacy download fr_core_news_sm   # French
+python -m spacy download de_core_news_sm   # German
 ```
 
-La lingua del documento viene rilevata automaticamente tramite `lingua-language-detector`
-(già incluso in `requirements.txt`) e il modello spaCy corrispondente viene selezionato
-di conseguenza. Se il modello per la lingua rilevata non è installato, viene usato il
-primo modello disponibile come fallback.
+The document language is detected automatically with `lingua-language-detector` and the corresponding spaCy model is selected. If the model for the detected language is not installed, the first available one is used as a fallback.
 
-> Se nessun modello spaCy è installato, il sistema funziona comunque in modalità
-> **LLM-only**: Presidio verrà disabilitato automaticamente e tutta la rilevazione
-> delle entità verrà gestita dall'LLM.
+> Without any spaCy model the system still works in **LLM-only** mode: Presidio is disabled and all detection goes through the LLM.
 
----
-
-## 4. Avviare il backend
+### 4. Start the backend
 
 ```bash
 cd backend/
@@ -86,200 +87,103 @@ source .venv/bin/activate
 uvicorn main:app --reload
 ```
 
-Il server sarà disponibile su `http://localhost:8000`.
-La documentazione interattiva (Swagger UI) è accessibile su `http://localhost:8000/docs`.
+API on `http://localhost:8000`, Swagger UI on `http://localhost:8000/docs`.
 
-### Endpoint API
+### 5. Frontend
 
-| Metodo | Endpoint | Descrizione |
+Open `frontend/index.html` directly in your browser (no server required). The frontend expects the backend on `http://localhost:8000`.
+
+Alternatively, serve it via Docker together with the rest of the stack (`docker compose up`).
+
+---
+
+## Using the platform
+
+The user flow is in three stages (see also the labels in the UI):
+
+1. **Ingestion and Normalization** — upload of the source document; the file is parsed (text, layout, tables) and converted to canonical Markdown.
+2. **Entity Recognition and Validation (NER)** — selection of the categories to detect, execution of recognition, manual validation (accept/discard) of every proposed placeholder.
+3. **Substitution and Redaction** — application of the approved placeholders to the original text; once finished the substitution map is deleted from the process memory (irreversible operation).
+
+### Supported document formats
+
+The backend accepts: `.md`, `.txt`, `.pdf`, `.docx`, `.pptx`, `.html`, `.htm` (see `conversion_service.py`).
+
+> The frontend selector also shows `.doc`, `.rtf`, `.odt` but these formats are **not** supported by the backend: uploading them will be rejected.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/health` | Stato del servizio e configurazione LLM |
-| `POST` | `/api/convert` | Upload file (`.md`, `.txt`) → testo Markdown |
-| `POST` | `/api/extract` | Pipeline di estrazione: NER ibrido + ruoli semantici |
-| `POST` | `/api/anonymize` | Sostituzione entità validate con label semantiche |
+| `GET`  | `/health` | Service status + LLM configuration (`status`, `llm_backend`, `model`) |
+| `POST` | `/api/convert` | File upload → normalized Markdown |
+| `POST` | `/api/extract` | Extraction pipeline: hybrid NER (Presidio + LLM) + semantic roles |
+| `POST` | `/api/anonymize` | Substitution of validated entities with semantic placeholders |
+
+Full reference (requests/responses): `http://localhost:8000/docs`.
 
 ---
 
-## 5. Eseguire i test sul dataset
-
-Sono disponibili due runner:
-
-| Runner            | Descrizione                                                                    |
-|-------------------|--------------------------------------------------------------------------------|
-| `runner`          | Pipeline completa: Presidio/spaCy + LLM + ruoli semantici + anonimizzazione    |
-| `runner_ner_only` | Solo Presidio/spaCy - utile per valutare la copertura del layer NER senza LLM  |
-
-### Pipeline completa
-
-```bash
-cd backend/
-source .venv/bin/activate
-python -m tests.dataset_tests.runner
-```
-
-### Solo NER (Presidio/spaCy, senza LLM)
-
-```bash
-python -m tests.dataset_tests.runner_ner_only
-```
-
-### Filtrare per gruppo di documenti
-
-Entrambi i runner accettano l'opzione `--group` (o `-g`) per eseguire solo i documenti
-il cui nome inizia con il prefisso specificato:
-
-```bash
-# Solo i documenti del gruppo 01
-python -m tests.dataset_tests.runner --group 01
-python -m tests.dataset_tests.runner_ner_only -g 01
-
-# Funziona con qualsiasi prefisso
-python -m tests.dataset_tests.runner -g CV
-```
-
-### Output e opzioni
-
-```bash
-# Sopprime le tabelle intermedie per documento (mostra solo il riepilogo finale)
-ANON_VERBOSE=0 python -m tests.dataset_tests.runner
-```
-
-I risultati del runner completo vengono salvati in `backend/tests/dataset_tests/results/`:
+## `/extract` pipeline architecture
 
 ```
-results/
-├── 20260327T120000Z_01_CV_IT.json        # risultato per documento
-├── 20260327T120000Z_02_CV_EN.json
-├── ...
-└── 20260327T120000Z_SUMMARY.json         # riepilogo dell'intera run
-```
-
-Ogni file JSON contiene: timestamp, modello usato, sorgente delle entità (`ner` / `llm` / `merged`),
-ruolo semantico assegnato, tempi di elaborazione e anteprima del documento anonimizzato.
-Il `SUMMARY.json` aggrega i conteggi per categoria su tutti i documenti.
-
----
-
-## 6. Frontend
-
-Apri `frontend/index.html` direttamente nel browser (nessun server richiesto).
-Il frontend si aspetta il backend in ascolto su `http://localhost:8000`.
-
----
-
-## Utilizzo tramite docker
-Come prima cosa bisogna buildare il container del backend eseguendo questo comando:
-```
-cd backend
-docker build -t anon-platform-backend .
-```
-Successivamente per alzare tutto lo stack è sufficente usare il seguente comando:
-```
-docker compose up
-```
-Per le versioni vecchie di docker usare `docker-compose`
-
-Per spegnere lo stack invece bisogna scrivere:
-```
-docker compose down
-```
-
----
-
-## Architettura della pipeline `/extract`
-
-```
-documento markdown
+markdown document
        │
        ▼
 ┌──────────────────────────────────────┐
-│  Modulo Identificazione              │
+│  Identification Module               │
 │  ┌───────────────────────────────┐   │
 │  │ Presidio + spaCy (NER rules)  │──►│ pattern-based: email, IBAN,
-│  └───────────────────────────────┘   │ telefono, codice fiscale, ecc.
+│  └───────────────────────────────┘   │ phone, fiscal code, etc.
 │  ┌───────────────────────────────┐   │
-│  │ LLM NER (llm_ner_service)     │──►│ semantico, multilingua (IT/EN/FR/DE)
+│  │ LLM NER (llm_ner_service)     │──►│ semantic, multilingual (IT/EN/FR/DE)
 │  └───────────────────────────────┘   │
-│          merge (LLM priorità)         │
+│          merge (LLM priority)        │
 └──────────────────────────────────────┘
-       │  entities con source = "ner" | "llm" | "merged"
+       │  entities with source = "ner" | "llm" | "merged"
        ▼
 ┌──────────────────────────────────────┐
-│  Modulo Ruoli Semantici              │
-│  LLM assegna ruolo contestuale a     │
+│  Semantic Roles Module               │
+│  LLM assigns contextual role to      │
 │  persone_fisiche / persone_giuridiche│
 └──────────────────────────────────────┘
-       │  entities con semantic_role
+       │  entities with semantic_role
        ▼
     ExtractionResult
 ```
 
-### Sostituzioni prodotte da `/anonymize`
+### Placeholders produced by `/anonymize`
 
-| Categoria | Con ruolo semantico | Senza ruolo (fallback) |
+| Category | With semantic role | Without role (fallback) |
 | --- | --- | --- |
-| `persone_fisiche` | `fornitore1`, `paziente1` | `persona1` |
-| `persone_giuridiche` | `azienda_fornitrice1`, `banca1` | `organizzazione1` |
+| `persone_fisiche` | `[CANDIDATO_1]`, `[PAZIENTE_1]`, … | `[PERSONA_1]` |
+| `persone_giuridiche` | `[AZIENDA_FORNITRICE_1]`, `[BANCA_1]`, … | `[ORGANIZZAZIONE_1]` |
 | `dati_contatto` | — | `[EMAIL_1]`, `[TELEFONO_1]`, `[INDIRIZZO_1]` |
 | `identificativi` | — | `[CODICE_FISCALE_1]`, `[AVS_1]`, `[PASSAPORTO_1]` |
 | `dati_finanziari` | — | `[IBAN_1]`, `[CARTA_1]` |
 | `dati_temporali` | — | `[DATA_NASCITA_1]`, `[DATA_1]` |
 
----
-
-## Struttura del progetto
-
-```
-anonymization-platform/
-├── backend/
-│   ├── .venv/                           # virtual environment (non committato)
-│   ├── app/
-│   │   ├── config.py                    # variabili di configurazione (env override)
-│   │   ├── domain/
-│   │   │   ├── entities.py              # EntityCategory, Entity, AnonymizationMapping
-│   │   │   └── document.py              # ExtractionResult, AnonymizationResult
-│   │   ├── infrastructure/
-│   │   │   ├── llm/ollama_client.py     # client HTTP verso Ollama
-│   │   │   └── storage/file_handler.py  # lettura/scrittura file
-│   │   ├── services/
-│   │   │   ├── conversion_service.py    # conversione file → Markdown
-│   │   │   ├── identification_service.py # Modulo Identificazione (Presidio + LLM)
-│   │   │   ├── llm_ner_service.py       # NER semantico via LLM
-│   │   │   ├── semantic_role_service.py  # Modulo Ruoli Semantici
-│   │   │   ├── extraction_service.py    # orchestrazione dei due moduli
-│   │   │   └── anonymization_service.py # sostituzione con label semantiche
-│   │   └── api/routes/
-│   │       ├── convert.py
-│   │       ├── extract.py
-│   │       └── anonymize.py
-│   ├── tests/dataset_tests/
-│   │   ├── runner.py                    # test runner sui documenti reali
-│   │   └── results/                     # risultati tracciati (JSON, non committati)
-│   ├── requirements.txt
-│   └── main.py                          # entry point FastAPI
-├── dataset/                             # 10 documenti multilingua (IT, EN, FR, DE)
-├── frontend/
-│   ├── index.html
-│   ├── app.js
-│   └── style.css
-└── docs/
-```
+Labels are **localized** based on the document language (e.g. `[CANDIDATE_1]` in EN, `[CANDIDAT_1]` in FR, `[KANDIDAT_1]` in DE).
 
 ---
 
-## Configurazione
+## Configuration
 
-Le variabili di configurazione possono essere sovrascritte tramite variabili d'ambiente:
+Environment variables (read by `backend/app/config.py`):
 
-| Variabile | Valore predefinito | Descrizione |
-|-----------|--------------------|-------------|
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Endpoint Ollama |
-| `OLLAMA_MODEL` | `llama3.1:8b` | Modello LLM da utilizzare |
-| `OLLAMA_TIMEOUT` | `120` | Timeout richieste LLM (secondi) |
-| `CACHE_DIR` | `/tmp/anon_cache` | Directory per la cache dei documenti convertiti |
-| `CACHE_MAX_DISK_MB` | `500` | Soglia di eviction LRU (MB) |
+| Variable | Default | Description |
+|-----------|---------|-------------|
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama endpoint |
+| `OLLAMA_MODEL` | `llama3.1:8b` | LLM model used |
+| `OLLAMA_TIMEOUT` | `360` | LLM request timeout (seconds) |
+| `CACHE_DIR` | `/tmp/anon_cache` | Cache directory for converted documents |
+| `CACHE_MAX_DISK_MB` | `500` | LRU eviction threshold (MB) |
+| `CACHE_TTL_SECONDS` | `604800` | Cache entry TTL (7 days) |
+| `AUDIT_LOG_PATH` | `logs/audit.log` | Audit log path |
 
-Esempio con modello alternativo:
+Example with an alternative model:
 
 ```bash
 OLLAMA_MODEL=llama3.2:1b uvicorn main:app --reload
@@ -287,35 +191,131 @@ OLLAMA_MODEL=llama3.2:1b uvicorn main:app --reload
 
 ---
 
-## Risoluzione problemi
+## Dataset tests
 
-### Ollama non raggiungibile
+Two runners are available:
+
+| Runner            | Description |
+|-------------------|-------------|
+| `runner`          | Full pipeline: Presidio/spaCy + LLM + semantic roles + anonymization |
+| `runner_ner_only` | Presidio/spaCy only — useful to evaluate the NER layer coverage without LLM |
+
+### Full pipeline
+
+```bash
+cd backend/
+source .venv/bin/activate
+python -m tests.dataset_tests.runner
+```
+
+### NER only (Presidio/spaCy, without LLM)
+
+```bash
+python -m tests.dataset_tests.runner_ner_only
+```
+
+### Filter by document group
+
+Both runners accept `--group` (or `-g`) to process only documents whose name starts with the given prefix:
+
+```bash
+python -m tests.dataset_tests.runner --group 01
+python -m tests.dataset_tests.runner_ner_only -g 01
+python -m tests.dataset_tests.runner -g CV
+```
+
+### Output and options
+
+```bash
+# Suppress per-document intermediate tables (only show final summary)
+ANON_VERBOSE=0 python -m tests.dataset_tests.runner
+```
+
+Results are saved in `backend/tests/dataset_tests/results/`:
+
+```
+results/
+├── 20260327T120000Z_01_CV_IT.json        # per-document result
+├── 20260327T120000Z_02_CV_EN.json
+├── ...
+└── 20260327T120000Z_SUMMARY.json         # summary of the whole run
+```
+
+Each file contains: timestamp, model used, entity source (`ner` / `llm` / `merged`), assigned semantic role, processing times, preview of the anonymized document. The `SUMMARY.json` aggregates counts by category across all documents.
+
+---
+
+## Project structure
+
+```
+anonymization-platform/
+├── backend/
+│   ├── .venv/                            # virtual environment (not committed)
+│   ├── app/
+│   │   ├── config.py                     # configuration variables (env override)
+│   │   ├── domain/
+│   │   │   ├── entities.py               # EntityCategory, Entity, AnonymizationMapping
+│   │   │   └── document.py               # ExtractionResult, AnonymizationResult
+│   │   ├── infrastructure/
+│   │   │   ├── llm/ollama_client.py      # HTTP client to Ollama
+│   │   │   └── storage/file_handler.py   # file read/write
+│   │   ├── services/
+│   │   │   ├── conversion_service.py     # file parsing → Markdown (Docling + plain text)
+│   │   │   ├── identification_service.py # Identification module (Presidio + LLM)
+│   │   │   ├── llm_ner_service.py        # semantic NER via LLM
+│   │   │   ├── semantic_role_service.py  # Semantic Roles module
+│   │   │   ├── extraction_service.py     # orchestration of the two modules
+│   │   │   └── anonymization_service.py  # substitution with semantic labels
+│   │   └── api/routes/
+│   │       ├── convert.py
+│   │       ├── extract.py
+│   │       └── anonymize.py
+│   ├── tests/dataset_tests/
+│   │   ├── runner.py                     # full pipeline runner
+│   │   ├── runner_ner_only.py            # NER-only runner
+│   │   └── results/                      # tracked results (JSON, not committed)
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── main.py                           # FastAPI entry point
+├── dataset/                              # multilingual documents (IT, EN, FR, DE)
+├── frontend/
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
+├── docker-compose.yml
+└── docs/
+```
+
+---
+
+## Troubleshooting
+
+### Ollama not reachable
 
 ```bash
 docker start ollama
 docker logs ollama
 ```
 
-### Modello LLM non trovato
+### LLM model not found
 
 ```bash
 docker exec -it ollama ollama list
 docker exec -it ollama ollama pull llama3.1:8b
 ```
 
-### Risposta lenta
+### Slow response
 
-`llama3.1:8b` richiede ~8 GB di RAM. In alternativa usa un modello più leggero:
+`llama3.1:8b` requires ~8 GB of RAM. Alternatively, use a lighter model:
 
 ```bash
 docker exec -it ollama ollama pull llama3.2:3b
 OLLAMA_MODEL=llama3.2:3b uvicorn main:app --reload
 ```
 
-### Presidio/spaCy non disponibile
+### Presidio/spaCy unavailable
 
-Il sistema funziona comunque in modalità LLM-only. Per abilitare Presidio, installa
-almeno un modello spaCy (quello italiano è consigliato):
+The system still works in LLM-only mode. To enable Presidio install at least one spaCy model (Italian recommended):
 
 ```bash
 cd backend/
